@@ -15,11 +15,11 @@ var userSchema = new Schema(
             type: String,
             enum: ["customer", "restaurantAdmin", "deliveryPersonnel", "systemAdmin"],
             default: "customer"
-        },
-        isVerified: { type: Boolean, default: false },
-  },
-  { timestamps: true }
-    
+        }
+    },
+
+    { timestamps: true }
+
 );
 
 var user = mongoose.model("user", userSchema);

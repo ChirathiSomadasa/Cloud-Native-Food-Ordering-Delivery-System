@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login,getAllUsers, deleteUser, verifyRestaurant } = require('../controllers/authController');
+const { register, login,getAllUsers, deleteUser} = require('../controllers/authController');
 const { verifyToken, verifyRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -11,6 +11,5 @@ router.post('/login', login);
 // Protected routes
 router.get('/all', verifyToken, verifyRole(['systemAdmin']), getAllUsers); // Get all users (only system admin)
 router.delete('/delete/:id', verifyToken, verifyRole(['systemAdmin']), deleteUser); // Delete user (only system admin)
-router.put('/verify-restaurant/:id', verifyToken, verifyRole(['systemAdmin']), verifyRestaurant);//verifying restaurant admins
 
 module.exports = router; 

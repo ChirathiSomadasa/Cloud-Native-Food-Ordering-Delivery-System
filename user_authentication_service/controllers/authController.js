@@ -101,29 +101,3 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
-// Verify Restaurant Admin (Only System Admin)
-exports.verifyRestaurant = async (req, res) => {
-    try {
-      const userId = req.params.id;
-  
-      // Find the user (restaurant admin) by ID
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-  
-      // Check if the user is a restaurant admin
-      if (user.role !== 'restaurantAdmin') {
-        return res.status(400).json({ error: 'The selected user is not a restaurant admin' });
-      }
-  
-      // Update the verification status
-      user.isVerified = true;
-      await user.save();
-  
-      res.json({ Status: 'Success', message: 'Restaurant admin verified successfully' });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  };
