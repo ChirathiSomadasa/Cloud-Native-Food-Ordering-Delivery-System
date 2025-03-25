@@ -1,0 +1,212 @@
+/* General Styles */
+a {
+    text-decoration: none;
+    color: inherit;
+  }
+  button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+  
+  /* Header Styles */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    padding: 0 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Left Side */
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo {
+    font-weight: 600;
+    font-size: 18px;
+    color: #f4a405;
+  }
+  
+  /* Search Bar */
+  .search-container {
+    display: none;
+    flex: 1;
+    justify-content: center;
+    padding: 0 16px;
+  }
+  .search-bar {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+  }
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #757575;
+    font-size: 20px;
+  }
+  .search-input {
+    width: 100%;
+    height: 40px;
+    padding: 8px 8px 8px 36px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: #f4a405;
+  }
+  @media (min-width: 768px) {
+    .search-container {
+      display: flex;
+    }
+  }
+  
+  /* Mobile Search */
+  .mobile-search {
+    display: block;
+    padding: 8px 16px;
+    border-top: 1px solid #e0e0e0;
+  }
+  @media (min-width: 768px) {
+    .mobile-search {
+      display: none;
+    }
+  }
+  
+  /* Header Right */
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .desktop-menu {
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+  .mobile-menu {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  @media (min-width: 768px) {
+    .desktop-menu {
+      display: flex;
+    }
+    .mobile-menu {
+      display: none;
+    }
+  }
+  
+  /* Buttons */
+  .icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #333;
+    transition: background-color 0.2s;
+  }
+  .icon-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  .text-button-login {
+    padding: 8px 22px;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  .text-button-login:hover {
+    background-color: rgba(0, 0, 0, 0.09);
+  }
+  .text-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  .text-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  .primary-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    background-color: #f4a405;
+    color: white;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  .primary-button:hover {
+    background-color: #f4a405;
+  }
+  
+  /* Badge */
+  .notification-button,
+  .cart-button {
+    position: relative;
+  }
+  .badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+    font-weight: 500;
+    color: white;
+    background-color: #f4a405;
+    border-radius: 50%;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 480px) {
+    .header-container {
+      padding: 0 8px;
+    }
+    .icon-button {
+      width: 36px;
+      height: 36px;
+    }
+    .text-button {
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+    .primary-button {
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .header-container {
+      padding: 0 24px;
+    }
+  }

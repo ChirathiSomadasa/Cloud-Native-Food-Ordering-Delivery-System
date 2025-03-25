@@ -1,7 +1,14 @@
+import { BrowserRouter, Routes } from "react-router-dom";
+import "./App.css";
+import Header from "./components/Header";
 
 function App() {
   return (
-    <>Cloud-Native Food Ordering & Delivery System</>
+    <BrowserRouter>
+      <Header />
+      <Routes>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
