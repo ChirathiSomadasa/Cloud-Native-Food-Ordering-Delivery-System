@@ -2,8 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/dbConfig');
+const restaurantRoutes = require('./routes/restaurantRoutes'); 
+const menuItemRoutes = require('./routes/menuItemRoutes'); 
 const { PORT } = require('./config/envConfig');
-
 
 const app = express();
 
@@ -13,7 +14,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Routes
-
+app.use('/api/restaurants', restaurantRoutes);
+app.use('/api/menu-items', menuItemRoutes);
 
 // Connect to the database and start the server
 connectDB().then(() => {
