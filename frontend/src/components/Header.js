@@ -1,8 +1,7 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 import "./Header.css";
-
-
+import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -43,8 +42,8 @@ function Header() {
           {/* Right side - Auth buttons and icons */}
           <div className="header-right">
             <div className="desktop-menu">
-              <button className="text-button-login">Login</button>
-              <button className="primary-button">Sign Up</button>
+              <Link to="/register"><button className="primary-button">Sign Up</button></Link>
+              <Link to="/login"><button className="text-button-login">Login</button></Link>
               <button className="text-button">Sign Out</button>
               <button className="icon-button profile-button">
                 <PersonIcon />
@@ -72,8 +71,8 @@ function Header() {
               <button className="icon-button profile-button">
                 <PersonIcon />
               </button>
-              <button className="text-button-login">Login</button>
-              <button className="primary-button">Sign Up</button>
+              <Link to="/register"><button className="primary-button">Sign Up</button></Link>
+              <Link to="/login"><button className="text-button-login">Login</button></Link>
               <button className="text-button">Sign Out</button>
             </div>
           </div>

@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import "./Sidebar.css";
-import Profile from "../images/profile.png";
-
-import ListAltIcon from "@mui/icons-material/ListAlt"; 
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart"; 
-import NotificationsIcon from "@mui/icons-material/Notifications"; 
-import ExitToAppIcon from "@mui/icons-material/ExitToApp"; 
-import CloseIcon from "@mui/icons-material/Close"; 
+import ProfileImage from "../images/profile.png";
+import { Link } from "react-router-dom";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import CloseIcon from "@mui/icons-material/Close";
 
 function Sidebar({ isOpen, onClose }) {
   // Prevent scrolling when sidebar is open
@@ -51,7 +51,7 @@ function Sidebar({ isOpen, onClose }) {
           {/* Profile section */}
           <div className="profile-section">
             <div className="profile-avatar">
-              <img src={Profile} alt="Profile" />
+              <img src={ProfileImage} alt="Profile" />
             </div>
             <div className="profile-info">
               <div className="profile-name">User Name</div>
@@ -64,27 +64,31 @@ function Sidebar({ isOpen, onClose }) {
           {/* Navigation */}
           <nav className="sidebar-nav">
             <a href="/orders" className="sidebar-link" onClick={onClose}>
-              <ListAltIcon /> 
+              <ListAltIcon />
               <span>Orders</span>
             </a>
             <a href="/cart" className="sidebar-link" onClick={onClose}>
-              <ShoppingCartIcon /> 
+              <ShoppingCartIcon />
               <span>Cart</span>
             </a>
             <a href="/notifications" className="sidebar-link" onClick={onClose}>
-              <NotificationsIcon /> 
+              <NotificationsIcon />
               <span>Notifications</span>
             </a>
           </nav>
 
           {/* Authentication Buttons */}
           <div className="auth-buttons">
+            <Link to="/register"><button className="primary-button" onClick={onClose}>
+              Sign Up
+            </button>
+            </Link>
+            <Link to="/login">
             <button className="text-button-login" onClick={onClose}>
               Login
             </button>
-            <button className="primary-button" onClick={onClose}>
-              Sign Up
-            </button>
+            </Link>
+
           </div>
 
           {/* Sign out */}
