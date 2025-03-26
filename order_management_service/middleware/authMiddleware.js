@@ -29,4 +29,26 @@ const verifyRole = (allowedRoles) => {
   };
 };
 
-module.exports = { verifyToken, verifyRole };
+const isRestaurantOwner = (req, res, next) => {
+  try {
+      // Ensure Authorization header exists
+      const token = req.header("Authorization")?.split(" ")[1];
+      if (!token) {
+          return res.status(401).json({ error: "Access Denied - No Token Provided" });
+      }
+
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decoded; // Attach user to request
+
+      // Ensure user has restaurantId
+      if (!req.user.restaurantId) {
+          return res.status(403).json({ error: "Unauthorized - You must be a restaurant owner" });
+      }
+
+      next(); // Proceed to the controller
+  } catch (error) {
+      return res.status(401).json({ error: "Invalid or Expired Token" });
+  }
+};
+module.exports = { verifyToken, verifyRole, isRestaurantOwner };

@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Order = require('../models/Order');
 
 //place a order
@@ -52,29 +53,22 @@ exports.getOrder = async (req, res) => {
   }
 };
 
-// Get orders for a specific restaurant based on restaurantId
+// Get all orders for a specific restaurant
 exports.getOrdersForRestaurant = async (req, res) => {
   try {
-    // Ensure the user has a valid restaurantId
-    if (!req.restaurantId) {
-      return res.status(400).json({ error: 'Restaurant ID is missing' });
+    // Ensure the user is authenticated and has a restaurant ID
+    if (!req.user || !req.user.restaurantId) {
+      return res.status(400).json({ error: 'Restaurant ID is missing or user is unauthorized' });
     }
 
-    // Fetch orders based on restaurantId
-    const orders = await Order.find({ restaurantId: req.restaurantId });
+    // Fetch orders based on restaurantId from token
+    const orders = await Order.find({ restaurantId: req.user.restaurantId });
 
-    // If no orders are found, log and send an empty array
-    if (orders.length === 0) {
-      console.log("No orders found for this restaurant.");
-    }
-
-    // Send the orders as response
     res.json(orders);
   } catch (error) {
-    console.error("Error fetching orders:", error);
     res.status(500).json({ error: 'Error fetching orders' });
   }
-};
+}; 
 
 
 // Update the status of an existing order
@@ -101,3 +95,45 @@ exports.cancelOrder = async (req, res) => {
     res.status(500).json({ error: 'Error cancelling order' });
   }
 };
+
+/*
+exports.updateOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { items, status } = req.body;
+
+    // Check if orderId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      return res.status(400).json({ error: "Invalid order ID" });
+    }
+
+    // Find the order by ID
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    // Ensure the authenticated customer is updating their own order
+    if (order.customerId.toString() !== req.user.id) {
+      return res.status(403).json({ error: "Unauthorized to update this order" });
+    }
+
+    // Only allow updates if the order is still in 'Pending' status
+    if (order.status !== "Pending") {
+      return res.status(400).json({ error: "Order cannot be updated after being accepted" });
+    }
+
+    // Update order details if provided
+    if (items) order.items = items;
+    if (status) order.status = status;
+
+    // Save updated order
+    await order.save();
+    res.json({ message: "Order updated successfully", order });
+
+  } catch (error) {
+    console.error("Error updating order:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+*/
