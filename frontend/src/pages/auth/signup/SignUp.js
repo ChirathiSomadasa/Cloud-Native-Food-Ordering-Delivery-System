@@ -111,7 +111,6 @@ const sriLankanCities = [
 
 function SignUp() {
 
-
   const [selectedCity, setSelectedCity] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
