@@ -3,16 +3,42 @@ const Order = require('../models/Order');
 //place a order
 exports.placeOrder = async (req, res) => {
   try {
-    const { customerId, restaurantId, items, totalPrice } = req.body;
+      console.log("Received order data:", req.body); // Debugging
 
-    // Create a new order with the provided details
-    const order = new Order({ customerId, restaurantId, items, totalPrice, status: 'Pending' });
-    await order.save();
-    res.status(201).json(order);
+      const { restaurantId, items, totalPrice } = req.body;
+      if (!restaurantId || !items || items.length === 0 || !totalPrice) {
+          return res.status(400).json({ error: "Invalid order data" });
+      }
+
+      const customerId = req.user?.id; // Ensure req.user exists
+      if (!customerId) {
+          return res.status(401).json({ error: "Unauthorized - No customer ID" });
+      }
+
+      const order = new Order({
+          customerId,
+          restaurantId,
+          items,
+          totalPrice,
+          status: "Pending",
+      });
+
+      await order.save();
+      res.status(201).json(order);
   } catch (error) {
-    res.status(500).json({ error: 'Error placing order' });
+      console.error("Error placing order:", error); // Log full error
+      res.status(500).json({ error: "Error placing order" });
   }
 };
+/*example
+{
+  "restaurantId": "67e254ef9cfaba042d0d4e20",
+  "items": [
+    { "name": "String Hoppers", "quantity": 20, "price": 10 }
+  ],
+  "totalPrice": 200
+}
+*/
 
 // Get details of a specific order by its ID
 exports.getOrder = async (req, res) => {
