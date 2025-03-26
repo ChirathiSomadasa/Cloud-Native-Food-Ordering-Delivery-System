@@ -4,40 +4,45 @@ const User = require('../models/User');
 
 // Register User
 exports.register = async (req, res) => {
-    const { first_name, last_name, mobile_number, email, city, password, role } = req.body;
-  
-    try {
-      // Check if email already exists
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        return res.status(400).json({ error: 'Email is already in use' });
-      }
-  
-      // Set default role to "customer" if not provided
-      const userRole = role || 'customer';
-  
-      // Validate role
-      const allowedRoles = ['customer', 'restaurantAdmin', 'deliveryPersonnel', 'systemAdmin'];
-      if (!allowedRoles.includes(userRole)) {
-        return res.status(400).json({ error: 'Invalid role selected' });
-      }
-  
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await User.create({
-        first_name,
-        last_name,
-        mobile_number,
-        email,
-        city,
-        password: hashedPassword,
-        role: userRole, 
-      });
-  
-      res.status(201).json({ message: 'User registered successfully' });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
+  const { first_name, last_name, mobile_number, email, city, password, role } = req.body;
+
+  try {
+    // Check if email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email is already in use' });
     }
-  };
+
+    // Set default role to "customer" if not provided
+    const userRole = role || 'customer';
+
+    // Validate role
+    const allowedRoles = ['customer', 'restaurantAdmin', 'deliveryPersonnel', 'systemAdmin'];
+    if (!allowedRoles.includes(userRole)) {
+      return res.status(400).json({ error: 'Invalid role selected' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      first_name,
+      last_name,
+      mobile_number,
+      email,
+      city,
+      password: hashedPassword,
+      role: userRole,
+    });
+
+    // Redirect to restaurant registration if the user is a restaurantAdmin
+    if (userRole === 'restaurantAdmin') {
+      return res.status(201).json({ message: 'User registered successfully. Please complete restaurant registration.', user });
+    }
+
+    res.status(201).json({ message: 'User registered successfully', user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 // Login User
 exports.login = async (req, res) => {

@@ -12,13 +12,41 @@ const restaurantSchema = new Schema(
     restaurantName: { type: String, required: true },
     address: { type: String, required: true },
     operatingHours: {
-      Monday: { open: String, close: String },
-      Tuesday: { open: String, close: String },
-      Wednesday: { open: String, close: String },
-      Thursday: { open: String, close: String },
-      Friday: { open: String, close: String },
-      Saturday: { open: String, close: String },
-      Sunday: { open: String, close: String },
+      Monday: { 
+        isOpen: { type: Boolean, default: true }, 
+        open: { type: String },                 
+        close: { type: String }                  
+      },
+      Tuesday: { 
+        isOpen: { type: Boolean, default: true },
+        open: { type: String },
+        close: { type: String }
+      },
+      Wednesday: { 
+        isOpen: { type: Boolean, default: true },
+        open: { type: String },
+        close: { type: String }
+      },
+      Thursday: { 
+        isOpen: { type: Boolean, default: true },
+        open: { type: String },
+        close: { type: String }
+      },
+      Friday: { 
+        isOpen: { type: Boolean, default: true },
+        open: { type: String },
+        close: { type: String }
+      },
+      Saturday: { 
+        isOpen: { type: Boolean, default: true },
+        open: { type: String },
+        close: { type: String }
+      },
+      Sunday: { 
+        isOpen: { type: Boolean, default: true },
+        open: { type: String },
+        close: { type: String }
+      },
     },
     bankAccountDetails: {
       accountHolderName: { type: String, required: true },
@@ -30,5 +58,5 @@ const restaurantSchema = new Schema(
   { timestamps: true }
 );
 
-var restaurant = mongoose.model('Restaurant', restaurantSchema);
-module.exports = restaurant;
+const Restaurant = mongoose.model('Restaurant', restaurantSchema);
+module.exports = Restaurant;
