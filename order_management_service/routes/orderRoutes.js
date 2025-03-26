@@ -7,13 +7,8 @@ const router = express.Router();
 router.post('/add', verifyToken, verifyRole(['customer']), placeOrder);//checked
 router.get('/:id', verifyToken, verifyRole(['customer', 'restaurantAdmin']), getOrder);//checked
 // router.get('/', verifyToken, verifyRole(['restaurantAdmin']), getOrdersForRestaurant);
-// router.put('/:id/status', verifyToken, verifyRole(['restaurantAdmin']), updateOrderStatus);
-// router.delete('/:id', verifyToken, verifyRole(['customer']), cancelOrder);
+router.put('/:id/status', verifyToken, verifyRole(['restaurantAdmin']), updateOrderStatus);//checked
+router.delete('/:id', verifyToken, verifyRole(['customer']), cancelOrder);//checked
 
-router.post('/', placeOrder);//place a order
-router.get('/:id', getOrder);//get specific order by orderid
-router.get('/restaurant', getOrdersForRestaurant);//get specific order by restuarentid
-router.put('/:id/status', updateOrderStatus);//update status
-router.delete('/:id', cancelOrder);//cancel the order
 
 module.exports = router;
