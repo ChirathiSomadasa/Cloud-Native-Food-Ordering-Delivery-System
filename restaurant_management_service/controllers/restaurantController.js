@@ -1,15 +1,44 @@
 const Restaurant = require('../models/Restaurant');
+const User = require('../../user_authentication_service/models/User');
 
 // Register a new restaurant
 exports.registerRestaurant = async (req, res) => {
+  console.log("Received payload:", req.body); // Debugging line
+
+  const { userId, OwnerName, OwnerEmail, OwnerMobileNumber, ManagerName, ManagerMobileNumber, restaurantName, address, operatingHours, bankAccountDetails } = req.body;
+
   try {
-    const restaurant = await Restaurant.create(req.body);
+    // Check if userId is provided
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is missing. Please register as a user first." });
+    }
+
+    console.log("User ID received in request body:", userId); // Add logging
+
+    // Check if userId exists in the database
+    const user = await User.findById(userId).maxTimeMS(30000);
+    if (!user) {
+      return res.status(400).json({ error: "Invalid User ID. Please register as a user first." });
+    }
+
+    const restaurant = await Restaurant.create({
+      userId,
+      OwnerName,
+      OwnerEmail,
+      OwnerMobileNumber,
+      ManagerName,
+      ManagerMobileNumber,
+      restaurantName,
+      address,
+      operatingHours,
+      bankAccountDetails
+    });
+
     res.status(201).json({ message: 'Restaurant registered successfully', restaurant });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(400).json({ error: err.message || "Invalid data provided" });
   }
 };
-
 // Update restaurant details
 exports.updateRestaurant = async (req, res) => {
   const { id } = req.params;
@@ -57,3 +86,4 @@ exports.verifyRestaurant = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+

@@ -5,7 +5,6 @@ const User = require('../models/User');
 // Register User
 exports.register = async (req, res) => {
   const { first_name, last_name, mobile_number, email, city, password, role } = req.body;
-
   try {
     // Check if email already exists
     const existingUser = await User.findOne({ email });
@@ -33,12 +32,8 @@ exports.register = async (req, res) => {
       role: userRole,
     });
 
-    // Redirect to restaurant registration if the user is a restaurantAdmin
-    if (userRole === 'restaurantAdmin') {
-      return res.status(201).json({ message: 'User registered successfully. Please complete restaurant registration.', user });
-    }
-
-    res.status(201).json({ message: 'User registered successfully', user });
+    // Return userId in the response
+    res.status(201).json({ message: 'User registered successfully', userId: user._id });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -102,6 +97,24 @@ exports.deleteUser = async (req, res) => {
     }
 
     res.json({ Status: 'Success', message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Logout User
+exports.logout = async (req, res) => {
+  try {
+    // Clear the HTTP-only cookie containing the JWT token
+    res.clearCookie('auth_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Set to false for development
+      sameSite: 'strict',
+      path: '/',
+    });
+
+    // Respond with success message
+    res.status(200).json({ message: 'User logged out successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
