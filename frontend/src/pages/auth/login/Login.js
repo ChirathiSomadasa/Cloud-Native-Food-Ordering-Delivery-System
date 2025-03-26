@@ -7,23 +7,31 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
- 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
   return (
     <div className="login-container">
+      <div className="welcome-container">
+        <h1 className="welcome-heading">Welcome Back!</h1>
+        <p className="welcome-message">
+          Please enter your details to access your account
+        </p>
+      </div>
+
       <div className="login-modal">
         <div className="login-header">
-          <h2>Sign In</h2>
-
+          <h2>Login</h2>
         </div>
 
         <form className="login-form">
           <div className="form-groupL">
-            <label className="labelL" htmlFor="email">Email or phone number</label>
-            <input className="inputL"
+            <label className="labelL" htmlFor="email">
+              Email or phone number
+            </label>
+            <input
+              className="inputL"
               type="text"
               id="email"
               placeholder="Enter your email or phone"
@@ -31,9 +39,12 @@ function Login() {
           </div>
 
           <div className="form-group password-group">
-            <label className="labelL" htmlFor="password">Password</label>
+            <label className="labelL" htmlFor="password">
+              Password
+            </label>
             <div className="password-input-container">
-              <input className="inputL"
+              <input
+                className="inputL"
                 type={showPassword ? "text" : "password"}
                 id="password"
                 placeholder="Enter your password"
@@ -53,7 +64,7 @@ function Login() {
           </div>
 
           <button type="submit" className="login-button">
-            Sign In
+            Login
           </button>
         </form>
 
