@@ -1,8 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react"
 import "./SignUp.css";
 import SignUpImage from "../../../images/signup.png";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link } from "react-router-dom";
 
 // List of Sri Lankan cities
 const sriLankanCities = [
@@ -108,102 +107,45 @@ const sriLankanCities = [
   "Hali Ela",
   "Passara",
   "Lunugala",
-];
+]
 
 function SignUp() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [filteredCities, setFilteredCities] = useState(sriLankanCities);
-  const [formData, setFormData] = useState({
-    FirstName: "",
-    LastName: "",
-    MobileNumber: "",
-    Email: "",
-    City: "",
-    Password: "",
-    Role: "customer", // Default role
-  });
-  const dropdownRef = useRef(null);
-  const navigate = useNavigate(); // Hook for navigation
+
+  const [searchTerm, setSearchTerm] = useState("")
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [filteredCities, setFilteredCities] = useState(sriLankanCities)
+  const dropdownRef = useRef(null)
 
   // Filter cities based on search term
   useEffect(() => {
     if (searchTerm === "") {
-      setFilteredCities(sriLankanCities);
+      setFilteredCities(sriLankanCities)
     } else {
-      const filtered = sriLankanCities.filter((city) =>
-        city.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredCities(filtered);
+      const filtered = sriLankanCities.filter((city) => city.toLowerCase().includes(searchTerm.toLowerCase()))
+      setFilteredCities(filtered)
     }
-  }, [searchTerm]);
+  }, [searchTerm])
 
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
+        setIsDropdownOpen(false)
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+
+    document.addEventListener("mousedown", handleClickOutside)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [])
 
   const handleCitySelect = (city) => {
-    setSearchTerm(city);
-    setIsDropdownOpen(false);
-    setFormData({ ...formData, City: city }); // Update city in form data
-  };
+   
+    setSearchTerm(city)
+    setIsDropdownOpen(false)
+  }
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const transformedData = {
-        first_name: formData.FirstName,
-        last_name: formData.LastName,
-        mobile_number: formData.MobileNumber,
-        email: formData.Email,
-        city: formData.City,
-        password: formData.Password,
-        role: formData.Role,
-      };
-
-      console.log("Payload being sent to backend:", transformedData);
-
-      const response = await axios.post(
-        "http://localhost:5001/api/auth/register",
-        transformedData
-      );
-
-      // Store userId in local storage on successful registration
-      const userId = response.data.userId;
-      localStorage.setItem("temp_userId", userId);
-      console.log("Stored userId in local storage:", userId);
-
-      if (formData.Role === "restaurantAdmin") {
-        navigate("/restaurant-register");
-      } else if (formData.Role === "customer") {
-        navigate("/login");
-      } else if (formData.Role === "deliveryPersonnel") {
-        navigate("/delivery");
-      }
-
-      console.log(response.data.message);
-      alert("User registered successfully!");
-    } catch (error) {
-      console.error("Error during registration:", error.response?.data?.error);
-      const errorMessage =
-        error.response?.data?.error || "An unexpected error occurred.";
-      alert(`Error during registration: ${errorMessage}`);
-    }
-  };
   return (
     <div className="signup-container">
       <div className="signup-form-container">
@@ -211,98 +153,73 @@ function SignUp() {
           <h1>Sign Up</h1>
           <p>Create your account to order delicious food</p>
         </div>
-        <form className="signup-form" onSubmit={handleSubmit}>
+
+        <form className="signup-form">
           <div className="form-rowS">
             <div className="form-groupS">
-              <label className="labelS" htmlFor="FirstName">
-                First Name
-              </label>
-              <input
-                className="inputS"
+              <label className="labelS"htmlFor="first_name">First Name</label>
+              <input className="inputS"
                 type="text"
-                id="FirstName"
-                name="FirstName"
+                id="first_name"
+                name="first_name"
                 placeholder="Enter your first name"
-                value={formData.FirstName}
-                onChange={handleChange}
-                required
               />
             </div>
+
             <div className="form-groupS">
-              <label className="labelS" htmlFor="LastName">
-                Last Name
-              </label>
-              <input
-                className="inputS"
+              <label className="labelS" htmlFor="last_name">Last Name</label>
+              <input className="inputS"
                 type="text"
-                id="LastName"
-                name="LastName"
+                id="last_name"
+                name="last_name"
                 placeholder="Enter your last name"
-                value={formData.LastName}
-                onChange={handleChange}
-                required
               />
             </div>
           </div>
+
           <div className="form-groupS">
-            <label className="labelS" htmlFor="MobileNumber">
-              Mobile Number
-            </label>
-            <input
-              className="inputS"
+            <label className="labelS" htmlFor="mobile_number">Mobile Number</label>
+            <input className="inputS"
               type="tel"
-              id="MobileNumber"
-              name="MobileNumber"
+              id="mobile_number"
+              name="mobile_number"
               placeholder="Enter your mobile number"
-              value={formData.MobileNumber}
-              onChange={handleChange}
-              required
             />
           </div>
+
           <div className="form-groupS">
-            <label className="labelS" htmlFor="Email">
-              Email
-            </label>
-            <input
-              className="inputS"
+            <label className="labelS" htmlFor="email">Email</label>
+            <input className="inputS"
               type="email"
-              id="Email"
-              name="Email"
+              id="email"
+              name="email"
               placeholder="Enter your email address"
-              value={formData.Email}
-              onChange={handleChange}
-              required
             />
           </div>
           {/* City Dropdown */}
           <div className="form-groupS">
-            <label className="labelS" htmlFor="City">
+            <label className="labelS" htmlFor="city">
               City
             </label>
             <div className="city-dropdown-container" ref={dropdownRef}>
               <input
                 className="inputS city-search"
                 type="text"
-                id="City"
-                name="City"
+                id="city"
+                name="city"
                 placeholder="Search for your city"
                 value={searchTerm}
                 onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setIsDropdownOpen(true);
+                  setSearchTerm(e.target.value)
+                  setIsDropdownOpen(true)
                 }}
                 onClick={() => setIsDropdownOpen(true)}
-                required
               />
               {isDropdownOpen && (
                 <div className="city-dropdown">
                   {filteredCities.length > 0 ? (
                     filteredCities.map((city, index) => (
-                      <div
-                        key={index}
-                        className="city-option"
-                        onClick={() => handleCitySelect(city)}
-                      >
+                      <div key={index} className="city-option" onClick={() => handleCitySelect(city)}>
                         {city}
                       </div>
                     ))
@@ -313,82 +230,53 @@ function SignUp() {
               )}
             </div>
           </div>
+
           <div className="form-groupS">
-            <label className="labelS" htmlFor="Password">
-              Password
-            </label>
-            <input
-              className="inputS"
+            <label className="labelS" htmlFor="password">Password</label>
+            <input className="inputS"
               type="password"
-              id="Password"
-              name="Password"
+              id="password"
+              name="password"
               placeholder="Enter your password"
-              value={formData.Password}
-              onChange={handleChange}
-              required
             />
           </div>
           {/* Account Type Selection */}
           <div className="form-groupS account-type-section">
             <label className="labelS">Choose Your Account Type</label>
-            <p className="account-type-description">
-              Select the type of account you want to create
-            </p>
+            <p className="account-type-description">Select the type of account you want to create</p>
+
             <div className="account-type-options">
               <div className="account-type-option">
-                <input
-                  type="radio"
-                  id="customer"
-                  name="Role"
-                  value="customer"
-                  checked={formData.Role === "customer"}
-                  onChange={handleChange}
-                />
+                <input type="radio" id="customer" name="accountType" value="customer" defaultChecked />
                 <label htmlFor="customer" className="account-type-label">
                   <span className="account-type-title">Customer</span>
-                  <span className="account-type-info">
-                    Order food from your favorite restaurants
-                  </span>
+                  <span className="account-type-info">Order food from your favorite restaurants</span>
                 </label>
               </div>
+
               <div className="account-type-option">
-                <input
-                  type="radio"
-                  id="business"
-                  name="Role"
-                  value="restaurantAdmin"
-                  checked={formData.Role === "restaurantAdmin"}
-                  onChange={handleChange}
-                />
+                <input type="radio" id="business" name="accountType" value="business" />
                 <label htmlFor="business" className="account-type-label">
                   <span className="account-type-title">Business</span>
-                  <span className="account-type-info">
-                    Register your restaurant on our platform
-                  </span>
+                  <span className="account-type-info">Register your restaurant on our platform</span>
                 </label>
               </div>
+
               <div className="account-type-option">
-                <input
-                  type="radio"
-                  id="delivery"
-                  name="Role"
-                  value="deliveryPersonnel"
-                  checked={formData.Role === "deliveryPersonnel"}
-                  onChange={handleChange}
-                />
+                <input type="radio" id="delivery" name="accountType" value="delivery" />
                 <label htmlFor="delivery" className="account-type-label">
                   <span className="account-type-title">Delivery</span>
-                  <span className="account-type-info">
-                    Join our delivery fleet and earn money
-                  </span>
+                  <span className="account-type-info">Join our delivery fleet and earn money</span>
                 </label>
               </div>
             </div>
           </div>
+
           <button type="submit" className="signup-button">
             Sign Up
           </button>
         </form>
+        
         <div className="login-link">
           <p>
             Already have an account?{" "}
@@ -398,6 +286,7 @@ function SignUp() {
           </p>
         </div>
       </div>
+
       <div className="signup-image">
         <div className="benefits">
           <h2>Join Our Food Delivery Network</h2>
