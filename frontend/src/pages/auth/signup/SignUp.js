@@ -192,7 +192,7 @@ function SignUp() {
       } else if (formData.Role === "customer") {
         navigate("/login");
       } else if (formData.Role === "deliveryPersonnel") {
-        navigate("/delivery");
+        navigate("/login");
       }
 
       console.log(response.data.message);

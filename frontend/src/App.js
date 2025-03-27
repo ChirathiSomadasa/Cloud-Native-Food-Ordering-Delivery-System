@@ -6,6 +6,8 @@ import Login from "./pages/auth/login/Login";
 import RestaurantSignUp from "./pages/auth/signup/RestaurantSignUp";
 import RestaurantHome from "./pages/RestaurantAdmin/home/Home";
 import CustomerHome from "./pages/customer/home/Home";
+import AdminHome from "./pages/systemAdmin/home/Home";
+import DeliveryHome from "./pages/deliveryPersonnel/home/Home";
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
       <Route path="/restaurant-register" element={<RestaurantSignUp />} />
       <Route path="/restaurant-home" element={<RestaurantHome />} />
       <Route path="/" element={<CustomerHome />} />
+      <Route path="/admin-home" element={<AdminHome />} />
+      <Route path="/delivery-home" element={<DeliveryHome />} />
       </Routes>
     </BrowserRouter>
   );
