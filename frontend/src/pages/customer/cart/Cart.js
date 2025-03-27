@@ -5,8 +5,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 function Cart() {
     const [cartItems, setCartItems] = useState([
         { id: 1, name: "Beef Pizza", price: 12, quantity: 2, img: "pizza.png" },
-        { id: 2, name: "Egg Burger", price: 11, quantity: 2, img: "burger.png" },
-        { id: 3, name: "Cucumber Salad", price: 12, quantity: 2, img: "salad.png" },
     ]);
 
     const [selectedOrders, setSelectedOrders] = useState([]); // Store selected order IDs
