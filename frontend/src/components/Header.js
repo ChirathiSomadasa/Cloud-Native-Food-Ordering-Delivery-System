@@ -76,10 +76,12 @@ function Header() {
               <button className="icon-button profile-button">
                 <PersonIcon />
               </button>
+              <Link to="/cart">
               <button className="icon-button cart-button">
                 <ShoppingCartIcon />
                 <span className="badge">3</span>
               </button>
+              </Link>
               <button className="icon-button notification-button">
                 <NotificationsIcon />
                 <span className="badge">2</span>
