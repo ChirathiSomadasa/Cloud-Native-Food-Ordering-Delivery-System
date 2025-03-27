@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode"; // Corrected import statement for jwtDecode
+import {jwtDecode} from "jwt-decode"; 
 import "./RestaurantSignUp.css";
 
 const RestaurantSignUp = () => {
@@ -31,27 +31,28 @@ const RestaurantSignUp = () => {
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);
+  const [userId, setUserId] = useState(null); // State to store userId
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("auth_token"); 
+    const token = localStorage.getItem("auth_token");
     if (!token) {
-      navigate("/login"); 
+      navigate("/login");
       return;
     }
-
     try {
       const decodedToken = jwtDecode(token); // Decode the JWT token
-      const { role } = decodedToken;
-
+      const { role, id: decodedUserId } = decodedToken; // Extract role and userId (id is used in the token)
       if (role !== "restaurantAdmin") {
         alert("Only restaurant admins can register a restaurant.");
-        navigate("/home"); 
+        navigate("/home");
         return;
       }
-
       setIsLoggedIn(true);
       setUserRole(role);
+      setUserId(decodedUserId); // Store userId in state
+      console.log("Decoded Token:", decodedToken); 
+      console.log("Extracted userId:", decodedUserId); 
     } catch (error) {
       console.error("Error decoding token:", error);
       navigate("/login"); // Redirect to login if token decoding fails
@@ -120,7 +121,9 @@ const RestaurantSignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+     
       const transformedData = {
+        userId, 
         OwnerName: formData.OwnerName,
         OwnerEmail: formData.OwnerEmail,
         OwnerMobileNumber: formData.OwnerMobileNumber,
