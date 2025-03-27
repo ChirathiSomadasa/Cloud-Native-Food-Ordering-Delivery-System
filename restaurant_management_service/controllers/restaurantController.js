@@ -70,3 +70,22 @@ exports.getAllRestaurants = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Get restaurant verification status (new controller function)
+exports.getRestaurantStatus = async (req, res) => {
+  try {
+    const userId = req.user.id; // Extract userId from the decoded token
+
+    // Find the restaurant associated with the logged-in user
+    const restaurant = await Restaurant.findOne({ userId });
+
+    if (!restaurant) {
+      return res.status(404).json({ error: 'Restaurant not found or rejected' });
+    }
+
+    // Return the verification status
+    res.status(200).json({ isVerified: restaurant.isVerified });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
