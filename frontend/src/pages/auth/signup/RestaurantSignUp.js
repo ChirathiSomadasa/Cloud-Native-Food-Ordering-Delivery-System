@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
 import "./RestaurantSignUp.css";
 
 const RestaurantSignUp = () => {
@@ -51,8 +51,8 @@ const RestaurantSignUp = () => {
       setIsLoggedIn(true);
       setUserRole(role);
       setUserId(decodedUserId); // Store userId in state
-      console.log("Decoded Token:", decodedToken); 
-      console.log("Extracted userId:", decodedUserId); 
+      console.log("Decoded Token:", decodedToken);
+      console.log("Extracted userId:", decodedUserId);
     } catch (error) {
       console.error("Error decoding token:", error);
       navigate("/login"); // Redirect to login if token decoding fails
@@ -121,9 +121,9 @@ const RestaurantSignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-     
+
       const transformedData = {
-        userId, 
+        userId,
         OwnerName: formData.OwnerName,
         OwnerEmail: formData.OwnerEmail,
         OwnerMobileNumber: formData.OwnerMobileNumber,

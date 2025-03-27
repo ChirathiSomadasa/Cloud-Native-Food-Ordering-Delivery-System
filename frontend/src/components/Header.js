@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import "./Header.css";
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate for redirection
-import axios from "axios"; // For making HTTP requests
+import { Link, useNavigate } from "react-router-dom"; 
+import axios from "axios"; 
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -11,7 +11,7 @@ import PersonIcon from "@mui/icons-material/Person";
 
 function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate(); 
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -25,7 +25,7 @@ function Header() {
         { withCredentials: true } // Include credentials (cookies)
       );
 
-      // Clear any frontend-stored tokens (if applicable)
+      // Clear any frontend-stored tokens 
       localStorage.removeItem("auth_token");
 
       // Redirect the user to the login page

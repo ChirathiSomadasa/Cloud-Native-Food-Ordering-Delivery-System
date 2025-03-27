@@ -180,7 +180,7 @@ function SignUp() {
         transformedData
       );
       navigate("/login");
-  
+
       console.log(response.data.message);
       alert("User registered successfully!");
     } catch (error) {

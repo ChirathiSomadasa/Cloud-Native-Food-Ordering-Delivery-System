@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios"; // For making HTTP requests
+import axios from "axios"; 
 import "./Login.css";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -31,7 +31,7 @@ function Login() {
 
       const { role, token } = response.data;
 
-      // Store the token in localStorage or cookies (optional)
+      // Store the token in localStorage or cookies 
       localStorage.setItem("auth_token", token);
 
       // Navigate based on user role
