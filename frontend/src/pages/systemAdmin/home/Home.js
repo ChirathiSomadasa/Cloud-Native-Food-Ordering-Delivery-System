@@ -5,7 +5,7 @@ function Home() {
 
   return (
     <div>
-      Home
+      Syatem Admin Home
     </div>
   );
 }
