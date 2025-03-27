@@ -9,6 +9,7 @@ exports.registerRestaurant = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 // Update restaurant details
 exports.updateRestaurant = async (req, res) => {
   const { id } = req.params;
@@ -56,4 +57,3 @@ exports.verifyRestaurant = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-

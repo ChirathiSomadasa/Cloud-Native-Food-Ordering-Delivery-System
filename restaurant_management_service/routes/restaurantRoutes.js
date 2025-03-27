@@ -6,7 +6,7 @@ const { validateRestaurantRegistration } = require('../middleware/validationMidd
 const router = express.Router();
 
 // Register a new restaurant 
-router.post('/register-restaurant', verifyToken,verifyRole,validateRestaurantRegistration, registerRestaurant);
+router.post('/register-restaurant', validateRestaurantRegistration, registerRestaurant);
 
 // Update restaurant details 
 router.put('/update/:id', verifyToken, verifyRole(['restaurantAdmin']), updateRestaurant);
