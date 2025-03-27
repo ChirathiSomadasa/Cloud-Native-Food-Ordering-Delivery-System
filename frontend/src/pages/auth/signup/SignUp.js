@@ -174,27 +174,13 @@ function SignUp() {
         password: formData.Password,
         role: formData.Role,
       };
-
       console.log("Payload being sent to backend:", transformedData);
-
       const response = await axios.post(
         "http://localhost:5001/api/auth/register",
         transformedData
       );
-
-      // Store userId in local storage on successful registration
-      const userId = response.data.userId;
-      localStorage.setItem("temp_userId", userId);
-      console.log("Stored userId in local storage:", userId);
-
-      if (formData.Role === "restaurantAdmin") {
-        navigate("/restaurant-register");
-      } else if (formData.Role === "customer") {
-        navigate("/login");
-      } else if (formData.Role === "deliveryPersonnel") {
-        navigate("/login");
-      }
-
+      navigate("/login");
+  
       console.log(response.data.message);
       alert("User registered successfully!");
     } catch (error) {
@@ -204,6 +190,7 @@ function SignUp() {
       alert(`Error during registration: ${errorMessage}`);
     }
   };
+
   return (
     <div className="signup-container">
       <div className="signup-form-container">
