@@ -47,7 +47,7 @@
     }
   }
   
-  .form-group {
+  .form-groupM {
     margin-bottom: 20px;
   }
   
@@ -58,18 +58,18 @@
     color: #333;
   }
   
-  .form-row {
+  .form-rowM {
     display: flex;
     flex-direction: column;
     gap: 16px;
   }
   
   @media (min-width: 576px) {
-    .form-row {
+    .form-rowM {
       flex-direction: row;
     }
   
-    .form-row .form-group {
+    .form-rowM .form-groupM {
       flex: 1;
     }
   }
