@@ -8,10 +8,15 @@ function Home() {
     navigate("/restaurant-register");
   };
 
+  const handleMenuButtonClick = () => {
+    navigate("/addMenuItem");
+  };
+
   return (
     <div>
       RestaurantAdmin
       <button onClick={handleButtonClick}>Register Your restaurant</button>
+      <button onClick={handleMenuButtonClick}>Add Menu Items Here</button>
     </div>
   );
 }

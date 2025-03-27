@@ -1,5 +1,5 @@
 const express = require('express');
-const {registerRestaurant,updateRestaurant,deleteRestaurant,verifyRestaurant} = require('../controllers/restaurantController');
+const {registerRestaurant,updateRestaurant,deleteRestaurant,verifyRestaurant,getAllRestaurants} = require('../controllers/restaurantController');
 const { verifyToken, verifyRole } = require('../middleware/authMiddleware');
 const { validateRestaurantRegistration } = require('../middleware/validationMiddleware');
 
@@ -16,5 +16,8 @@ router.delete('/delete/:id', verifyToken, verifyRole(['systemAdmin']), deleteRes
 
 // Verify a restaurant
 router.put('/verify-restaurant/:id', verifyToken, verifyRole(['systemAdmin']), verifyRestaurant);
+
+// Fetch all restaurants
+router.get('/get', verifyToken, verifyRole(['systemAdmin']), getAllRestaurants);
 
 module.exports = router;
