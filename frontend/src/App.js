@@ -8,6 +8,7 @@ import RestaurantHome from "./pages/RestaurantAdmin/home/Home";
 import CustomerHome from "./pages/customer/home/Home";
 import AdminHome from "./pages/systemAdmin/home/Home";
 import DeliveryHome from "./pages/deliveryPersonnel/home/Home";
+import MenuItemAdd from "./pages/RestaurantAdmin/menuItem/MenuItemAdd";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       <Route path="/" element={<CustomerHome />} />
       <Route path="/admin-home" element={<AdminHome />} />
       <Route path="/delivery-home" element={<DeliveryHome />} />
+      <Route path="/addMenuItem" element={<MenuItemAdd />} />
       </Routes>
     </BrowserRouter>
   );

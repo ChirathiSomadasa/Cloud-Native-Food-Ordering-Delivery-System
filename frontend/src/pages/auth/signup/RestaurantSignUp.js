@@ -1,16 +1,17 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // For navigation
-import axios from "axios"; // For making HTTP requests
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import {jwtDecode} from "jwt-decode"; // Corrected import statement for jwtDecode
 import "./RestaurantSignUp.css";
 
 const RestaurantSignUp = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    OwnerName: "", // Updated to PascalCase
-    OwnerEmail: "", // Updated to PascalCase
-    OwnerMobileNumber: "", // Updated to PascalCase
-    ManagerName: "", // Updated to PascalCase
-    ManagerMobileNumber: "", // Updated to PascalCase
+    OwnerName: "",
+    OwnerEmail: "",
+    OwnerMobileNumber: "",
+    ManagerName: "",
+    ManagerMobileNumber: "",
     restaurantName: "",
     address: "",
     operatingHours: {
@@ -28,7 +29,34 @@ const RestaurantSignUp = () => {
       bankName: "",
     },
   });
-  const navigate = useNavigate(); // Hook for navigation
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token"); 
+    if (!token) {
+      navigate("/login"); 
+      return;
+    }
+
+    try {
+      const decodedToken = jwtDecode(token); // Decode the JWT token
+      const { role } = decodedToken;
+
+      if (role !== "restaurantAdmin") {
+        alert("Only restaurant admins can register a restaurant.");
+        navigate("/home"); 
+        return;
+      }
+
+      setIsLoggedIn(true);
+      setUserRole(role);
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      navigate("/login"); // Redirect to login if token decoding fails
+    }
+  }, [navigate]);
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -92,15 +120,7 @@ const RestaurantSignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const userId = localStorage.getItem("temp_userId");
-      console.log("Retrieved userId from local storage on submit:", userId);
-
-      if (!userId) {
-        return alert("User ID is missing. Please register as a user first.");
-      }
-
       const transformedData = {
-        userId: userId,
         OwnerName: formData.OwnerName,
         OwnerEmail: formData.OwnerEmail,
         OwnerMobileNumber: formData.OwnerMobileNumber,
@@ -111,32 +131,50 @@ const RestaurantSignUp = () => {
         operatingHours: formData.operatingHours,
         bankAccountDetails: formData.bankAccountDetails,
       };
-
       console.log("Payload being sent to backend:", transformedData);
+
+      const token = localStorage.getItem("auth_token");
+      if (!token) {
+        alert("Authentication token is missing. Please log in again.");
+        navigate("/login");
+        return;
+      }
 
       const response = await axios.post(
         "http://localhost:5002/api/restaurants/register-restaurant",
-        transformedData,{
+        transformedData,
+        {
           headers: {
-            'Content-Type': 'application/json',
-        },
-        },
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-      console.log(response.data.message);
-      alert("Restaurant registered successfully!");
+      console.log("Backend response:", response); // Log the full response
+      console.log("Backend response data:", response.data); // Log the response data
 
-      localStorage.removeItem("temp_userId");
-
-      navigate("/login");
+      if (response.status === 201) {
+        alert("Restaurant registered successfully!");
+        console.log("Navigating to addMenuItem page...");
+        navigate("/addMenuItem"); // Navigate to the next page
+      } else {
+        alert("Unexpected response from the server. Please try again.");
+      }
     } catch (error) {
-      console.error("Error during restaurant registration:", error.response?.data);
-      const errorMessage =
-        error.response?.data?.error || "An unexpected error occurred.";
-      alert(`Error during restaurant registration: ${errorMessage}`);
+      console.error("Error during restaurant registration:", error);
+      if (error.response) {
+        console.log("Backend error response:", error.response); // Log the full error response
+        const errorMessage =
+          error.response.data?.error || "An unexpected error occurred.";
+        alert(`Backend Error: ${errorMessage}`);
+      } else if (error.request) {
+        alert("No response received from the server. Please check your connection.");
+      } else {
+        alert(`Error: ${error.message}`);
+      }
     }
   };
-
 
   // Render the current step of the form
   const renderStep = () => {
@@ -152,8 +190,8 @@ const RestaurantSignUp = () => {
               <input
                 className="inputR"
                 type="text"
-                name="OwnerName" // Updated to PascalCase
-                value={formData.OwnerName} // Updated to PascalCase
+                name="OwnerName"
+                value={formData.OwnerName}
                 onChange={handleInputChange}
                 placeholder="Enter owner's full name"
                 required
@@ -166,8 +204,8 @@ const RestaurantSignUp = () => {
               <input
                 className="inputR"
                 type="email"
-                name="OwnerEmail" // Updated to PascalCase
-                value={formData.OwnerEmail} // Updated to PascalCase
+                name="OwnerEmail"
+                value={formData.OwnerEmail}
                 onChange={handleInputChange}
                 placeholder="Enter owner's email address"
                 required
@@ -180,8 +218,8 @@ const RestaurantSignUp = () => {
               <input
                 className="inputR"
                 type="text"
-                name="OwnerMobileNumber" // Updated to PascalCase
-                value={formData.OwnerMobileNumber} // Updated to PascalCase
+                name="OwnerMobileNumber"
+                value={formData.OwnerMobileNumber}
                 onChange={handleInputChange}
                 placeholder="Enter owner's mobile number"
                 required
@@ -194,8 +232,8 @@ const RestaurantSignUp = () => {
               <input
                 className="inputR"
                 type="text"
-                name="ManagerName" // Updated to PascalCase
-                value={formData.ManagerName} // Updated to PascalCase
+                name="ManagerName"
+                value={formData.ManagerName}
                 onChange={handleInputChange}
                 placeholder="Enter manager's full name"
                 required
@@ -208,8 +246,8 @@ const RestaurantSignUp = () => {
               <input
                 className="inputR"
                 type="text"
-                name="ManagerMobileNumber" // Updated to PascalCase
-                value={formData.ManagerMobileNumber} // Updated to PascalCase
+                name="ManagerMobileNumber"
+                value={formData.ManagerMobileNumber}
                 onChange={handleInputChange}
                 placeholder="Enter manager's mobile number"
                 required
@@ -222,7 +260,6 @@ const RestaurantSignUp = () => {
             </div>
           </div>
         );
-
       case 2:
         return (
           <div className="form-step">
@@ -318,7 +355,6 @@ const RestaurantSignUp = () => {
             </div>
           </div>
         );
-
       case 3:
         return (
           <div className="form-step">
@@ -366,7 +402,6 @@ const RestaurantSignUp = () => {
                 <option value="Bank of Ceylon">Bank of Ceylon</option>
                 <option value="People's Bank">People's Bank</option>
                 <option value="Commercial Bank of Ceylon">Commercial Bank of Ceylon</option>
-                {/* Add other banks here */}
               </select>
             </div>
             <div className="button-group">
@@ -379,11 +414,14 @@ const RestaurantSignUp = () => {
             </div>
           </div>
         );
-
       default:
         return null;
     }
   };
+
+  if (!isLoggedIn) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="restaurant-signup-container">
