@@ -64,6 +64,7 @@ function Cart() {
         return <div>Loading...</div>; // Show loading state while fetching data
     }
     return (
+    
         <div className="cart-container">
             <h2 className="cart-title">My Orders</h2>
             <div className="cart-items">
