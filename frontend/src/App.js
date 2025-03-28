@@ -10,7 +10,6 @@ import AdminHome from "./pages/systemAdmin/home/Home";
 import DeliveryHome from "./pages/deliveryPersonnel/home/Home";
 import MenuItemAdd from "./pages/RestaurantAdmin/menuItem/MenuItemAdd";
 import Cart from "./pages/customer/cart/Cart";
-import VerifyRestaurant from "./pages/systemAdmin/verifyRestaurant/VerifyRestaurant";
 
 function App() {
   return (
@@ -26,7 +25,6 @@ function App() {
       <Route path="/delivery-home" element={<DeliveryHome />} />
       <Route path="/addMenuItem" element={<MenuItemAdd />} />
       <Route path="/cart" element={<Cart/>}/>
-      <Route path="/verifyRestaurant" element={<VerifyRestaurant />} />
       </Routes>
     </BrowserRouter>
   );
