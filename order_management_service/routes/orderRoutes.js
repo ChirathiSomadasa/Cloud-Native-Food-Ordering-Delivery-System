@@ -10,7 +10,7 @@ router.get('/', isRestaurantOwner,verifyToken, verifyRole(['restaurantAdmin']), 
 router.put('/:id/status', verifyToken, verifyRole(['restaurantAdmin']), updateOrderStatus);//checked
 router.delete('/:id', verifyToken, verifyRole(['customer']), cancelOrder);//checked
 //router.put("/:id/update", verifyToken,verifyRole(['customer']), updateOrder);
-
+ 
 
 
 module.exports = router;
