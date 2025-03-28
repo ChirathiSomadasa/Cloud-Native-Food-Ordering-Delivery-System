@@ -9,9 +9,8 @@ import CustomerHome from "./pages/customer/home/Home";
 import AdminHome from "./pages/systemAdmin/home/Home";
 import DeliveryHome from "./pages/deliveryPersonnel/home/Home";
 import MenuItemAdd from "./pages/RestaurantAdmin/menuItem/MenuItemAdd";
-/*Piumi
-import Cart from "./pages/customer/cart/Cart";
-*/
+import Cart from "./pages/customer/cart/Cart";//*Piumi
+
 
 function App() {
   return (
@@ -26,8 +25,7 @@ function App() {
       <Route path="/admin-home" element={<AdminHome />} />
       <Route path="/delivery-home" element={<DeliveryHome />} />
       <Route path="/addMenuItem" element={<MenuItemAdd />} />
-      {/*piumi*/}
-      {/*<Route path="/cart" element={<Cart/>}/>*/}
+      <Route path="/cart" element={<Cart/>}/>
 
       </Routes>
     </BrowserRouter>
