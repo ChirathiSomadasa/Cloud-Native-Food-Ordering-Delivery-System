@@ -50,7 +50,7 @@ function MenuItemAdd() {
               </div>
             </div>
 
-            <div className="form-group checkbox-group">
+            <div className="form-groupM checkbox-group">
               <label className="checkbox-container">
                 <input type="checkbox" name="availability" />
                 <span className="checkmark"></span>
