@@ -1,14 +1,40 @@
-const MenuItem = require('../models/MenuItem');
+const MenuItem = require("../models/MenuItem");
+const upload = require("../middleware/uploadMiddleware");
 
-// Add a new menu item
-exports.addMenuItem = async (req, res) => {
-  try {
-    const menuItem = await MenuItem.create(req.body);
-    res.status(201).json({ message: 'Menu item added successfully', menuItem });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+exports.addMenuItem = [
+  upload.fields([
+    { name: 'image', maxCount: 1 },
+    { name: 'restaurantId', maxCount: 1 },
+    { name: 'name', maxCount: 1 },
+    { name: 'description', maxCount: 1 },
+    { name: 'price', maxCount: 1 },
+    { name: 'availability', maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const { restaurantId, name, description, price, availability } = req.body;
+      const imageUrl = req.files['image'] ? req.files['image'][0].path : null; // Get the uploaded image URL
+
+      if (!restaurantId) {
+        return res.status(400).json({ error: 'restaurantId is required' });
+      }
+
+      const menuItem = await MenuItem.create({
+        restaurantId,
+        name,
+        description,
+        price,
+        availability,
+        image: imageUrl, // Save the image URL in the database
+      });
+
+      res.status(201).json({ message: "Menu item added successfully", menuItem });
+    } catch (err) {
+      console.error("Error in addMenuItem:", err.message); // Log the error
+      res.status(500).json({ error: err.message });
+    }
+  },
+];
 
 // Update a menu item
 exports.updateMenuItem = async (req, res) => {

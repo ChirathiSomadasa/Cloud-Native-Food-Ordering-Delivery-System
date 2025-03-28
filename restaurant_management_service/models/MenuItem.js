@@ -8,6 +8,7 @@ var menuItemSchema = new Schema(
     description: { type: String },
     price: { type: Number, required: true },
     availability: { type: Boolean, default: true },
+    image: { type: String }, // Add this field for storing the image URL
   },
   { timestamps: true }
 );

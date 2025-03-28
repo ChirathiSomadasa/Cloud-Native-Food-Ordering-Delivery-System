@@ -35,19 +35,27 @@ exports.verifyRestaurantStatus = async (req, res, next) => {
   try {
     let restaurantId;
 
-    // If restaurantId is provided in the request body
+    // Check for restaurantId in req.body (for adding a new menu item)
     if (req.body.restaurantId) {
       restaurantId = req.body.restaurantId;
-    } else {
-      //extract restaurantId from the MenuItem document
-      const menuItemId = req.params.id;
-      const menuItem = await MenuItem.findById(menuItemId);
+    } 
+    // Check for restaurantId in req.query (optional fallback)
+    else if (req.query.restaurantId) {
+      restaurantId = req.query.restaurantId;
+    } 
+    // If menuItemId is provided in the request params (for updating/deleting a menu item)
+    else if (req.params.id) {
+      const menuItem = await MenuItem.findById(req.params.id);
 
       if (!menuItem) {
         return res.status(404).json({ error: 'Menu item not found' });
       }
 
       restaurantId = menuItem.restaurantId;
+    } 
+    // If neither is provided, return an error
+    else {
+      return res.status(400).json({ error: 'restaurantId or menuItemId is required' });
     }
 
     // Find the restaurant and check if it is verified
