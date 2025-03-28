@@ -9,7 +9,7 @@ import CustomerHome from "./pages/customer/home/Home";
 import AdminHome from "./pages/systemAdmin/home/Home";
 import DeliveryHome from "./pages/deliveryPersonnel/home/Home";
 import MenuItemAdd from "./pages/RestaurantAdmin/menuItem/MenuItemAdd";
-import Cart from "./pages/customer/cart/Cart";//*Piumi
+import Cart from "./pages/customer/cart/Cart";//Piumi
 
 
 function App() {
