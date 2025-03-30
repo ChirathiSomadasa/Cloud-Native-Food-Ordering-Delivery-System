@@ -4,7 +4,14 @@ const deliverySchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: true,
+        validate: {
+            validator: async function(value) {
+                const user = await mongoose.model('User').findById(value);
+                return user && user.role === 'customer';
+            },
+            message: 'User must be a customer.'
+        }
     },
     restaurantId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -13,7 +20,14 @@ const deliverySchema = new mongoose.Schema({
     },
     driverId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        validate: {
+            validator: async function(value) {
+                const driver = await mongoose.model('User').findById(value);
+                return driver && driver.role === 'deliveryPersonnel';
+            },
+            message: 'Driver must be a delivery personnel.'
+        }
     },
     pickupLocation: {
         type: String,
