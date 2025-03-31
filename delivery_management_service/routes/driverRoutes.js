@@ -1,17 +1,24 @@
 const express = require('express');
+const {
+  getAvailableDeliveries,
+  acceptDelivery,
+  declineDelivery,
+  updateDriverLocation,
+} = require('../controllers/driverController');
+const { verifyToken, verifyRole } = require('../middleware/authMiddleware');
+
 const router = express.Router();
-const DriverController = require('../controllers/driverController');
 
-// 📌 Accept Delivery (Driver accepts the delivery)
-// Route to accept a specific delivery by the driver
-router.post('/acceptDelivery/:orderId/:driverId', DriverController.acceptDelivery);
+// Route to get available deliveries (status: 'pending')
+router.get('/available', verifyToken, verifyRole(['deliveryPersonnel']), getAvailableDeliveries);
 
-// 📌 Reject Delivery (Driver rejects the delivery)
-// Route to reject a specific delivery by the driver
-router.post('/rejectDelivery/:orderId/:driverId', DriverController.rejectDelivery);
+// Route to accept a delivery
+router.put('/accept', verifyToken, verifyRole(['deliveryPersonnel']), acceptDelivery);
 
-// 📌 Update Driver Location (Driver updates their current location)
-// Route for the driver to update their location
-router.post('/updateDriverLocation/:driverId', DriverController.updateDriverLocation);
+// Route to decline a delivery
+router.put('/decline', verifyToken, verifyRole(['deliveryPersonnel']), declineDelivery);
+
+// Route to update the driver's location during delivery
+router.put('/update-location', verifyToken, verifyRole(['deliveryPersonnel']), updateDriverLocation);
 
 module.exports = router;

@@ -1,75 +1,92 @@
-const User = require('../models/User');
 const Delivery = require('../models/Delivery');
+const User = require('../models/User');
 
-// 📌 Accept Delivery (Driver accepts the delivery)
+// Get a list of available deliveries (status: 'pending') for the driver to accept or decline
+exports.getAvailableDeliveries = async (req, res) => {
+  try {
+    const deliveries = await Delivery.find({ deliveryStatus: 'pending' })
+      .populate('restaurantId')
+      .populate('orderId');
+
+    res.json({ deliveries });
+  } catch (err) {
+    res.status(500).json({ error: 'Error fetching available deliveries', err });
+  }
+};
+
+// Driver accepts a delivery
 exports.acceptDelivery = async (req, res) => {
-    try {
-        const { orderId, driverId } = req.params;
+  const { deliveryId } = req.body;
+  const driverId = req.user.id; // The authenticated driver
 
-        // Ensure the user is a driver
-        const driver = await User.findById(driverId);
-        if (!driver || driver.role !== 'deliveryPersonnel') {
-            return res.status(400).json({ error: 'User is not a valid driver.' });
-        }
+  try {
+    const delivery = await Delivery.findById(deliveryId);
+    if (!delivery) return res.status(404).json({ error: 'Delivery not found' });
 
-        const order = await Delivery.findById(orderId);
-        if (!order) return res.status(404).json({ error: 'Order not found' });
-
-        order.driverId = driverId;
-        order.deliveryStatus = 'accepted';
-        await order.save();
-
-        res.status(200).json({ message: 'Order accepted by driver', order });
-
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to accept delivery', details: error.message });
+    if (delivery.deliveryStatus !== 'pending') {
+      return res.status(400).json({ error: 'This delivery has already been accepted or declined' });
     }
+
+    // Check if the driver is already assigned
+    if (delivery.driverId) {
+      return res.status(400).json({ error: 'This delivery already has a driver' });
+    }
+
+    // Update the delivery status to accepted and assign the driver
+    delivery.driverId = driverId;
+    delivery.deliveryStatus = 'accepted'; // Delivery is now accepted
+    await delivery.save();
+
+    // Notify the restaurant and customer (this could be done through real-time notifications in production)
+    res.status(200).json({ message: 'Delivery accepted successfully', delivery });
+  } catch (err) {
+    res.status(500).json({ error: 'Error accepting delivery', err });
+  }
 };
 
-// 📌 Reject Delivery (Driver rejects the delivery)
-exports.rejectDelivery = async (req, res) => {
-    try {
-        const { orderId, driverId } = req.params;
+// Driver declines a delivery
+exports.declineDelivery = async (req, res) => {
+  const { deliveryId } = req.body;
 
-        // Ensure the user is a driver
-        const driver = await User.findById(driverId);
-        if (!driver || driver.role !== 'deliveryPersonnel') {
-            return res.status(400).json({ error: 'User is not a valid driver.' });
-        }
+  try {
+    const delivery = await Delivery.findById(deliveryId);
+    if (!delivery) return res.status(404).json({ error: 'Delivery not found' });
 
-        const order = await Delivery.findById(orderId);
-        if (!order) return res.status(404).json({ error: 'Order not found' });
-
-        // Revert the order to pending
-        order.driverId = null;
-        order.deliveryStatus = 'pending'; // Reassign to another driver
-        await order.save();
-
-        res.status(200).json({ message: 'Order rejected by driver', order });
-
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to reject delivery', details: error.message });
+    if (delivery.deliveryStatus !== 'pending') {
+      return res.status(400).json({ error: 'This delivery has already been accepted or declined' });
     }
+
+    // Update the delivery status to declined
+    delivery.deliveryStatus = 'declined'; // Delivery is now declined
+    await delivery.save();
+
+    // Notify the restaurant and customer (this could be done through real-time notifications in production)
+    res.status(200).json({ message: 'Delivery declined', delivery });
+  } catch (err) {
+    res.status(500).json({ error: 'Error declining delivery', err });
+  }
 };
 
-// 📌 Update Driver Location (Driver updates their current location)
+// Update driver location during delivery
 exports.updateDriverLocation = async (req, res) => {
-    try {
-        const { driverId } = req.params;
-        const { lat, lng } = req.body; // Lat/Lng from the driver's location
+  const { deliveryId, lat, lng } = req.body;
 
-        // Ensure the user is a driver
-        const driver = await User.findById(driverId);
-        if (!driver || driver.role !== 'deliveryPersonnel') {
-            return res.status(400).json({ error: 'User is not a valid driver.' });
-        }
+  try {
+    const delivery = await Delivery.findById(deliveryId);
+    if (!delivery) return res.status(404).json({ error: 'Delivery not found' });
 
-        driver.location = { type: 'Point', coordinates: [lng, lat] };
-        await driver.save();
-
-        res.status(200).json({ message: 'Driver location updated', driver });
-
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to update driver location', details: error.message });
+    // Only allow updating the location if the driver has accepted the delivery
+    if (delivery.deliveryStatus !== 'accepted') {
+      return res.status(400).json({ error: 'Delivery not accepted yet' });
     }
+
+    // Update the driver location in the delivery model
+    delivery.driverLocation = { lat, lng };
+    await delivery.save();
+
+    res.status(200).json({ message: 'Driver location updated', driverLocation: delivery.driverLocation });
+  } catch (err) {
+    res.status(500).json({ error: 'Error updating driver location', err });
+  }
 };
+

@@ -48,7 +48,7 @@ const deliverySchema = new mongoose.Schema({
     },
     deliveryStatus: {
         type: String,
-        enum: ['pending', 'accepted', 'picked-up', 'on-the-way', 'delivered', 'cancelled'],
+        enum: [ 'accepted','declined','proccessing', 'picked-up', 'on-the-way', 'delivered'],
         default: 'pending'
     },
     estimatedDeliveryTime: {
@@ -56,14 +56,6 @@ const deliverySchema = new mongoose.Schema({
     },
     distance: {
         type: Number 
-    },
-    signature: {
-        type: String
-    },
-    otp: {
-        type: String,
-        select: false,
-        required: true
     },
     driverLocation: {
         lat: { type: Number },
