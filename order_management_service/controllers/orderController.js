@@ -1,13 +1,16 @@
 const mongoose = require("mongoose");
 const Order = require('../models/Order');
+const Restaurant = require('../../restaurant_management_service/models/Restaurant');
+const MenuItem = require('../../restaurant_management_service/models/MenuItem');
+
 
 //place a order
 exports.placeOrder = async (req, res) => {
   try {
       console.log("Received order data:", req.body); // Debugging
 
-      const { restaurantId, itemId, totalPrice } = req.body;
-      if (!restaurantId || !itemId ||  !totalPrice) {
+      const { restaurantId, itemId,quantity, totalPrice } = req.body;
+      if (!restaurantId || !itemId || !quantity || !totalPrice) {
           return res.status(400).json({ error: "Invalid order data" });
       }
 
@@ -20,6 +23,7 @@ exports.placeOrder = async (req, res) => {
           customerId,
           restaurantId,
           itemId,
+          quantity,
           totalPrice,
           status: "Pending",
       });
@@ -37,6 +41,7 @@ exports.placeOrder = async (req, res) => {
   "items": [
     { "name": "String Hoppers", "quantity": 20, "price": 10 }
   ],
+  "quantity":2
   "totalPrice": 200
 }
 */
@@ -53,25 +58,46 @@ exports.getOrder = async (req, res) => {
   }
 };
 
-// Get all orders for a specific restaurant
-exports.getOrdersForRestaurant = async (req, res) => {
+//get details of specific customer
+exports.getOrdersForCustomer = async (req, res) => {
   try {
-    // Ensure the user is authenticated and has a restaurant ID
-    if (!req.user || !req.user.restaurantId) {
-      return res.status(400).json({ error: 'Restaurant ID is missing or user is unauthorized' });
+    const customerId = req.user?.id; // Ensure req.user exists
+    if (!customerId) {
+      return res.status(401).json({ error: "Unauthorized - No customer ID" });
     }
 
-    // Fetch orders based on restaurantId from token
-    const orders = await Order.find({ restaurantId: req.user.restaurantId });
+    // Fetch orders associated with this customer
+    const orders = await Order.find({ customerId });
 
+    // If no orders found, return an empty array
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching orders' });
+    console.error("Error fetching customer orders:", error);
+    res.status(500).json({ error: "Error fetching customer orders" });
   }
-}; 
+};
 
+// Get orders for a specific restaurant
+exports.getOrdersForRestaurant = async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+    
+    // Validate restaurant ID
+    if (!restaurantId) {
+      return res.status(400).json({ error: "Restaurant ID is required" });
+    }
+    
+    // Fetch orders associated with this restaurant
+    const orders = await Order.find({ restaurantId });
+    
+    // If no orders found, return an empty array
+    res.json(orders);
+  } catch (error) {
+    console.error("Error fetching restaurant orders:", error);
+    res.status(500).json({ error: "Error fetching restaurant orders" });
+  }
+};
 
-// Update the status of an existing order
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;

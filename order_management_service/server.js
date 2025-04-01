@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-//require('module-alias/register');
 const connectDB = require('./config/dbConfig');
 const { PORT } = require('./config/envConfig');
 const orderRoutes = require('./routes/orderRoutes');
