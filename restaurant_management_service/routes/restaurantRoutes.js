@@ -17,4 +17,5 @@ router.delete('/delete/:id', verifyToken, verifyRole(['systemAdmin']), deleteRes
 // Verify a restaurant
 router.put('/verify-restaurant/:id', verifyToken, verifyRole(['systemAdmin']), verifyRestaurant);
 
+
 module.exports = router;
