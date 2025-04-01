@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+//require('module-alias/register');
 const connectDB = require('./config/dbConfig');
 const { PORT } = require('./config/envConfig');
-const authRoutes = require('./routes/authRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 
 
@@ -18,7 +18,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Routes
-app.use('/api/auth', authRoutes);
 app.use('/api/order',orderRoutes);
 
 // Connect to the database and start the server
