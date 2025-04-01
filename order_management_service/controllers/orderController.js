@@ -122,44 +122,40 @@ exports.cancelOrder = async (req, res) => {
   }
 };
 
-/*
 exports.updateOrder = async (req, res) => {
   try {
-    const { orderId } = req.params;
-    const { items, status } = req.body;
-
-    // Check if orderId is a valid ObjectId
-    if (!mongoose.Types.ObjectId.isValid(orderId)) {
-      return res.status(400).json({ error: "Invalid order ID" });
-    }
+    const { itemId, quantity, totalPrice } = req.body;
+    const { id } = req.params; // Order ID from request params
 
     // Find the order by ID
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(id);
     if (!order) {
       return res.status(404).json({ error: "Order not found" });
     }
 
-    // Ensure the authenticated customer is updating their own order
-    if (order.customerId.toString() !== req.user.id) {
-      return res.status(403).json({ error: "Unauthorized to update this order" });
-    }
-
-    // Only allow updates if the order is still in 'Pending' status
+    // Only allow updates if the order is still pending
     if (order.status !== "Pending") {
-      return res.status(400).json({ error: "Order cannot be updated after being accepted" });
+      return res.status(400).json({ error: "Cannot update a confirmed or completed order" });
     }
 
-    // Update order details if provided
-    if (items) order.items = items;
-    if (status) order.status = status;
+    // Create an object with only the fields that need updating
+    const updatedFields = {};
+    if (itemId !== undefined) updatedFields.itemId = itemId;
+    if (quantity !== undefined) updatedFields.quantity = quantity;
+    if (totalPrice !== undefined) updatedFields.totalPrice = totalPrice;
 
-    // Save updated order
-    await order.save();
-    res.json({ message: "Order updated successfully", order });
+    // If no fields are provided, return an error
+    if (Object.keys(updatedFields).length === 0) {
+      return res.status(400).json({ error: "No fields provided for update" });
+    }
 
+    // Update order with the provided fields
+    const updatedOrder = await Order.findByIdAndUpdate(id, updatedFields, { new: true });
+
+    res.json({ message: "Order updated successfully", order: updatedOrder });
   } catch (error) {
     console.error("Error updating order:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Error updating order" });
   }
 };
-*/
+
