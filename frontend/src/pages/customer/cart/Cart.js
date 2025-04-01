@@ -9,26 +9,60 @@ function Cart() {
 
     const [selectedOrders, setSelectedOrders] = useState([]); // Store selected order IDs
     const [loading, setLoading] = useState(true);
-    const userId = "user123"; // Replace with actual user ID logic
+
+    // useEffect(() => {
+    //     const fetchCartItems = async () => {
+    //         try {
+    //             // Fetch only the orders for the current logged-in user
+    //             const response = await fetch(`/api/orders/${customerId}`, { method: "GET" });
+    //             const data = await response.json();
+    //             setCartItems(data);
+    //             setLoading(false);
+    //         } catch (error) {
+    //             console.error("Error fetching cart items:", error);
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchCartItems();
+    // }, [customerId]);
 
     useEffect(() => {
         const fetchCartItems = async () => {
             try {
-                // Fetch only the orders for the current logged-in user
-                const response = await fetch(`/api/cart/${userId}`);
+                const response = await fetch(`/api/order/customer`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`, // Include authentication token
+                    },
+                });
+    
+                if (!response.ok) {
+                    throw new Error("Failed to fetch orders");
+                }
+    
                 const data = await response.json();
-                setCartItems(data);
+    
+                // Transform orders to fit cart UI
+                const formattedCartItems = data.map((order) => ({
+                    id: order._id,
+                    name: order.itemId.map(item => item.name).join(", "), // Combine multiple item names
+                    price: order.totalPrice, // Use order total price
+                    quantity: order.itemId.length, // Show number of items
+                    //img: order.itemId[0]?.img || "default.png" // Use first item's image if available
+                }));
+    
+                setCartItems(formattedCartItems);
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching cart items:", error);
                 setLoading(false);
             }
         };
-
+    
         fetchCartItems();
-    }, [userId]);
-
-    // Function to remove an item from the cart
+    }, []);
+    
     const removeItem = (id) => {
         setCartItems(cartItems.filter((item) => item.id !== id));
         setSelectedOrders(selectedOrders.filter((orderId) => orderId !== id)); // Remove from selection too
