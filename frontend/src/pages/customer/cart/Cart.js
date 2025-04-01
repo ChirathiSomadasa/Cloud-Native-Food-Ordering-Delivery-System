@@ -10,31 +10,11 @@ function Cart() {
     const [selectedOrders, setSelectedOrders] = useState([]); // Store selected order IDs
     const [loading, setLoading] = useState(true);
 
-    // useEffect(() => {
-    //     const fetchCartItems = async () => {
-    //         try {
-    //             // Fetch only the orders for the current logged-in user
-    //             const response = await fetch(`/api/orders/${customerId}`, { method: "GET" });
-    //             const data = await response.json();
-    //             setCartItems(data);
-    //             setLoading(false);
-    //         } catch (error) {
-    //             console.error("Error fetching cart items:", error);
-    //             setLoading(false);
-    //         }
-    //     };
-
-    //     fetchCartItems();
-    // }, [customerId]);
-
     useEffect(() => {
         const fetchCartItems = async () => {
             try {
-                const response = await fetch(`/api/order/customer`, {
+                const response = await fetch(`/api/customer/orders`, {
                     method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`, // Include authentication token
-                    },
                 });
     
                 if (!response.ok) {
