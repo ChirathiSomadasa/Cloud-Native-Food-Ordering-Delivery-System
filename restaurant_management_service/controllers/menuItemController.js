@@ -1,36 +1,33 @@
 const MenuItem = require("../models/MenuItem");
-const upload = require("../middleware/uploadMiddleware");
 
-exports.addMenuItem = [
-  upload.fields([
-    { name: 'image', maxCount: 1 },
-    { name: 'restaurantId', maxCount: 1 },
-    { name: 'name', maxCount: 1 },
-    { name: 'description', maxCount: 1 },
-    { name: 'price', maxCount: 1 },
-    { name: 'availability', maxCount: 1 },
-  ]),
+// Add a new menu item
+exports.addMenuItem = async (req, res) => {
+  try {
+    const menuItem = await MenuItem.create(req.body);
+    res.status(201).json({ message: 'Menu item added successfully', menuItem });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.addMenuPhoto = [
   async (req, res) => {
     try {
-      const { restaurantId, name, description, price, availability } = req.body;
-      const imageUrl = req.files['image'] ? req.files['image'][0].path : null; // Get the uploaded image URL
-
-      if (!restaurantId) {
-        return res.status(400).json({ error: 'restaurantId is required' });
+      // Check if an image file was uploaded
+      if (!req.file) {
+        return res.status(400).json({ error: 'Image file is required' });
       }
 
-      const menuItem = await MenuItem.create({
-        restaurantId,
-        name,
-        description,
-        price,
-        availability,
-        image: imageUrl, // Save the image URL in the database
-      });
+      // Get the uploaded image URL from Cloudinary
+      const imageUrl = req.file.path;
 
-      res.status(201).json({ message: "Menu item added successfully", menuItem });
+      // Return the response with the image URL
+      res.status(201).json({
+        message: "Image uploaded successfully",
+        imageUrl,
+      });
     } catch (err) {
-      console.error("Error in addMenuItem:", err.message); // Log the error
+      console.error("Error in addMenuPhoto:", err.message); // Log the error
       res.status(500).json({ error: err.message });
     }
   },

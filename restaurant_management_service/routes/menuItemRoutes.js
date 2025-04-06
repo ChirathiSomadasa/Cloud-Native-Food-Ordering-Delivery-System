@@ -1,6 +1,6 @@
 const express = require('express');
 const upload = require('../middleware/uploadMiddleware'); // Import the upload middleware
-const { addMenuItem, updateMenuItem, deleteMenuItem } = require('../controllers/menuItemController');
+const { addMenuItem, addMenuPhoto, updateMenuItem, deleteMenuItem} = require('../controllers/menuItemController');
 const { verifyToken, verifyRole, verifyRestaurantStatus } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -11,16 +11,18 @@ router.post(
   verifyToken,
   verifyRole(['restaurantAdmin']),
   verifyRestaurantStatus,
-  upload.fields([
-    { name: 'image', maxCount: 1 }, // Handle the image file
-    { name: 'restaurantId', maxCount: 1 }, // Handle text fields
-    { name: 'name', maxCount: 1 },
-    { name: 'description', maxCount: 1 },
-    { name: 'price', maxCount: 1 },
-    { name: 'availability', maxCount: 1 },
-  ]),
   addMenuItem
 );
+
+//Add a new menu photo
+router.post(
+    '/add-menu-photo',
+    verifyToken,
+    verifyRole(['restaurantAdmin']),
+    upload.single('image'), // Middleware to handle image upload
+    addMenuPhoto
+  );
+  
 
 // Update a menu item
 router.put(
