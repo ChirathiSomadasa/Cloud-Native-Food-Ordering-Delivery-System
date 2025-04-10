@@ -1,8 +1,10 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+
+
 // Middleware to verify JWT token
-exports.verifyToken = (req, res, next) => {
+const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) {
     return res.status(401).json({ error: 'Access denied. Token is missing.' });
@@ -18,7 +20,7 @@ exports.verifyToken = (req, res, next) => {
 };
 
 // Middleware to check user role
-exports.verifyRole = (allowedRoles) => {
+const verifyRole = (allowedRoles) => {
   return (req, res, next) => {
     if (!req.user || !allowedRoles.includes(req.user.role)) {
       return res.status(403).json({ error: 'Access denied. Insufficient permissions.' });
@@ -27,6 +29,7 @@ exports.verifyRole = (allowedRoles) => {
   };
 };
 
+// Middleware to check if the user is a restaurant owner
 const isRestaurantOwner = (req, res, next) => {
   try {
       // Ensure Authorization header exists
@@ -48,4 +51,11 @@ const isRestaurantOwner = (req, res, next) => {
   } catch (error) {
       return res.status(401).json({ error: "Invalid or Expired Token" });
   }
+};
+
+
+module.exports = {
+  verifyToken,
+  verifyRole,
+  isRestaurantOwner
 };
