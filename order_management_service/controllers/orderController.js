@@ -38,9 +38,7 @@ exports.placeOrder = async (req, res) => {
 /*example
 {
   "restaurantId": "67e254ef9cfaba042d0d4e20",
-  "items": [
-    { "name": "String Hoppers", "quantity": 20, "price": 10 }
-  ],
+  "itemId": "2444444444444444444444443",
   "quantity":2
   "totalPrice": 200
 }
