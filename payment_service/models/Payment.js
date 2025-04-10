@@ -1,39 +1,55 @@
 const mongoose = require('mongoose');
 
-const paymentSchema = new mongoose.Schema({
-    orderId: {
-        type: String,
-        required: true,
-        unique: true
+const paymentSchema = new mongoose.Schema(
+    {
+        paymentId: mongoose.Schema.Types.ObjectId, // Unique ID for the payment
+
+        customerId: { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'user', // Reference to User model
+            required: true 
+        },
+        restaurantId: { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'Restaurant', // Reference to Restaurant model
+            required: true 
+        },
+        orderId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Order', // Reference to Order model
+            required: true
+        },
+
+        amount: {
+            type: Number,
+            required: true // This will be fetched from the Order model
+        },
+        currency: {
+            type: String,
+            default: 'LKR' // Default currency
+        },
+        paymentMethod: {
+            type: String,
+            enum: ['Credit Card', 'Debit Card', 'Cash'],
+            required: true
+        },
+
+        status: {
+            type: String,
+            enum: ['pending', 'completed', 'failed'],
+            default: 'pending'
+        },
+
+        paymentReference: {
+            type: String
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
+
     },
-    amount: {
-        type: Number,
-        required: true
-    },
-    currency: {
-        type: String,
-        default: 'LKR'
-    },
-    status: {
-        type: String,
-        enum: ['pending', 'completed', 'failed'],
-        default: 'pending'
-    },
-    customerEmail: {
-        type: String,
-        required: true
-    },
-    customerName: {
-        type: String,
-        required: true
-    },
-    paymentReference: {
-        type: String
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-});
+    { timestamps: true }
+);
 
 module.exports = mongoose.model('Payment', paymentSchema);
