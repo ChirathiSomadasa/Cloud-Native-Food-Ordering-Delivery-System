@@ -7,55 +7,112 @@ function MenuItemAdd() {
     name: "",
     description: "",
     price: 0,
-    availability: false,
-    image: null, // To store the uploaded image file
+    availability: true,
+    image: null, // To store the selected image file
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
-  // Handle input changes
+  // Handle changes in form inputs
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : type === "file" ? files[0] : value,
-    }));
+    if (type === "file") {
+      // If the input is a file, store the selected file
+      setFormData((prevData) => ({
+        ...prevData,
+        image: files[0], // Store the first selected file
+      }));
+    } else if (type === "checkbox") {
+      // Handle checkbox inputs
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: checked,
+      }));
+    } else {
+      // Handle text, number, and textarea inputs
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+
+  // Convert the image file to a base64 string
+  const convertFileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file); // Read the file as a Data URL (base64)
+    });
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-  
+    setError("");
+
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("restaurantId", localStorage.getItem("restaurantId"));
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("price", formData.price);
-      formDataToSend.append("availability", formData.availability);
-      if (formData.image) {
-        formDataToSend.append("image", formData.image);
+      // Retrieve the token
+      const token = localStorage.getItem("auth_token"); // Use the correct key
+      if (!token) {
+        alert("Authentication token is missing. Please log in again.");
+        return;
       }
-  
-      console.log("FormData Keys:", [...formDataToSend.keys()]); // Log the keys
-      console.log("FormData Values:", [...formDataToSend.values()]); // Log the values
-  
-      const response = await axios.post("/api/menu-items/add-menu-item", formDataToSend, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+
+      // Convert the image file to base64
+      let imageData = "";
+      if (formData.image) {
+        imageData = await convertFileToBase64(formData.image);
+      }
+
+      // Prepare the request payload
+      const payload = {
+        name: formData.name,
+        description: formData.description,
+        price: parseFloat(formData.price), // Ensure price is a number
+        availability: formData.availability,
+        imageData: imageData, // Include the base64-encoded image
+      };
+
+      // Log the token and payload for debugging
+      console.log("Token:", token);
+      console.log("Request Payload:", payload);
+
+      // Send the request to the backend
+      const response = await axios.post(
+        "http://localhost:5002/api/menu-items/add-menu-item",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token
+          },
+        }
+      );
+
+      // Reset the form after successful submission
+      setFormData({
+        name: "",
+        description: "",
+        price: 0,
+        availability: true,
+        image: null,
       });
-  
-      console.log(response.data.message);
+
       alert("Menu item added successfully!");
-      setFormData({ name: "", description: "", price: 0, availability: false, image: null });
     } catch (err) {
-      console.error("Frontend Error:", err.response?.data?.error || err.message); // Log the error
-      setError(err.response?.data?.error || "An error occurred while adding the menu item.");
+      console.error("Error adding menu item:", err.response?.data?.error || err.message);
+
+      // Display specific error messages
+      if (err.response?.status === 401) {
+        alert("Authentication failed. Please log in again.");
+      } else if (err.response?.status === 403) {
+        alert("Access denied. You do not have permission to perform this action.");
+      } else {
+        setError(err.response?.data?.error || "An error occurred while adding the menu item.");
+      }
     } finally {
       setLoading(false);
     }
@@ -72,7 +129,9 @@ function MenuItemAdd() {
         <div className="form-layout">
           <div className="form-main">
             <div className="form-groupM">
-              <label className="labelM" htmlFor="name">Item Name</label>
+              <label className="labelM" htmlFor="name">
+                Item Name
+              </label>
               <input
                 className="inputM"
                 type="text"
