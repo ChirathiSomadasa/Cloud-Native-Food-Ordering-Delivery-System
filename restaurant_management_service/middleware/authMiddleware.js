@@ -38,16 +38,15 @@ exports.verifyRestaurantStatus = async (req, res, next) => {
     // If restaurantId is provided in the request body
     if (req.body.restaurantId) {
       restaurantId = req.body.restaurantId;
-    } else {
-      //extract restaurantId from the MenuItem document
-      const menuItemId = req.params.id;
-      const menuItem = await MenuItem.findById(menuItemId);
-
+    } else if (req.params.id) {
+      // Extract restaurantId from the MenuItem document (only for update/delete routes)
+      const menuItem = await MenuItem.findById(req.params.id);
       if (!menuItem) {
         return res.status(404).json({ error: 'Menu item not found' });
       }
-
       restaurantId = menuItem.restaurantId;
+    } else {
+      return res.status(400).json({ error: 'restaurantId is required in the request body' });
     }
 
     // Find the restaurant and check if it is verified
@@ -55,7 +54,6 @@ exports.verifyRestaurantStatus = async (req, res, next) => {
     if (!restaurant) {
       return res.status(404).json({ error: 'Restaurant not found' });
     }
-
     if (!restaurant.isVerified) {
       return res.status(403).json({ error: 'Restaurant is not verified. Please contact the System Admin.' });
     }

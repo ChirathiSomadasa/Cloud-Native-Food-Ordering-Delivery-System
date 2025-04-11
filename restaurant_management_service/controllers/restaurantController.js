@@ -89,3 +89,22 @@ exports.getRestaurantStatus = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Fetch the restaurant ID for the logged-in user
+exports.getRestaurantIdForUser = async (req, res) => {
+  try {
+    const userId = req.user.id; // Extract userId from the decoded token
+
+    // Find the restaurant associated with the logged-in user
+    const restaurant = await Restaurant.findOne({ userId });
+
+    if (!restaurant) {
+      return res.status(404).json({ error: 'No restaurant found for this user' });
+    }
+
+    // Return the restaurant ID
+    res.status(200).json({ restaurantId: restaurant._id });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
