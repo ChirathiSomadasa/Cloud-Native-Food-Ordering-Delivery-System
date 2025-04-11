@@ -1,4 +1,5 @@
 import React, { useState,useEffect  } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Cart.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -9,6 +10,7 @@ function Cart() {
 
     const [selectedOrders, setSelectedOrders] = useState([]); // Store selected order IDs
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchCartItems = async () => {
@@ -64,6 +66,10 @@ function Cart() {
         } else {
             setSelectedOrders([...selectedOrders, id]); // Add new selection
         }
+    };
+
+    const handleCheckout = () => {
+        navigate('./payment'); // Navigate to the payment route
     };
 
     // Calculate total only for selected orders
@@ -125,7 +131,7 @@ function Cart() {
                 </div>
             </div>
 
-            <button className="checkout-button" disabled={selectedOrders.length === 0}>
+            <button className="checkout-button" disabled={selectedOrders.length === 0} onClick={handleCheckout}>
                 CHECK OUT
             </button>
         </div>
