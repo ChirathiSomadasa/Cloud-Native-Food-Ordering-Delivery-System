@@ -3,7 +3,7 @@ const Order = require('../models/Order');
 const Restaurant = require('../../restaurant_management_service/models/Restaurant');
 const MenuItem = require('../../restaurant_management_service/models/MenuItem');
 
-
+ 
 //place a order
 exports.placeOrder = async (req, res) => {
   try {

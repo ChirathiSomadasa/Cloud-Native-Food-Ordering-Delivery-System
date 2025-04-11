@@ -1,5 +1,7 @@
 import React, { useState,useEffect  } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 import "./Cart.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -13,38 +15,24 @@ function Cart() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        const fetchCartItems = async () => {
+        const fetchOrders = async () => {
             try {
-                const response = await fetch(`/api/customer/orders`, {
-                    method: "GET",
+                const token = localStorage.getItem('token');
+                const res = await axios.get('http://localhost:5003/order/customer/orders', {
+                    headers: { Authorization: `Bearer ${token}` }
                 });
-    
-                if (!response.ok) {
-                    throw new Error("Failed to fetch orders");
-                }
-    
-                const data = await response.json();
-    
-                // Transform orders to fit cart UI
-                const formattedCartItems = data.map((order) => ({
-                    id: order._id,
-                    name: order.itemId.map(item => item.name).join(", "), // Combine multiple item names
-                    price: order.totalPrice, // Use order total price
-                    quantity: order.itemId.length, // Show number of items
-                    //img: order.itemId[0]?.img || "default.png" // Use first item's image if available
-                }));
-    
-                setCartItems(formattedCartItems);
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching cart items:", error);
+                setCartItems(res.data.orders); // Assume orders come in an array
+            } catch (err) {
+                console.error("Error fetching orders:", err);
+                alert("Failed to load orders. Please try again.");
+            } finally {
                 setLoading(false);
             }
         };
-    
-        fetchCartItems();
+
+        fetchOrders();
     }, []);
-    
+     
     const removeItem = (id) => {
         setCartItems(cartItems.filter((item) => item.id !== id));
         setSelectedOrders(selectedOrders.filter((orderId) => orderId !== id)); // Remove from selection too

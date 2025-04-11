@@ -1,7 +1,6 @@
 const express = require('express');
 const { placeOrder, getOrder, getOrdersForRestaurant, updateOrderStatus, cancelOrder,getOrdersForCustomer,updateOrder } = require('../controllers/orderController');
 const { verifyToken, verifyRole } = require('../middleware/authMiddleware');
-
 const router = express.Router();
 
 // Customer Order Routes
