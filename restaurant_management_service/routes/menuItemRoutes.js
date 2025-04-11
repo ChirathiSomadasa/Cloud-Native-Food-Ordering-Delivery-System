@@ -1,5 +1,5 @@
 const express = require('express');
-const { addMenuItem,updateMenuItem, deleteMenuItem} = require('../controllers/menuItemController');
+const { addMenuItem,updateMenuItem, deleteMenuItem,getMenuItemsWithRestaurantName} = require('../controllers/menuItemController');
 const { verifyToken, verifyRole, verifyRestaurantStatus } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -31,4 +31,6 @@ router.delete(
   deleteMenuItem
 );
 
+// Route to fetch menu items with restaurant name for the Home page
+router.get('/home-menu-items', getMenuItemsWithRestaurantName);
 module.exports = router;

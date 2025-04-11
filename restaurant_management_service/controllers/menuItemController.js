@@ -112,3 +112,33 @@ exports.deleteMenuItem = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+// Fetch menu items with restaurant name for the Home page
+exports.getMenuItemsWithRestaurantName = async (req, res) => {
+  try {
+    // Fetch all menu items and populate the restaurant name
+    const menuItems = await MenuItem.find()
+      .populate("restaurantId", "restaurantName") // Populate only the 'restaurantName' field of the restaurant
+      .exec();
+
+    if (!menuItems || menuItems.length === 0) {
+      return res.status(404).json({ message: "No menu items found" });
+    }
+
+    // Format the response to include restaurant name
+    const formattedMenuItems = menuItems.map((item) => ({
+      id: item._id,
+      name: item.name,
+      restaurant: item.restaurantId ? item.restaurantId.restaurantName : "Unknown Restaurant",
+      image: item.image,
+      price: item.price,
+      description: item.description,
+    }));
+
+    res.status(200).json(formattedMenuItems);
+  } catch (err) {
+    console.error("Error fetching menu items:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+};

@@ -49,17 +49,6 @@ function Header() {
             </a>
           </div>
 
-          {/* Middle - Search bar */}
-          <div className="search-container">
-            <div className="search-bar">
-              <SearchIcon className="search-icon" />
-              <input
-                type="search"
-                placeholder="Search restaurants and foods..."
-                className="search-input"
-              />
-            </div>
-          </div>
 
           {/* Right side - Auth buttons and icons */}
           <div className="header-right">
@@ -109,18 +98,6 @@ function Header() {
                 Sign Out
               </button>
             </div>
-          </div>
-        </div>
-
-        {/* Mobile search */}
-        <div className="mobile-search">
-          <div className="search-bar">
-            <SearchIcon className="search-icon" />
-            <input
-              type="search"
-              placeholder="Search restaurants and foods..."
-              className="search-input"
-            />
           </div>
         </div>
       </header>
