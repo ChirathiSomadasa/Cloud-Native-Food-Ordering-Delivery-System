@@ -90,7 +90,7 @@ h1 {
 .action-icon {
   cursor: pointer;
   font-size: 20px;
-  margin: 0 10px;
+  margin: 0 5px;
   transition: color 0.3s ease;
   padding: 5px;
   border-radius: 2px;
@@ -98,25 +98,21 @@ h1 {
 
 .edit-icon {
   color: #f4a405;
-  /* Green for Edit */
   background-color: #fff7e7;
 }
 
 .delete-icon {
   color: #e74c3c;
-  /* Red for Delete */
   background-color: #ffe2df;
 }
 
 .edit-icon:hover {
   color: #dc9404;
-  /* Darker green on hover */
   background-color: #ffe8ba;
 }
 
 .delete-icon:hover {
   color: #c0392b;
-  /* Darker red on hover */
   background-color: #fec0b9;
 }
 

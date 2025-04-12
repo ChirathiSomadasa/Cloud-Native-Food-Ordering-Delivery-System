@@ -62,7 +62,7 @@ function Home() {
 
   if (loading) {
     return (
-      <div className="home-container">
+      <div className="home-container-RA">
         <div className="loading-indicator">
           <HourglassEmptyIcon fontSize="large" />
           <p>Loading registration status...</p>

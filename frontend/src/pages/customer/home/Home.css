@@ -1,16 +1,10 @@
 /* Global Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
   
-  body {
+  .customer-home {
     background-color: #f9f9f9;
   }
   
-  .home-container {
+  .home-container-c {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
@@ -84,7 +78,7 @@
   }
   
   /* Hero Section */
-  .hero-section {
+  .hero-section-c {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -92,9 +86,10 @@
     gap: 40px;
     text-align: center;
     overflow: hidden; 
+    background-color: #fff5df;
   }
   
-  .hero-content {
+  .hero-content-c {
     flex: 1;
     max-width: 500px;
     display: flex;
@@ -103,7 +98,7 @@
     animation: fadeIn 1s ease-out;
   }
   
-  .hero-title {
+  .hero-title-c {
     font-size: 42px;
     font-weight: 700;
     line-height: 1.2;
@@ -112,13 +107,13 @@
     animation: slideInLeft 1.2s ease-out;
   }
   
-  .highlight {
+  .highlight-c {
     color: #f4a405;
     position: relative;
     display: inline-block;
   }
   
-  .highlight::after {
+  .highlight-c::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -139,7 +134,7 @@
     }
   }
   
-  .hero-description {
+  .hero-description-c {
     color: #666;
     line-height: 1.6;
     margin-bottom: 30px;
@@ -147,7 +142,7 @@
     animation: slideInLeft 1.4s ease-out;
   }
   
-  .explore-button {
+  .order-button-c {
     background-color: #f4a405;
     color: white;
     border: none;
@@ -166,7 +161,7 @@
     overflow: hidden;
   }
   
-  .explore-button::before {
+  .order-button-c::before {
     content: '';
     position: absolute;
     top: 0;
@@ -177,12 +172,12 @@
     transition: 0.5s;
   }
   
-  .explore-button:hover {
+  .order-button-c:hover {
     background-color: #d89000;
     transform: translateY(-3px);
   }
   
-  .explore-button:hover::before {
+  .order-button-c:hover::before {
     left: 100%;
   }
   
@@ -191,11 +186,11 @@
     transition: transform 0.3s;
   }
   
-  .explore-button:hover .arrow {
+  .order-button-c:hover .arrow {
     transform: translateX(5px);
   }
   
-  .hero-image {
+  .hero-image-c {
     flex: 1;
     display: flex;
     justify-content: center; 
@@ -203,7 +198,7 @@
     animation: slideInRight 1.2s ease-out;
   }
   
-  .hero-image img {
+  .hero-image-c img {
     max-width: 100%;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -211,7 +206,7 @@
     transition: transform 0.3s ease;
   }
   
-  .hero-image img:hover {
+  .hero-image-c img:hover {
     transform: scale(1.03);
   }
   
@@ -284,7 +279,8 @@
     color: #333;
   }
   
-  .view-more-button {
+  .view-more-button,
+  .view-less-button {
     background-color: transparent;
     color: #f4a405;
     border: 1px solid #f4a405;
@@ -295,7 +291,8 @@
     transition: all 0.3s;
   }
   
-  .view-more-button:hover {
+  .view-more-button:hover,
+  .view-less-button:hover {
     background-color: #f4a405;
     color: white;
   }

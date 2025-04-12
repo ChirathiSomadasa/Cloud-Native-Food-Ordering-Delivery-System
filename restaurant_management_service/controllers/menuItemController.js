@@ -115,12 +115,18 @@ exports.deleteMenuItem = async (req, res) => {
 };
 
 
-// Fetch menu items with restaurant name for the Home page
+// Fetch menu items with restaurant name for the Home page (with pagination)
 exports.getMenuItemsWithRestaurantName = async (req, res) => {
   try {
-    // Fetch all menu items and populate the restaurant name
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 6; // Default limit of 6 items per page
+    const skip = (page - 1) * limit;
+
+    // Fetch menu items with pagination
     const menuItems = await MenuItem.find()
       .populate("restaurantId", "restaurantName")
+      .skip(skip)
+      .limit(limit)
       .exec();
 
     if (!menuItems || menuItems.length === 0) {
@@ -178,6 +184,34 @@ exports.getMenuItemsForUser = async (req, res) => {
     res.status(200).json(formattedMenuItems);
   } catch (err) {
     console.error("Error fetching menu items for user:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Fetch a single menu item by ID
+exports.getMenuItemById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    // Find the menu item by ID
+    const menuItem = await MenuItem.findById(id)
+      .populate("restaurantId", "restaurantName") // Populate the restaurant name
+      .exec();
+    if (!menuItem) {
+      return res.status(404).json({ error: 'Menu item not found' });
+    }
+    // Format the response
+    const formattedMenuItem = {
+      id: menuItem._id,
+      name: menuItem.name,
+      description: menuItem.description,
+      price: menuItem.price,
+      availability: menuItem.availability,
+      image: menuItem.image,
+      restaurant: menuItem.restaurantId ? menuItem.restaurantId.restaurantName : "Unknown Restaurant",
+    };
+    res.status(200).json(formattedMenuItem);
+  } catch (err) {
+    console.error("Error fetching menu item:", err.message);
     res.status(500).json({ error: err.message });
   }
 };

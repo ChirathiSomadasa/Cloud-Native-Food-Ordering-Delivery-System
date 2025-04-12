@@ -11,6 +11,7 @@ import DeliveryHome from "./pages/deliveryPersonnel/home/Home";
 import MenuItemAdd from "./pages/RestaurantAdmin/menuItem/MenuItemAdd";
 import VerifyRestaurant from "./pages/systemAdmin/verifyRestaurant/VerifyRestaurant";
 import MenuItemList from "./pages/RestaurantAdmin/menuItem/MenuItemList";
+import MenuItemEdit from "./pages/RestaurantAdmin/menuItem/MenuItemEdit";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
       <Route path="/addMenuItem" element={<MenuItemAdd />} />
       <Route path="/verifyRestaurant" element={<VerifyRestaurant />} />
       <Route path="/menu-item-list" element={<MenuItemList />} />
+      <Route path="/edit-menu-item/:id" element={<MenuItemEdit />} />
       </Routes>
     </BrowserRouter>
   );
