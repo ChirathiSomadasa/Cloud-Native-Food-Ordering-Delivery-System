@@ -32,6 +32,25 @@ function Home() {
     fetchMenuItems();
   }, []);
 
+  //Piumi
+  const handleAddToCart = async (item) => {
+    const cartItem = {
+      id: item.id, // itemId
+      name: item.name,
+      price: item.price,
+      quantity: 1,
+      img: item.image,
+      restaurantId: item.restaurantId, 
+    };
+  
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push(cartItem);
+    localStorage.setItem("cart", JSON.stringify(cart));
+  
+    alert(`${item.name} added to cart!`);
+  };
+  //
+
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
@@ -96,6 +115,8 @@ function Home() {
                     <p className="description-label">Description:</p>
                     <p className="description-text">{item.description || "No description available."}</p>
                   </div>
+                  <button onClick={() => handleAddToCart(item)} className="add-to-cart-btn">Add to Cart</button>
+
                 </div>
               </div>
             ))
