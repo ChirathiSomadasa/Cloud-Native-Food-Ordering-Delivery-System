@@ -72,17 +72,17 @@ function Home() {
   }
 
   return (
-    <div className="home-container">
-      <div className="hero-section">
+    <div className="home-container-RA">
+      <div className="hero-section-RA">
         <h1>Food Ordering & Delivery System</h1>
-        <p className="subtitle">
+        <p className="subtitle-RA">
           Register your restaurant, manage your menu, and start receiving orders online today.
         </p>
-        <div className="cta-buttons">
-          <button className="primary-buttonA" onClick={handleButtonClick}>
+        <div className="cta-buttons-RA">
+          <button className="primary-button-RA" onClick={handleButtonClick}>
             Register Your Restaurant
           </button>
-          <button className="secondary-button" onClick={handleMenuButtonClick}>
+          <button className="secondary-button-RA" onClick={handleMenuButtonClick}>
             Add Menu Items
           </button>
         </div>

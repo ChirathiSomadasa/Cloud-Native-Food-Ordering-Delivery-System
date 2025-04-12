@@ -1,5 +1,6 @@
 const MenuItem = require("../models/MenuItem");
 const cloudinary = require('../config/cloudinaryConfig');
+const Restaurant = require('../models/Restaurant');
 
 // Add a new menu item with an image
 exports.addMenuItem = async (req, res) => {
@@ -82,7 +83,7 @@ exports.updateMenuItem = async (req, res) => {
 
     res.json({ message: 'Menu item updated successfully', updatedMenuItem });
   } catch (err) {
-    console.error("Error in updateMenuItem:", err.message); 
+    console.error("Error in updateMenuItem:", err.message);
     res.status(500).json({ error: err.message });
   }
 };
@@ -108,7 +109,7 @@ exports.deleteMenuItem = async (req, res) => {
 
     res.json({ message: 'Menu item deleted successfully' });
   } catch (err) {
-    console.error("Error in deleteMenuItem:", err.message); 
+    console.error("Error in deleteMenuItem:", err.message);
     res.status(500).json({ error: err.message });
   }
 };
@@ -119,7 +120,7 @@ exports.getMenuItemsWithRestaurantName = async (req, res) => {
   try {
     // Fetch all menu items and populate the restaurant name
     const menuItems = await MenuItem.find()
-      .populate("restaurantId", "restaurantName") // Populate only the 'restaurantName' field of the restaurant
+      .populate("restaurantId", "restaurantName")
       .exec();
 
     if (!menuItems || menuItems.length === 0) {
@@ -139,6 +140,44 @@ exports.getMenuItemsWithRestaurantName = async (req, res) => {
     res.status(200).json(formattedMenuItems);
   } catch (err) {
     console.error("Error fetching menu items:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Fetch menu items for a specific restaurant (user-specific)
+exports.getMenuItemsForUser = async (req, res) => {
+  try {
+    const userId = req.user.id; // Extract userId from the decoded token
+
+    // Find the restaurant associated with the logged-in user
+    const restaurant = await Restaurant.findOne({ userId });
+    if (!restaurant) {
+      return res.status(404).json({ error: 'No restaurant found for this user' });
+    }
+
+    // Fetch menu items for the restaurant
+    const menuItems = await MenuItem.find({ restaurantId: restaurant._id })
+      .populate("restaurantId", "restaurantName")
+      .exec();
+
+    if (!menuItems || menuItems.length === 0) {
+      return res.status(404).json({ message: "No menu items found for this restaurant" });
+    }
+
+    // Format the response to include restaurant name
+    const formattedMenuItems = menuItems.map((item) => ({
+      id: item._id,
+      name: item.name,
+      restaurant: item.restaurantId ? item.restaurantId.restaurantName : "Unknown Restaurant",
+      image: item.image,
+      price: item.price,
+      description: item.description,
+      availability: item.availability,
+    }));
+
+    res.status(200).json(formattedMenuItems);
+  } catch (err) {
+    console.error("Error fetching menu items for user:", err.message);
     res.status(500).json({ error: err.message });
   }
 };

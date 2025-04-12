@@ -1,12 +1,12 @@
 /* Base styles */
-  .home-container {
+  .home-container-RA {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
   }
   
   /* Hero section */
-  .hero-section {
+  .hero-section-RA {
     background: linear-gradient(135deg, #fff9f1 0%, #fdf2da 100%);
     border-radius: 16px;
     padding: 60px 40px;
@@ -15,13 +15,13 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   }
   
-  .hero-section h1 {
+  .hero-section-RA h1 {
     font-size: 3rem;
     margin-bottom: 20px;
     color: #333;
   }
   
-  .subtitle {
+  .subtitle-RA {
     font-size: 1.2rem;
     color: #666;
     max-width: 700px;
@@ -30,7 +30,7 @@
   }
   
   /* Button styles */
-  .cta-buttons {
+  .cta-buttons-RA {
     display: flex;
     justify-content: center;
     gap: 20px;
@@ -38,8 +38,8 @@
     flex-wrap: wrap;
   }
   
-  .primary-buttonA,
-  .secondary-button {
+  .primary-button-RA,
+  .secondary-button-RA {
     padding: 14px 28px;
     font-size: 1rem;
     font-weight: 600;
@@ -50,25 +50,25 @@
     outline: none;
   }
   
-  .primary-buttonA {
+  .primary-button-RA {
     background-color: #f4a405;
     color: white;
     box-shadow: 0 4px 12px rgba(255, 219, 77, 0.3);
   }
   
-  .primary-buttonA:hover {
+  .primary-button-RA:hover {
     background-color: #eb9e05;
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(255, 219, 77, 0.4);
   }
   
-  .secondary-button {
+  .secondary-button-RA {
     background-color: white;
     color: #f4a405;
     border: 2px solid #f4a405;
   }
   
-  .secondary-button:hover {
+  .secondary-button-RA:hover {
     background-color: #fff2d9;
     transform: translateY(-2px);
   }
