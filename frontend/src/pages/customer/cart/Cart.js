@@ -15,23 +15,11 @@ function Cart() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const res = await axios.get('http://localhost:5003/order/customer/orders', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setCartItems(res.data.orders); // Assume orders come in an array
-            } catch (err) {
-                console.error("Error fetching orders:", err);
-                alert("Failed to load orders. Please try again.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchOrders();
+        const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+        setCartItems(storedCart);
+        setLoading(false);
     }, []);
+    
      
     const removeItem = (id) => {
         setCartItems(cartItems.filter((item) => item.id !== id));
@@ -56,9 +44,35 @@ function Cart() {
         }
     };
 
-    const handleCheckout = () => {
-        navigate('./payment'); // Navigate to the payment route
+    const handleCheckout = async () => {
+        try {
+            const selectedItems = cartItems.filter(item => selectedOrders.includes(item.id));
+            const token = localStorage.getItem("token");
+            const user = JSON.parse(localStorage.getItem("user"));
+    
+            const orderPayload = {
+                userId: user?._id,
+                items: selectedItems,
+                totalAmount: totalPrice,
+            };
+    
+            await axios.post("http://localhost:5003/api/order/add", orderPayload, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+    
+            alert("Order placed successfully!");
+    
+            // Remove selected items from cart
+            const remainingCart = cartItems.filter(item => !selectedOrders.includes(item.id));
+            localStorage.setItem("cart", JSON.stringify(remainingCart));
+            setCartItems(remainingCart);
+            setSelectedOrders([]);
+        } catch (error) {
+            console.error("Checkout error:", error);
+            alert("Failed to place order. Please try again.");
+        }
     };
+    
 
     // Calculate total only for selected orders
     const selectedTotal = cartItems
