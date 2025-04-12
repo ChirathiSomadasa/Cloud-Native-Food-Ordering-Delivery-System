@@ -63,10 +63,12 @@ function Sidebar({ isOpen, onClose }) {
 
           {/* Navigation */}
           <nav className="sidebar-nav">
+          <Link to="/my-orders">
             <a href="/orders" className="sidebar-link" onClick={onClose}>
               <ListAltIcon />
               <span>Orders</span>
             </a>
+            </Link>
             <a href="/cart" className="sidebar-link" onClick={onClose}>
               <ShoppingCartIcon />
               <span>Cart</span>

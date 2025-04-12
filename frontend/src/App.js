@@ -10,6 +10,7 @@ import AdminHome from "./pages/systemAdmin/home/Home";
 import DeliveryHome from "./pages/deliveryPersonnel/home/Home";
 import MenuItemAdd from "./pages/RestaurantAdmin/menuItem/MenuItemAdd";
 import Cart from "./pages/customer/cart/Cart";//Piumi
+import MyOrders from "./pages/customer/cart/MyOrders";
 import PaymentForm from "./pages/customer/payment/PaymentForm";//Thamindu
 
 
@@ -27,6 +28,7 @@ function App() {
       <Route path="/delivery-home" element={<DeliveryHome />} />
       <Route path="/addMenuItem" element={<MenuItemAdd />} />
       <Route path="/cart" element={<Cart/>}/>
+      <Route path="/my-orders" element={<MyOrders />} />
       <Route path="/payment" element={<PaymentForm/>}/>
       </Routes>
     </BrowserRouter>
