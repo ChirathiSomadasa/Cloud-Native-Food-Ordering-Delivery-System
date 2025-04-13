@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/dbConfig');
 const { PORT } = require('./config/envConfig');
 const orderRoutes = require('./routes/orderRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/order',orderRoutes);
+app.use('/api/cart', cartRoutes);
 
 // Connect to the database and start the server
 connectDB().then(() => {
