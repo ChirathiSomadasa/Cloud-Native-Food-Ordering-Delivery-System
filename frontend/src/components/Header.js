@@ -12,7 +12,8 @@ import PersonIcon from "@mui/icons-material/Person";
 function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
-
+  const [cartItems, setCartItems] = useState([]);
+  const [cartUpdated, setCartUpdated] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   // Function to handle sign-out
@@ -35,8 +36,6 @@ function Header() {
     }
   };
 
-  const [cartItems, setCartItems] = useState([]);
-  const [cartUpdated, setCartUpdated] = useState(false);
 
   useEffect(() => {
     const fetchCartItems = async () => {
