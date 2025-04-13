@@ -39,7 +39,7 @@ function Home() {
         alert("You must be logged in to add items to the cart.");
         return;
       }
-  
+
       const response = await fetch("http://localhost:5003/api/cart/add", {
         method: "POST",
         headers: {
@@ -53,16 +53,16 @@ function Home() {
           img: item.image
         })
       });
-  
+
       const data = await response.json();
       console.log("Sending item to cart:", item);
       console.log("Sending to backend:", {
-        itemId: item.id, 
+        itemId: item.id,
         name: item.name,
         price: item.price,
         img: item.image
       });
-      
+
       if (response.ok) {
         alert("Added to cart!");
       } else {
@@ -72,9 +72,11 @@ function Home() {
     } catch (err) {
       console.error("Error adding to cart:", err);
     }
+    window.dispatchEvent(new Event("cartUpdated")); // notify Header
+
   };
-  
-  
+
+
   //
 
   if (loading) {
@@ -109,10 +111,10 @@ function Home() {
       {/* Search Section */}
       <section className="search-section-h">
         <div className="search-container-h">
-          <input 
-            type="text" 
-            className="search-input-h" 
-            placeholder="Search for food, restaurants, or cuisines..." 
+          <input
+            type="text"
+            className="search-input-h"
+            placeholder="Search for food, restaurants, or cuisines..."
           />
           <button className="search-button-h">
             Search
@@ -125,7 +127,7 @@ function Home() {
         <div className="section-header">
           <h2 className="section-title">Tailored to your <span className="highlight">taste</span></h2>
           <button className="view-more-button">View more</button>
-        </div>       
+        </div>
         <div className="food-grid">
           {foodItems.length > 0 ? (
             foodItems.map((item) => (
