@@ -122,6 +122,9 @@ exports.getMenuItemsWithRestaurantName = async (req, res) => {
     const limit = parseInt(req.query.limit) || 6; // Default limit of 6 items per page
     const skip = (page - 1) * limit;
 
+    // Fetch total count of menu items
+    const totalItems = await MenuItem.countDocuments();
+
     // Fetch menu items with pagination
     const menuItems = await MenuItem.find()
       .populate("restaurantId", "restaurantName")
@@ -143,7 +146,11 @@ exports.getMenuItemsWithRestaurantName = async (req, res) => {
       description: item.description,
     }));
 
-    res.status(200).json(formattedMenuItems);
+    res.status(200).json({
+      data: formattedMenuItems,
+      totalPages: Math.ceil(totalItems / limit),
+      currentPage: page,
+    });
   } catch (err) {
     console.error("Error fetching menu items:", err.message);
     res.status(500).json({ error: err.message });

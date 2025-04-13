@@ -86,10 +86,14 @@ const MenuItemList = () => {
     });
 
   // Get the sort direction indicator
-  const getSortDirectionIndicator = (key) => {
-    if (sortConfig.key !== key) return "";
-    return sortConfig.direction === "ascending" ? " ▲" : " ▼";
-  };
+const getSortDirectionIndicator = (key) => {
+  if (sortConfig.key !== key) return "";
+  return sortConfig.direction === "ascending" ? (
+    <span className="material-icons sort-icon">arrow_upward</span>
+  ) : (
+    <span className="material-icons sort-icon">arrow_downward</span>
+  );
+};
 
   // Handle Edit Action
   const handleEdit = (id) => {
