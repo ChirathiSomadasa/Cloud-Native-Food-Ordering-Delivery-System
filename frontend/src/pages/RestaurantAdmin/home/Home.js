@@ -60,6 +60,10 @@ function Home() {
     navigate("/addMenuItem");
   };
 
+  const handleViewMenuButtonClick = () => {
+    navigate("/menu-item-list");
+  }
+
   if (loading) {
     return (
       <div className="home-container-RA">
@@ -84,6 +88,9 @@ function Home() {
           </button>
           <button className="secondary-button-RA" onClick={handleMenuButtonClick}>
             Add Menu Items
+          </button>
+          <button className="secondary-button-RA" onClick={handleViewMenuButtonClick}>
+            View my Menus
           </button>
         </div>
       </div>
@@ -149,6 +156,9 @@ function Home() {
           </button>
           <button className="admin-button" onClick={handleMenuButtonClick}>
             Add Menu Items
+          </button>
+          <button className="admin-button" onClick={handleViewMenuButtonClick}>
+            View My Menus
           </button>
         </div>
       </div>

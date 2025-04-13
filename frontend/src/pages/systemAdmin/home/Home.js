@@ -17,7 +17,7 @@ function Home() {
             <p className="card-description">Create, update, or deactivate user accounts</p>
           </div>
           <div className="card-content">
-            <button className="admin-button">Manage Users</button>
+          <Link to="/manage-users"><button className="admin-button">Manage Users</button></Link>
           </div>
         </div>
 

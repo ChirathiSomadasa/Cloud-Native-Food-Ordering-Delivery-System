@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import "./MenuItemList.css";
 
 const MenuItemList = () => {
@@ -7,6 +8,8 @@ const MenuItemList = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "ascending" });
+
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     const fetchMenuItems = async () => {
@@ -17,23 +20,19 @@ const MenuItemList = () => {
           setLoading(false);
           return;
         }
-
         const response = await fetch("http://localhost:5002/api/menu-items/user-menu-items", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
         }
-
         const data = await response.json();
         if (!Array.isArray(data)) {
           throw new Error("Invalid data format received from the server.");
         }
-
         setMenuItems(data);
         setLoading(false);
       } catch (err) {
@@ -42,7 +41,6 @@ const MenuItemList = () => {
         setLoading(false);
       }
     };
-
     fetchMenuItems();
   }, []);
 
@@ -95,8 +93,7 @@ const MenuItemList = () => {
 
   // Handle Edit Action
   const handleEdit = (id) => {
-    alert(`Edit menu item with ID: ${id}`);
-    // Add navigation logic to edit page here
+    navigate(`/edit-menu-item/${id}`); // Navigate to the edit page
   };
 
   // Handle Delete Action
@@ -108,19 +105,16 @@ const MenuItemList = () => {
           setError("Authentication token is missing. Please log in again.");
           return;
         }
-
         const response = await fetch(`http://localhost:5002/api/menu-items/delete/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
         }
-
         // Remove the deleted item from the state
         setMenuItems((prevItems) => prevItems.filter((item) => item.id !== id));
         alert("Menu item deleted successfully!");
@@ -161,8 +155,8 @@ const MenuItemList = () => {
                 <th onClick={() => requestSort("availability")}>
                   Availability{getSortDirectionIndicator("availability")}
                 </th>
-                <th>Edit</th> 
-                <th>Delete</th> 
+                <th>Edit</th>
+                <th>Delete</th>
               </tr>
             </thead>
             <tbody>
@@ -193,8 +187,8 @@ const MenuItemList = () => {
                       >
                         edit
                       </span>
-                      </td>
-                      <td>
+                    </td>
+                    <td>
                       {/* Delete Icon */}
                       <span
                         className="material-icons action-icon delete-icon"
@@ -203,12 +197,12 @@ const MenuItemList = () => {
                       >
                         delete
                       </span>
-                      </td>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="no-results">
+                  <td colSpan="7" className="no-results">
                     No menu items found
                   </td>
                 </tr>

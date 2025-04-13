@@ -12,6 +12,7 @@ import MenuItemAdd from "./pages/RestaurantAdmin/menuItem/MenuItemAdd";
 import VerifyRestaurant from "./pages/systemAdmin/verifyRestaurant/VerifyRestaurant";
 import MenuItemList from "./pages/RestaurantAdmin/menuItem/MenuItemList";
 import MenuItemEdit from "./pages/RestaurantAdmin/menuItem/MenuItemEdit";
+import ManageUsers from "./pages/systemAdmin/manageUsers/ManageUsers";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
       <Route path="/verifyRestaurant" element={<VerifyRestaurant />} />
       <Route path="/menu-item-list" element={<MenuItemList />} />
       <Route path="/edit-menu-item/:id" element={<MenuItemEdit />} />
+      <Route path="/manage-users" element={<ManageUsers />} />
       </Routes>
     </BrowserRouter>
   );
