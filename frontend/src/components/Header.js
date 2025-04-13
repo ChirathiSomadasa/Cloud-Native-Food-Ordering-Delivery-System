@@ -36,27 +36,49 @@ function Header() {
   };
 
   const [cartItems, setCartItems] = useState([]);
-
-  // Assuming userId is available, you can fetch the user's cart items
-  const userId = "user123"; // Replace with actual user ID logic
+  const [cartUpdated, setCartUpdated] = useState(false);
 
   useEffect(() => {
     const fetchCartItems = async () => {
+      const token = localStorage.getItem("auth_token");
+      if (!token) return;
+
       try {
-        // Fetch user's cart items
-        const response = await fetch(`/api/cart/${userId}`);
-        const data = await response.json();
-        setCartItems(data); // Set the cart items to state
-      } catch (error) {
-        console.error("Error fetching cart items:", error);
+        const response = await fetch("http://localhost:5003/api/cart", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const itemsWithQuantity = (data.items || []).map((item) => ({
+            ...item,
+            quantity: item.quantity || 1,
+          }));
+          setCartItems(itemsWithQuantity);
+        } else {
+          console.error("Failed to fetch cart");
+        }
+      } catch (err) {
+        console.error("Error fetching cart:", err);
       }
     };
 
     fetchCartItems();
-  }, [userId]);
+    // Listen to cart updates globally
+    const handleCartUpdate = () => {
+      fetchCartItems(); // Refresh when event is triggered
+    };
+
+    window.addEventListener("cartUpdated", handleCartUpdate);
+
+    return () => {
+      window.removeEventListener("cartUpdated", handleCartUpdate);
+    };
+  }, [cartUpdated]); // run effect when cartUpdated changes
 
   // Get the number of items in the cart
   const numberOfItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+
 
   return (
     <>
@@ -91,7 +113,7 @@ function Header() {
               <Link to="/cart">
                 <button className="icon-button cart-button">
                   <ShoppingCartIcon />
-                  <span className="badge">3</span>
+                  <span className="badge">{numberOfItems}</span>
                 </button>
               </Link>
               <button className="icon-button notification-button">
