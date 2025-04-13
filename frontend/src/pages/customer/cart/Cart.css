@@ -8,6 +8,7 @@
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
+    margin-top: 30px;
   }
   
   .cart-title {
@@ -32,10 +33,7 @@
     justify-content: space-between;
   }
 
-  .cart-item:hover {
-    background: #f9f9f9c9;
-    border: 1px solid #f4a405; /* Adds a 2px solid orange border */
-}
+
   
   
   .cart-item-img {
@@ -153,7 +151,7 @@
     cursor: pointer;
     transition: all 0.3s;
     margin-top: 20px;
-    margin-left: 580px;
+    margin-left: 630px;
     margin-bottom: 10px;
   }
   

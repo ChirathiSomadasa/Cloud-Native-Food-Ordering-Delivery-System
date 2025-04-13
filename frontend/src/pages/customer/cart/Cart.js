@@ -171,6 +171,7 @@ function Cart() {
     if (loading) return <div>Loading...</div>;
 
     return (
+        <>
         <div className="cart-container">
             <h2 className="cart-title">My Orders</h2>
             <button className="clear-cart-button" onClick={clearCart}>
@@ -240,6 +241,7 @@ function Cart() {
                 CHECK OUT
             </button>
         </div>
+        </>
     );
 }
 
