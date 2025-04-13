@@ -6,7 +6,6 @@ function Home() {
   const [foodItems, setFoodItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   useEffect(() => {
     // Fetch menu items with restaurant names from the backend
     const fetchMenuItems = async () => {
