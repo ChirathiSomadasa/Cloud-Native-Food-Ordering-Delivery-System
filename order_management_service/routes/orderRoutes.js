@@ -4,7 +4,7 @@ const { verifyToken, verifyRole } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 // Customer Order Routes
-router.post('/add', verifyToken, verifyRole(['customer']), placeOrder);//checked
+router.post('/add',verifyToken,verifyRole(['customer']), placeOrder);//checked
 router.get('/:id', verifyToken, verifyRole(['customer', 'restaurantAdmin']), getOrder);//checked
 router.delete('/:id', verifyToken, verifyRole(['customer']), cancelOrder);//checked
 router.get('/customer/orders', verifyToken, verifyRole(['customer']), getOrdersForCustomer); // Get all orders for a customer
