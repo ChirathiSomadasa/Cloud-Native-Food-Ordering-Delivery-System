@@ -34,21 +34,48 @@ function Home() {
 
   //Piumi
   const handleAddToCart = async (item) => {
-    const cartItem = {
-      id: item.id, // itemId
-      name: item.name,
-      price: item.price,
-      quantity: 1,
-      img: item.image,
-      restaurantId: item.restaurantId, 
-    };
+    try {
+      const token = localStorage.getItem("auth_token"); // Retrieve token from localStorage
+      if (!token) {
+        alert("You must be logged in to add items to the cart.");
+        return;
+      }
   
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.push(cartItem);
-    localStorage.setItem("cart", JSON.stringify(cart));
+      const response = await fetch("http://localhost:5003/api/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` // Add the token here
+        },
+        body: JSON.stringify({
+          itemId: item.id,
+          name: item.name,
+          price: item.price,
+          img: item.image
+        })
+      });
   
-    alert(`${item.name} added to cart!`);
+      const data = await response.json();
+      console.log("Sending item to cart:", item);
+      console.log("Sending to backend:", {
+        itemId: item.id, 
+        name: item.name,
+        price: item.price,
+        img: item.image
+      });
+      
+      if (response.ok) {
+        alert("Added to cart!");
+      } else {
+        console.error(data);
+        alert(data.error || "Failed to add item to cart.");
+      }
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+    }
   };
+  
+  
   //
 
   if (loading) {
