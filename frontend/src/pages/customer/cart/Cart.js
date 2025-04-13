@@ -123,34 +123,43 @@ function Cart() {
     };
 
     const handleCheckout = async () => {
+        const token = localStorage.getItem("auth_token");
+        if (!token) {
+            alert("Please log in to proceed with checkout.");
+            return;
+        }
+    
+        const selectedItems = cartItems.filter(item => selectedOrders.includes(item._id));
+    
         try {
-            const selectedItems = cartItems.filter((item) =>
-                selectedOrders.includes(item._id)
-            );
-            const token = localStorage.getItem("auth_token");
-            const user = JSON.parse(localStorage.getItem("user"));
-
-            const orderPayload = {
-                userId: user?._id,
-                items: selectedItems,
-                totalAmount: totalPrice,
-            };
-
-            await axios.post("http://localhost:5003/api/order/add", orderPayload, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
+            for (const item of selectedItems) {
+                const orderData = {
+                    //restaurantId: item.restaurantId, // This must be part of cart item
+                    itemId: item._id,
+                    quantity: item.quantity,
+                    totalPrice: item.price * item.quantity
+                };
+    
+                const response = await axios.post(
+                    "http://localhost:5003/api/order/add",
+                    orderData,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+    
+                console.log("Order placed:", response.data);
+            }
+    
             alert("Order placed successfully!");
-            const remainingCart = cartItems.filter(
-                (item) => !selectedOrders.includes(item._id)
-            );
-            setCartItems(remainingCart);
+            // Optionally clear only selected orders from cart
+            const remainingCartItems = cartItems.filter(item => !selectedOrders.includes(item._id));
+            setCartItems(remainingCartItems);
             setSelectedOrders([]);
         } catch (error) {
-            console.error("Checkout error:", error);
+            console.error("Error placing order:", error.response?.data || error.message);
             alert("Failed to place order. Please try again.");
         }
     };
+    
 
     const selectedTotal = cartItems
         .filter((item) => selectedOrders.includes(item._id))
