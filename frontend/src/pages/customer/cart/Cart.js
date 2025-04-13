@@ -165,7 +165,7 @@ function Cart() {
         .filter((item) => selectedOrders.includes(item._id))
         .reduce((total, item) => total + item.price * item.quantity, 0);
 
-    const deliveryFee = selectedOrders.length > 0 ? 300 : 0;
+    const deliveryFee = selectedOrders.length > 0 ? 200 : 0;
     const totalPrice = selectedTotal + deliveryFee;
 
     if (loading) return <div>Loading...</div>;
