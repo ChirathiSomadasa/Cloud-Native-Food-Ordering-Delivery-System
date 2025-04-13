@@ -9,8 +9,8 @@ exports.placeOrder = async (req, res) => {
   try {
       console.log("Received order data:", req.body); // Debugging
 
-      const { restaurantId, itemId,quantity, totalPrice } = req.body;
-      if (!restaurantId || !itemId || !quantity || !totalPrice) {
+      const {  itemId,quantity, totalPrice } = req.body;
+      if ( !itemId || !quantity || !totalPrice) {
           return res.status(400).json({ error: "Invalid order data" });
       }
 
@@ -21,7 +21,6 @@ exports.placeOrder = async (req, res) => {
 
       const order = new Order({
           customerId,
-          restaurantId,
           itemId,
           quantity,
           totalPrice,
