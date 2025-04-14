@@ -29,7 +29,7 @@ function MenuItemAdd() {
           return;
         }
   
-        const response = await axios.get("http://localhost:5002/api/restaurants/get-restaurant-id", {
+        const response = await axios.get("http://localhost:5004/api/restaurants/get-restaurant-id", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
