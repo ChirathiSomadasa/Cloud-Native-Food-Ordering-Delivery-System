@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import "./Header.css";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom"; 
+import axios from "axios"; 
 import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonIcon from "@mui/icons-material/Person";
 
 function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -34,29 +33,6 @@ function Header() {
       console.error("Error during sign-out:", err.response?.data?.error);
     }
   };
-
-  const [cartItems, setCartItems] = useState([]);
-
-  // Assuming userId is available, you can fetch the user's cart items
-  const userId = "user123"; // Replace with actual user ID logic
-
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        // Fetch user's cart items
-        const response = await fetch(`/api/cart/${userId}`);
-        const data = await response.json();
-        setCartItems(data); // Set the cart items to state
-      } catch (error) {
-        console.error("Error fetching cart items:", error);
-      }
-    };
-
-    fetchCartItems();
-  }, [userId]);
-
-  // Get the number of items in the cart
-  const numberOfItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <>
@@ -88,12 +64,10 @@ function Header() {
               <button className="icon-button profile-button">
                 <PersonIcon />
               </button>
-              <Link to="/cart">
-                <button className="icon-button cart-button">
-                  <ShoppingCartIcon />
-                  <span className="badge">3</span>
-                </button>
-              </Link>
+              <button className="icon-button cart-button">
+                <ShoppingCartIcon />
+                <span className="badge">3</span>
+              </button>
               <button className="icon-button notification-button">
                 <NotificationsIcon />
                 <span className="badge">2</span>
@@ -104,7 +78,7 @@ function Header() {
             <div className="mobile-menu">
               <button className="icon-button cart-button">
                 <ShoppingCartIcon />
-                <span className="badge">{numberOfItems}</span>
+                <span className="badge">3</span>
               </button>
               <button className="icon-button notification-button">
                 <NotificationsIcon />

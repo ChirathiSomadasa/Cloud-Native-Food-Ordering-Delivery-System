@@ -41,7 +41,6 @@ exports.deleteRestaurant = async (req, res) => {
 // Verify a restaurant (Only System Admin)
 exports.verifyRestaurant = async (req, res) => {
   const { id } = req.params;
-
   try {
     const restaurant = await Restaurant.findById(id);
     if (!restaurant) {
@@ -57,6 +56,7 @@ exports.verifyRestaurant = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // Fetch all restaurants
 exports.getAllRestaurants = async (req, res) => {

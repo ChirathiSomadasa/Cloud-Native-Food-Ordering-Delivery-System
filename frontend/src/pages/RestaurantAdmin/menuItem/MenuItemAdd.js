@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; 
 import axios from "axios";
 import "./MenuItemAdd.css";
 
@@ -12,6 +13,7 @@ function MenuItemAdd() {
     image: null, // To store the uploaded image file
   });
 
+  const navigate = useNavigate();
   // State to manage loading, error messages, and restaurantId
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -111,7 +113,7 @@ function MenuItemAdd() {
       console.log("Request Payload:", payload);
   
       const response = await axios.post(
-        "http://localhost:5002/api/menu-items/add-menu-item",
+        "http://localhost:5004/api/menu-items/add-menu-item",
         payload,
         {
           headers: {
@@ -129,6 +131,7 @@ function MenuItemAdd() {
       });
   
       alert("Menu item added successfully!");
+      navigate("/menu-item-list");
     } catch (err) {
       console.error("Error adding menu item:", err.response?.data?.error || err.message);
       setError(err.response?.data?.error || "An error occurred while adding the menu item.");
@@ -200,7 +203,6 @@ function MenuItemAdd() {
                 />
               </div>
             </div>
-
             <div className="form-groupM checkbox-group">
               <label className="checkbox-container">
                 <input

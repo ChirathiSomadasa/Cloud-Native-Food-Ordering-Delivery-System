@@ -17,6 +17,11 @@ router.delete('/delete/:id', verifyToken, verifyRole(['systemAdmin']), deleteRes
 // Verify a restaurant
 router.put('/verify-restaurant/:id', verifyToken, verifyRole(['systemAdmin']), verifyRestaurant);
 
+// Fetch all restaurants
+router.get('/get', verifyToken, verifyRole(['systemAdmin']), getAllRestaurants);
+
+// Get restaurant verification status
+router.get('/status', verifyToken, getRestaurantStatus);
 
 // Fetch the restaurant ID for the logged-in user
 router.get('/get-restaurant-id', verifyToken, verifyRole(['restaurantAdmin']), getRestaurantIdForUser);
