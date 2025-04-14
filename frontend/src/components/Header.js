@@ -4,7 +4,6 @@ import "./Header.css";
 import { Link, useNavigate } from "react-router-dom"; 
 import axios from "axios"; 
 import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonIcon from "@mui/icons-material/Person";

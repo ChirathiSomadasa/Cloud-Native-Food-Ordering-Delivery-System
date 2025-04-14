@@ -30,7 +30,7 @@ function MenuItemEdit() {
           return;
         }
 
-        const response = await axios.get(`http://localhost:5002/api/menu-items/${id}`, {
+        const response = await axios.get(`http://localhost:5004/api/menu-items/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -117,7 +117,7 @@ function MenuItemEdit() {
       console.log("Request Payload:", payload);
 
       const response = await axios.put(
-        `http://localhost:5002/api/menu-items/update/${id}`,
+        `http://localhost:5004/api/menu-items/update/${id}`,
         payload,
         {
           headers: {

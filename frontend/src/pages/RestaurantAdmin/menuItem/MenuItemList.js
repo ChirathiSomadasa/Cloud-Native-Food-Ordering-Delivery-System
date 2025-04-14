@@ -20,7 +20,7 @@ const MenuItemList = () => {
           setLoading(false);
           return;
         }
-        const response = await fetch("http://localhost:5002/api/menu-items/user-menu-items", {
+        const response = await fetch("http://localhost:5004/api/menu-items/user-menu-items", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -26,7 +26,7 @@ function Home() {
           return;
         }
 
-        const response = await axios.get("http://localhost:5002/api/restaurants/status", {
+        const response = await axios.get("http://localhost:5004/api/restaurants/status", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

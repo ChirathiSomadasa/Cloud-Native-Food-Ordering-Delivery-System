@@ -13,7 +13,7 @@ function Home() {
     const fetchMenuItems = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5002/api/menu-items/home-menu-items?page=${currentPage}&limit=6`
+          `http://localhost:5004/api/menu-items/home-menu-items?page=${currentPage}&limit=6`
         );
         if (!response.ok) {
           const errorText = await response.text();

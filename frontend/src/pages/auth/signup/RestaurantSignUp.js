@@ -144,7 +144,7 @@ const RestaurantSignUp = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:5002/api/restaurants/register-restaurant",
+        "http://localhost:5004/api/restaurants/register-restaurant",
         transformedData,
         {
           headers: {

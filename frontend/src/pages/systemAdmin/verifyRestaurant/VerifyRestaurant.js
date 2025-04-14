@@ -16,7 +16,7 @@ function VerifyRestaurant() {
           return;
         }
 
-        const response = await axios.get("http://localhost:5002/api/restaurants/get", {
+        const response = await axios.get("http://localhost:5004/api/restaurants/get", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -53,7 +53,7 @@ function VerifyRestaurant() {
       }
 
       const response = await axios.put(
-        `http://localhost:5002/api/restaurants/verify-restaurant/${restaurantId}`,
+        `http://localhost:5004/api/restaurants/verify-restaurant/${restaurantId}`,
         {},
         {
           headers: {
@@ -86,7 +86,7 @@ function VerifyRestaurant() {
       }
 
       const response = await axios.delete(
-        `http://localhost:5002/api/restaurants/delete/${restaurantId}`,
+        `http://localhost:5004/api/restaurants/delete/${restaurantId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
