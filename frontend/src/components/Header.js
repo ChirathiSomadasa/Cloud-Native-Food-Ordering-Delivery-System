@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState,useEffect } from "react";
 import Sidebar from "./Sidebar";
 import "./Header.css";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom"; 
+import axios from "axios"; 
 import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonIcon from "@mui/icons-material/Person";
@@ -14,6 +13,7 @@ function Header() {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [cartUpdated, setCartUpdated] = useState(false);
+
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   // Function to handle sign-out
@@ -35,7 +35,6 @@ function Header() {
       console.error("Error during sign-out:", err.response?.data?.error);
     }
   };
-
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -78,7 +77,6 @@ function Header() {
   // Get the number of items in the cart
   const numberOfItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
-
   return (
     <>
       <header className="header">
@@ -115,6 +113,7 @@ function Header() {
                   <span className="badge">{numberOfItems}</span>
                 </button>
               </Link>
+
               <button className="icon-button notification-button">
                 <NotificationsIcon />
                 <span className="badge">2</span>
@@ -125,7 +124,7 @@ function Header() {
             <div className="mobile-menu">
               <button className="icon-button cart-button">
                 <ShoppingCartIcon />
-                <span className="badge">{numberOfItems}</span>
+                <span className="badge">3</span>
               </button>
               <button className="icon-button notification-button">
                 <NotificationsIcon />

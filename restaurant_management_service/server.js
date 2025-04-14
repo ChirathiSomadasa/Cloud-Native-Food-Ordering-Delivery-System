@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/dbConfig');
-const bodyParser = require('body-parser'); // Import body-parser explicitly
 const restaurantRoutes = require('./routes/restaurantRoutes'); 
 const menuItemRoutes = require('./routes/menuItemRoutes'); 
 const { PORT } = require('./config/envConfig');
@@ -25,10 +24,4 @@ connectDB().then(() => {
   });
 }).catch((err) => {
   console.error('Failed to start the server:', err.message);
-});
-
-// Error-handling middleware
-app.use((err, req, res, next) => {
-  console.error("Server Error:", err.message); // Log the error
-  res.status(500).json({ error: err.message || "Internal Server Error" });
 });
