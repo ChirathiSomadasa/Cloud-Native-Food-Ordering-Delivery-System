@@ -78,12 +78,25 @@ try {
 
 // Get All Users (Only System Admin)
 exports.getAllUsers = async (req, res) => {
-try {
-  const users = await User.find({}, 'first_name last_name email  mobile_number city role createdAt');
-  res.json({ Status: 'Success', data: users });
-} catch (err) {
-  res.status(500).json({ error: err.message });
-}
+  try {
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+    const skip = (page - 1) * limit;
+
+    const totalUsers = await User.countDocuments();
+    const users = await User.find({}, 'first_name last_name mobile_number email city role')
+      .skip(skip)
+      .limit(limit);
+
+    res.json({
+      Status: 'Success',
+      data: users,
+      totalPages: Math.ceil(totalUsers / limit),
+      currentPage: page,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 // Delete User (Only System Admin)

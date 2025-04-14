@@ -9,9 +9,15 @@ import CustomerHome from "./pages/customer/home/Home";
 import AdminHome from "./pages/systemAdmin/home/Home";
 import DeliveryHome from "./pages/deliveryPersonnel/home/Home";
 import MenuItemAdd from "./pages/RestaurantAdmin/menuItem/MenuItemAdd";
+import VerifyRestaurant from "./pages/systemAdmin/verifyRestaurant/VerifyRestaurant";
+import MenuItemList from "./pages/RestaurantAdmin/menuItem/MenuItemList";
+import MenuItemEdit from "./pages/RestaurantAdmin/menuItem/MenuItemEdit";
+import ManageUsers from "./pages/systemAdmin/manageUsers/ManageUsers";
 import Cart from "./pages/customer/cart/Cart";//Piumi
 import MyOrders from "./pages/customer/cart/MyOrders";
 import PaymentForm from "./pages/customer/payment/PaymentForm";//Thamindu
+
+
 
 
 function App() {
@@ -27,6 +33,10 @@ function App() {
       <Route path="/admin-home" element={<AdminHome />} />
       <Route path="/delivery-home" element={<DeliveryHome />} />
       <Route path="/addMenuItem" element={<MenuItemAdd />} />
+      <Route path="/verifyRestaurant" element={<VerifyRestaurant />} />
+      <Route path="/menu-item-list" element={<MenuItemList />} />
+      <Route path="/edit-menu-item/:id" element={<MenuItemEdit />} />
+      <Route path="/manage-users" element={<ManageUsers />} />
       <Route path="/cart" element={<Cart/>}/>
       <Route path="/my-orders" element={<MyOrders />} />
       <Route path="/payment" element={<PaymentForm/>}/>
