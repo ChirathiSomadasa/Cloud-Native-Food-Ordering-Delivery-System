@@ -1,17 +1,38 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import "./Header.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; 
+import axios from "axios"; 
 import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import PersonIcon from "@mui/icons-material/Person"; 
+import PersonIcon from "@mui/icons-material/Person";
 
 function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigate = useNavigate(); 
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  // Function to handle sign-out
+  const handleSignOut = async () => {
+    try {
+      // Send a POST request to the backend to log out
+      await axios.post(
+        "http://localhost:5001/api/auth/logout", // Backend logout endpoint
+        {},
+        { withCredentials: true } // Include credentials (cookies)
+      );
+
+      // Clear any frontend-stored tokens 
+      localStorage.removeItem("auth_token");
+
+      // Redirect the user to the login page
+      navigate("/login");
+    } catch (err) {
+      console.error("Error during sign-out:", err.response?.data?.error);
+    }
+  };
 
   return (
     <>
@@ -27,24 +48,19 @@ function Header() {
             </a>
           </div>
 
-          {/* Middle - Search bar */}
-          <div className="search-container">
-            <div className="search-bar">
-              <SearchIcon className="search-icon" />
-              <input
-                type="search"
-                placeholder="Search restaurants and foods..."
-                className="search-input"
-              />
-            </div>
-          </div>
 
           {/* Right side - Auth buttons and icons */}
           <div className="header-right">
             <div className="desktop-menu">
-              <Link to="/register"><button className="primary-button">Sign Up</button></Link>
-              <Link to="/login"><button className="text-button-login">Login</button></Link>
-              <button className="text-button">Sign Out</button>
+              <Link to="/register">
+                <button className="primary-button">Sign Up</button>
+              </Link>
+              <Link to="/login">
+                <button className="text-button-login">Login</button>
+              </Link>
+              <button className="text-button" onClick={handleSignOut}>
+                Sign Out
+              </button>
               <button className="icon-button profile-button">
                 <PersonIcon />
               </button>
@@ -71,22 +87,16 @@ function Header() {
               <button className="icon-button profile-button">
                 <PersonIcon />
               </button>
-              <Link to="/register"><button className="primary-button">Sign Up</button></Link>
-              <Link to="/login"><button className="text-button-login">Login</button></Link>
-              <button className="text-button">Sign Out</button>
+              <Link to="/register">
+                <button className="primary-button">Sign Up</button>
+              </Link>
+              <Link to="/login">
+                <button className="text-button-login">Login</button>
+              </Link>
+              <button className="text-button" onClick={handleSignOut}>
+                Sign Out
+              </button>
             </div>
-          </div>
-        </div>
-
-        {/* Mobile search */}
-        <div className="mobile-search">
-          <div className="search-bar">
-            <SearchIcon className="search-icon" />
-            <input
-              type="search"
-              placeholder="Search restaurants and foods..."
-              className="search-input"
-            />
           </div>
         </div>
       </header>

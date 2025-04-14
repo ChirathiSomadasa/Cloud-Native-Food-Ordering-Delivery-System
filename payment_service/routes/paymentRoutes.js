@@ -1,14 +1,28 @@
 const express = require('express');
 const router = express.Router();
-const paymentController = require('../controllers/paymentController');
+const {createPayment, getPayment, updatePaymentStatus, 
+    initializeOnlinePayment, handlePaymentNotification} = require('../controllers/paymentController');
+const { verifyToken, verifyRole } = require('../middleware/authMiddleware'); //check
 
-// Initialize payment
-router.post('/initiate', paymentController.validatePayment, paymentController.initiatePayment);
 
-// Handle PayHere notification
-router.post('/notify', paymentController.handleNotification);
 
-// Get payment status
-router.get('/status/:orderId', paymentController.getPaymentStatus);
+// Create new payment  
+router.post('/pay', verifyToken, verifyRole(['customer']), createPayment); //check
+
+// Get payment by ID
+router.get('/payments/:id', verifyToken, verifyRole(['customer']), getPayment); //check
+
+
+
+// Update payment status
+router.patch('/payments/:id', updatePaymentStatus); //check
+
+// Initialize online payment
+router.post('/payments/initiate-online', initializeOnlinePayment);
+
+// Handle payment notification
+router.post('/payments/notify', handlePaymentNotification);
+
+
 
 module.exports = router;

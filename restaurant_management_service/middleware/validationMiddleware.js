@@ -13,7 +13,7 @@ exports.validateRestaurantRegistration = [
   // Validate bank account details
   body('bankAccountDetails.accountHolderName')
     .notEmpty()
-    .withMessage('Account holder name is required'),
+    .withMessage('Account holder name is required'), 
   body('bankAccountDetails.accountNumber')
     .notEmpty()
     .withMessage('Account number is required'),

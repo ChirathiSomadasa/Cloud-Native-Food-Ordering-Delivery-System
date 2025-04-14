@@ -8,7 +8,10 @@ const { PORT } = require('./config/envConfig');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -27,4 +30,4 @@ connectDB().then(() => {
 
 // Routes
 const paymentRoutes = require('./routes/paymentRoutes');
-app.use('/payment', paymentRoutes);
+app.use('/api/payment', paymentRoutes);
