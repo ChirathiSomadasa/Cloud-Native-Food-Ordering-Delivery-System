@@ -4,8 +4,8 @@ const objectId = Schema.ObjectId;
 
 const deliverySchema = new Schema({
     id: objectId,
-            customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    //RestaurantId: {type: mongoose.Schema.Types.ObjectId, ref: 'Resturant', required: true },
+    customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    RestaurantId: {type: mongoose.Schema.Types.ObjectId, ref: 'MenuItem', required: true },
     driverId: {
         type: objectId,
         ref: 'User',
@@ -17,10 +17,9 @@ const deliverySchema = new Schema({
             message: 'Driver must be a delivery personnel.'
         }
     },
-    // pickupLocation: {
-    //     type: String,
-    //     required: true
-    // },
+    pickupLocation: {//this is the resturant address
+        type: String
+    },
     deliveryAddress: {
         type: String,
         required: true
