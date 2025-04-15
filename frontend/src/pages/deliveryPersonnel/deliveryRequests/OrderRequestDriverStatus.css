@@ -1,0 +1,59 @@
+.status-container {
+    text-align: center;
+    padding: 40px;
+    font-family: Arial, sans-serif;
+    background-color: white;
+  }
+  
+  h2 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .status-image {
+    width: 180px;
+    margin-bottom: 20px;
+  }
+  
+  .accepted-text {
+    font-size: 16px;
+    color: #413cd2;
+    margin-bottom: 30px;
+    line-height: 1.6;
+    font-weight: bold;
+  }
+  
+  .order-id {
+    color: #000;
+  }
+  
+  .pickup-box {
+    background-color: #d9ecff;
+    display: inline-block;
+    padding: 20px 30px;
+    border-radius: 8px;
+  }
+  
+  .pickup-text {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #000;
+  }
+  
+  .ok-button {
+    background-color: #1a1ae4;
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .ok-button:hover {
+    background-color: #1212b0;
+  }
+  

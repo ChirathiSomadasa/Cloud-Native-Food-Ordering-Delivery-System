@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -76,6 +77,10 @@ function Sidebar({ isOpen, onClose }) {
             <a href="/notifications" className="sidebar-link" onClick={onClose}>
               <NotificationsIcon />
               <span>Notifications</span>
+            </a>
+            <a href="/deliveries" className="sidebar-link" onClick={onClose}>
+              <DeliveryDiningIcon />
+              <span>Deliveries</span>
             </a>
           </nav>
 
