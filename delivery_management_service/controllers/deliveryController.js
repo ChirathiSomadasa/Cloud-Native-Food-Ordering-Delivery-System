@@ -1,10 +1,8 @@
 const mongoose = require('mongoose');
 const User = require('../../user_authentication_service/models/User');
 const Restaurant = require('../../restaurant_management_service/models/Restaurant');
-const MenuItem = require('../../restaurant_management_service/models/MenuItem');
 const Order = require('../../order_management_service/models/Order');
 const Delivery = require('../models/Delivery');
-const axios = require('axios');
 
 
 // Create a new delivery entry when the user fills out the delivery form
@@ -13,68 +11,47 @@ exports.createDelivery = async (req, res) => {
     orderId,
     deliveryAddress,
     receiverName,
+    // paymentId,
     estimatedDeliveryTime,
     distance
   } = req.body;
 
-  const customerId = req.user.id;
+  const customerId = req.user.id; // Assumes the user is authenticated
 
   try {
-    // 1. Fetch order from order microservice
-    const { data: order } = await axios.get(
-      `http://localhost:5003/api/order/${orderId}`,
-      {
-        headers: {
-          Authorization: req.headers.authorization
-        }
-      }
-    );
+    // if (!mongoose.Types.ObjectId.isValid(orderId)) {
+    //   return res.status(400).json({ error: 'Invalid orderId format' });
+    // }
+    // // Validate the order
+    // const order = await Order.findById(orderId)
+    // .select('itemId totalPrice quantity customerId')
+    // .populate('customerId', 'name'); 
+    // if (!order) return res.status(404).json({ error: 'Order not found' });
 
-    if (!order || !order.itemId || order.itemId.length === 0) {
-      return res.status(400).json({ error: 'Order or items not found' });
-    }
-
-    // 2. Get the first MenuItem (already populated in order response)
-    const firstItem = order.itemId[0];
-    const restaurantId = firstItem.restaurantId;
-
-    if (!restaurantId) {
-      return res.status(400).json({ error: 'Restaurant ID not found in menu item' });
-    }
-
-    // 3. Fetch restaurant details to get the address
-    const restaurant = await Restaurant.findById(restaurantId);
-    if (!restaurant || !restaurant.address) {
-      return res.status(400).json({ error: 'Restaurant address not found' });
-    }
-
-    const pickupLocation = restaurant.address;
-
-    // 4. Create the Delivery
-    const fullName = `${order.customerId?.first_name || ''} ${order.customerId?.last_name || ''}`.trim();
-
+    // const itemIds = order.itemId && Array.isArray(order.itemId) ? order.itemId.map(item => item._id) : [];
+    // const totalPrice = order.totalPrice;
+    // const quantity = order.quantity;
+    // const customerName = order.customerId.name;
+    // Create new Delivery
     const newDelivery = new Delivery({
       customerId,
-      RestaurantId: firstItem._id, // This is still the MenuItem _id
       deliveryAddress,
-      receiverName: receiverName || fullName,
+      receiverName: receiverName, // || customerName,
       orderId,
-      itemId: order.itemId.map(item => item._id), // array of menu item IDs
-      totalPrice: order.totalPrice,
-      quantity: order.quantity,
-      pickupLocation,
+      // itemIds,
+      // totalPrice,
+      // quantity,
       estimatedDeliveryTime,
       distance,
-      deliveryStatus: 'pending',
-      driverLocation: { lat: null, lng: null }
+      deliveryStatus: 'pending', // Initial status
+      driverLocation: { lat: null, lng: null } // Initial driver location
     });
 
     await newDelivery.save();
     res.status(201).json({ message: 'Delivery created successfully', delivery: newDelivery });
 
   } catch (err) {
-    console.error('Error creating delivery:', err.message);
-    res.status(500).json({ error: 'Failed to create delivery', details: err.message });
+    res.status(500).json({ error: 'Error creating delivery', details: err.message });
   }
 };
 
