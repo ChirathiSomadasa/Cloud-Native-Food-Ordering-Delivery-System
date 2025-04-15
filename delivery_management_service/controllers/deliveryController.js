@@ -34,35 +34,46 @@ exports.createDelivery = async (req, res) => {
       return res.status(400).json({ error: 'Order or items not found' });
     }
 
-    // 2. Get the first MenuItem (already populated in order response)
-    const firstItem = order.itemId[0];
-    const restaurantId = firstItem.restaurantId;
+     // 2. Fetch the first MenuItem by its ID (from order.itemId[0])
+//      const menuItemId = order.itemId[0];
+// console.log("Fetching MenuItem for ID:", menuItemId);
+// const menuItem = await MenuItem.findById(menuItemId);
 
-    if (!restaurantId) {
-      return res.status(400).json({ error: 'Restaurant ID not found in menu item' });
-    }
+// if (!menuItem) {
+//   console.error(`MenuItem not found for ID: ${menuItemId}`);
+//   return res.status(400).json({ error: 'MenuItem not found' });
+// }
 
-    // 3. Fetch restaurant details to get the address
-    const restaurant = await Restaurant.findById(restaurantId);
-    if (!restaurant || !restaurant.address) {
-      return res.status(400).json({ error: 'Restaurant address not found' });
-    }
+// console.log("Fetched MenuItem:", menuItem);
 
-    const pickupLocation = restaurant.address;
+// if (!menuItem.restaurantId) {
+//   console.error(`MenuItem ${menuItemId} is missing restaurantId`);
+//   return res.status(400).json({ error: 'Restaurant ID not found in menu item' });
+// }
+
+// console.log("Restaurant ID:", menuItem.restaurantId);
+
+//     // 3. Fetch restaurant details to get the address
+//     const restaurant = await Restaurant.findById(restaurantId);
+//     if (!restaurant || !restaurant.address) {
+//       return res.status(400).json({ error: 'Restaurant address not found' });
+//     }
+
+//     const pickupLocation = restaurant.address;
 
     // 4. Create the Delivery
     const fullName = `${order.customerId?.first_name || ''} ${order.customerId?.last_name || ''}`.trim();
 
     const newDelivery = new Delivery({
       customerId,
-      RestaurantId: firstItem._id, // This is still the MenuItem _id
+      // RestaurantId: menuItemId, // This is still the MenuItem _id
       deliveryAddress,
       receiverName: receiverName || fullName,
       orderId,
-      itemId: order.itemId.map(item => item._id), // array of menu item IDs
+      // itemId: order.itemId.map(item => item._id), // array of menu item IDs
       totalPrice: order.totalPrice,
       quantity: order.quantity,
-      pickupLocation,
+      // pickupLocation,
       estimatedDeliveryTime,
       distance,
       deliveryStatus: 'pending',

@@ -5,21 +5,21 @@ const objectId = Schema.ObjectId;
 const deliverySchema = new Schema({
     id: objectId,
     customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    RestaurantId: {type: mongoose.Schema.Types.ObjectId, ref: 'MenuItem', required: true },
+    // RestaurantId: {type: mongoose.Schema.Types.ObjectId, ref: 'MenuItem', required: true },
     driverId: {
         type: objectId,
-        ref: 'User',
+        ref: 'user',
         validate: {
             validator: async function(value) {
-                const driver = await mongoose.model('User').findById(value);
+                const driver = await mongoose.model('user').findById(value);
                 return driver && driver.role === 'deliveryPersonnel';
             },
             message: 'Driver must be a delivery personnel.'
         }
     },
-    pickupLocation: {//this is the resturant address
-        type: String
-    },
+    // pickupLocation: {//this is the resturant address
+    //     type: String
+    // },
     deliveryAddress: {
         type: String,
         required: true
@@ -33,7 +33,7 @@ const deliverySchema = new Schema({
         ref: 'Order',
         required: true
     },
-    itemId: [{type: mongoose.Schema.Types.ObjectId, ref: 'MenuItem', required: true }],
+    // itemId: [{type: mongoose.Schema.Types.ObjectId, ref: 'MenuItem', required: true }],
     totalPrice: { type: Number },
     quantity: { type: Number },
    
