@@ -1,0 +1,60 @@
+.delivery-request-container {
+    max-width: 500px;
+    margin: 40px auto;
+    background-color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .delivery-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .delivery-image img {
+    width: 150px;
+    margin-bottom: 20px;
+  }
+  
+  .delivery-accepted {
+    font-size: 16px;
+    color: black;
+    margin-bottom: 25px;
+  }
+  
+  .driver-name, .delivery-id {
+    font-weight: bold;
+    color: #5a3ff9;
+  }
+  
+  .notify-box {
+    background-color: #e0f2ff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .notify-button {
+    background-color: #1d1dc9;
+    color: white;
+    padding: 8px 20px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .notify-button:hover {
+    background-color: #101094;
+  }
+  
+  .status1-box {
+    background-color: #73d573;
+    padding: 20px;
+    font-weight: bold;
+    border-radius: 10px;
+  }
+  
