@@ -1,25 +1,13 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const objectId = Schema.ObjectId;
 
-const deliverySchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-        validate: {
-            validator: async function(value) {
-                const user = await mongoose.model('User').findById(value);
-                return user && user.role === 'customer';
-            },
-            message: 'User must be a customer.'
-        }
-    },
-    restaurantId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Restaurant',
-        required: true
-    },
+const deliverySchema = new Schema({
+    id: objectId,
+            customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    //RestaurantId: {type: mongoose.Schema.Types.ObjectId, ref: 'Resturant', required: true },
     driverId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: objectId,
         ref: 'User',
         validate: {
             validator: async function(value) {
@@ -29,11 +17,15 @@ const deliverySchema = new mongoose.Schema({
             message: 'Driver must be a delivery personnel.'
         }
     },
-    pickupLocation: {
+    // pickupLocation: {
+    //     type: String,
+    //     required: true
+    // },
+    deliveryAddress: {
         type: String,
         required: true
     },
-    deliveryAddress: {
+    receiverName: {
         type: String,
         required: true
     },
@@ -42,25 +34,30 @@ const deliverySchema = new mongoose.Schema({
         ref: 'Order',
         required: true
     },
-    paymentId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Payment'
-    },
+    itemId: [{type: mongoose.Schema.Types.ObjectId, ref: 'MenuItem', required: true }],
+    totalPrice: { type: Number },
+    quantity: { type: Number },
+   
+    //paymentId: {type: mongoose.Schema.Types.ObjectId, ref: 'Payment', required: true },
     deliveryStatus: {
         type: String,
-        enum: [ 'accepted','declined','proccessing', 'picked-up', 'on-the-way', 'delivered'],
+        enum: ['pending', 'accepted', 'declined', 'processing', 'picked-up', 'on-the-way', 'delivered'],
         default: 'pending'
     },
     estimatedDeliveryTime: {
-        type: Number 
+        type: String
     },
     distance: {
-        type: Number 
+        type: Number
     },
     driverLocation: {
         lat: { type: Number },
         lng: { type: Number }
     }
-}, { timestamps: true });
+}, { 
+    bufferCommands: false,
+    timestamps: true
+ });
 
-module.exports = mongoose.model('Delivery', deliverySchema);
+var delivery = mongoose.model("Delivery", deliverySchema);
+module.exports = delivery;

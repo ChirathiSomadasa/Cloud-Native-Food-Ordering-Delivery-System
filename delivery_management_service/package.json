@@ -18,7 +18,7 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "kafka-node": "^5.0.0",
-    "mongoose": "^8.13.0",
+    "mongoose": "^8.13.2",
     "socket.io": "^4.8.1"
   }
 }

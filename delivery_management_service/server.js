@@ -3,8 +3,6 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/dbConfig');
 const { PORT } = require('./config/envConfig');
-const authRoutes = require('./routes/authRoutes');
-// const orderRoutes = require('./routes/orderRoutes');
 const deliveryRoutes = require('./routes/deliveryRoutes');
 const driverRoutes = require('./routes/driverRoutes');
 
@@ -20,8 +18,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Routes
-app.use('/api/auth', authRoutes);
-// app.use('/api/order',orderRoutes);
 app.use('/delivery', deliveryRoutes);
 app.use('/driver', driverRoutes);
 
