@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import "./Header.css";
-import { Link, useNavigate } from "react-router-dom"; 
-import axios from "axios"; 
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -10,7 +10,10 @@ import PersonIcon from "@mui/icons-material/Person";
 
 function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
+  // Check if the user is logged in by verifying the presence of the auth token
+  const isLoggedIn = !!localStorage.getItem("auth_token");
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -23,10 +26,8 @@ function Header() {
         {},
         { withCredentials: true } // Include credentials (cookies)
       );
-
-      // Clear any frontend-stored tokens 
+      // Clear any frontend-stored tokens
       localStorage.removeItem("auth_token");
-
       // Redirect the user to the login page
       navigate("/login");
     } catch (err) {
@@ -48,59 +49,40 @@ function Header() {
             </a>
           </div>
 
-
           {/* Right side - Auth buttons and icons */}
           <div className="header-right">
-            <div className="desktop-menu">
-              <Link to="/register">
-                <button className="primary-button">Sign Up</button>
-              </Link>
-              <Link to="/login">
-                <button className="text-button-login">Login</button>
-              </Link>
-              <button className="text-button" onClick={handleSignOut}>
-                Sign Out
-              </button>
-              <button className="icon-button profile-button">
-                <PersonIcon />
-              </button>
-              <button className="icon-button cart-button">
-                <ShoppingCartIcon />
-                <span className="badge">3</span>
-              </button>
-              <button className="icon-button notification-button">
-                <NotificationsIcon />
-                <span className="badge">2</span>
-              </button>
-            </div>
-
-            {/* Mobile icons */}
-            <div className="mobile-menu">
-              <button className="icon-button cart-button">
-                <ShoppingCartIcon />
-                <span className="badge">3</span>
-              </button>
-              <button className="icon-button notification-button">
-                <NotificationsIcon />
-                <span className="badge">2</span>
-              </button>
-              <button className="icon-button profile-button">
-                <PersonIcon />
-              </button>
-              <Link to="/register">
-                <button className="primary-button">Sign Up</button>
-              </Link>
-              <Link to="/login">
-                <button className="text-button-login">Login</button>
-              </Link>
-              <button className="text-button" onClick={handleSignOut}>
-                Sign Out
-              </button>
-            </div>
+            {isLoggedIn ? (
+              // Buttons to display when the user is logged in
+              <>
+                <button className="icon-button profile-button">
+                  <PersonIcon />
+                </button>
+                <button className="icon-button cart-button">
+                  <ShoppingCartIcon />
+                  <span className="badge">3</span>
+                </button>
+                <button className="icon-button notification-button">
+                  <NotificationsIcon />
+                  <span className="badge">2</span>
+                </button>
+                <button className="text-button" onClick={handleSignOut}>
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              // Buttons to display when the user is not logged in
+              <>
+                <Link to="/register">
+                  <button className="primary-button">Sign Up</button>
+                </Link>
+                <Link to="/login">
+                  <button className="text-button-login">Login</button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
-
       {/* Sidebar */}
       <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />
     </>
