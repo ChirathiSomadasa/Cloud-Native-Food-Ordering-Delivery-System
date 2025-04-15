@@ -36,7 +36,6 @@ function Sidebar({ isOpen, onClose }) {
 
   return (
     <div className="sidebar-wrapper">
-
       <div className="sidebar-overlay"></div>
 
       {/* Sidebar */}
@@ -50,45 +49,46 @@ function Sidebar({ isOpen, onClose }) {
         <div className="sidebar-content">
           {/* Profile section */}
           <div className="profile-section">
-            <div className="profile-avatar">
-              <img src={ProfileImage} alt="Profile" />
-            </div>
             <div className="profile-info">
               <div className="profile-name">User Name</div>
-              <a href="/account" className="manage-account" onClick={onClose}>
+              <Link to="/profile" className="manage-account" onClick={onClose}>
                 Manage account
-              </a>
+              </Link>
             </div>
           </div>
 
           {/* Navigation */}
           <nav className="sidebar-nav">
-            <a href="/orders" className="sidebar-link" onClick={onClose}>
+            <Link to="/orders" className="sidebar-link" onClick={onClose}>
               <ListAltIcon />
               <span>Orders</span>
-            </a>
-            <a href="/cart" className="sidebar-link" onClick={onClose}>
+            </Link>
+            <Link to="/cart" className="sidebar-link" onClick={onClose}>
               <ShoppingCartIcon />
               <span>Cart</span>
-            </a>
-            <a href="/notifications" className="sidebar-link" onClick={onClose}>
+            </Link>
+            <Link to="/notifications" className="sidebar-link" onClick={onClose}>
               <NotificationsIcon />
               <span>Notifications</span>
-            </a>
+            </Link>
+            <Link to="/notifications" className="sidebar-link" onClick={onClose}>
+              <NotificationsIcon />
+              <span>Notifications</span>
+            </Link>
           </nav>
 
           {/* Authentication Buttons */}
           <div className="auth-buttons">
-            <Link to="/register"><button className="primary-button" onClick={onClose}>
-              Sign Up
-            </button>
+            <Link to="/register">
+              <button className="primary-button" onClick={onClose}>
+                Sign Up
+              </button>
             </Link>
             <Link to="/login">
-            <button className="text-button-login" onClick={onClose}>
-              Login
-            </button>
+              <button className="text-button-login" onClick={onClose}>
+                Login
+              </button>
             </Link>
-
           </div>
 
           {/* Sign out */}

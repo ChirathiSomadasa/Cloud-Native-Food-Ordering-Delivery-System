@@ -15,6 +15,39 @@ function Header() {
   // Check if the user is logged in by verifying the presence of the auth token
   const isLoggedIn = !!localStorage.getItem("auth_token");
 
+  // Decode the JWT token to get the user's role
+  const getUserRole = () => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      if (token) {
+        const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decode the payload
+        return decodedToken.role || "customer"; // Default to "customer" if role is missing
+      }
+      return "customer"; // Default role for non-logged-in users
+    } catch (err) {
+      console.error("Error decoding token:", err);
+      return "customer";
+    }
+  };
+
+  const userRole = getUserRole();
+
+  // Determine the home route based on the user's role
+  const getHomeRoute = () => {
+    switch (userRole) {
+      case "restaurantAdmin":
+        return "/restaurant-home";
+      case "deliveryPersonnel":
+        return "/delivery-home";
+      case "systemAdmin":
+        return "/admin-home";
+      default:
+        return "/"; // Default to customer home
+    }
+  };
+
+  const homeRoute = getHomeRoute();
+
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   // Function to handle sign-out
@@ -44,9 +77,9 @@ function Header() {
             <button className="icon-button menu-button" onClick={toggleSidebar}>
               <MenuIcon />
             </button>
-            <a href="/" className="logo-container">
+            <Link to={homeRoute} className="logo-container">
               <div className="logo">FoodSprint</div>
-            </a>
+            </Link>
           </div>
 
           {/* Right side - Auth buttons and icons */}
