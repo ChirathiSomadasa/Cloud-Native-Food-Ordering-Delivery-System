@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import "./Sidebar.css";
-import ProfileImage from "../images/profile.png";
 import { Link, useNavigate } from "react-router-dom";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
