@@ -109,7 +109,7 @@ const getSortDirectionIndicator = (key) => {
           setError("Authentication token is missing. Please log in again.");
           return;
         }
-        const response = await fetch(`http://localhost:5002/api/menu-items/delete/${id}`, {
+        const response = await fetch(`http://localhost:5004/api/menu-items/delete/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
