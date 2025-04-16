@@ -36,6 +36,13 @@ services:
     depends_on:
       - mongo    
 
+  payment-service:
+    build: ./payment_service
+    ports:
+      - "5010:5010"
+    depends_on:
+      - mongo 
+
   frontend:
     build: ./frontend
     ports:
@@ -45,12 +52,14 @@ services:
       - REACT_APP_RESTAURANT_MANAGEMENT_API_URL=http://restaurant-management:5004
       - REACT_APP_RESTAURANT_MANAGEMENT_API_URL=http://order-management:5003
       - REACT_APP_DELIVERY_MANAGEMENT_API_URL=http://delivery-management:5008
+      - REACT_APP_PAYMENT_SERVICE_API_URL=http://payment-service:5010
   
     depends_on:
       - user-authentication
       - restaurant-management
       - order-management
       - delivery-management
+      - payment-service
 
 volumes:
   mongod_data:

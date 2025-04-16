@@ -184,7 +184,7 @@ function Cart() {
     const totalPrice = selectedTotal + deliveryFee;
 
 
-    // Function to dynamically load the PayPal SDK script
+    //// Function to dynamically load the PayPal SDK script
     const addPayPalScript = async () => {
         const {data: clientId} = await axios.get("http://localhost:5010/api/config/paypal");
         console.log(clientId);
@@ -204,6 +204,12 @@ function Cart() {
 
     useEffect(() => {
         if (sdkReady && selectedOrders.length > 0) {
+            // Clear the PayPal button container before rendering a new button
+            const paypalContainer = document.getElementById("paypal-button-container");
+            if (paypalContainer) {
+                paypalContainer.innerHTML = ""; // Clear the container
+            }
+
             window.paypal.Buttons({
                 createOrder: (data, actions) => {
                     return actions.order.create({
@@ -329,6 +335,32 @@ function Cart() {
                 onClick={handleCheckout}
             >
                 CHECK OUT
+            </button>
+            {sdkReady && selectedOrders.length > 0 && (
+                <div id="paypal-button-container" 
+                    style={{
+                        marginTop: "20px",
+                        maxWidth: "300px",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                        display: "block",
+                        textAlign: "center",
+                    }}
+                ></div>
+            )}
+            <button className="checkout-button"  
+                style={{
+                    marginTop: "20px",
+                    maxWidth: "300px",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    display: "block",
+                    textAlign: "center",
+                    color: "black",
+                }}
+                onClick={handlePaymentDetailsClick}
+            >
+                Payment Details
             </button>
         </div>
         </>
