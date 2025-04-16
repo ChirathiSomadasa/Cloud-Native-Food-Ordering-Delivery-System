@@ -1,8 +1,8 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import "./Header.css";
-import { Link, useNavigate } from "react-router-dom"; 
-import axios from "axios"; 
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -11,8 +11,42 @@ import PersonIcon from "@mui/icons-material/Person";
 function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([]);
-  const [cartUpdated, setCartUpdated] = useState(false);
+
+  // Check if the user is logged in by verifying the presence of the auth token
+  const isLoggedIn = !!localStorage.getItem("auth_token");
+
+  // Decode the JWT token to get the user's role
+  const getUserRole = () => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      if (token) {
+        const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decode the payload
+        return decodedToken.role || "customer"; // Default to "customer" if role is missing
+      }
+      return "customer"; // Default role for non-logged-in users
+    } catch (err) {
+      console.error("Error decoding token:", err);
+      return "customer";
+    }
+  };
+
+  const userRole = getUserRole();
+
+  // Determine the home route based on the user's role
+  const getHomeRoute = () => {
+    switch (userRole) {
+      case "restaurantAdmin":
+        return "/restaurant-home";
+      case "deliveryPersonnel":
+        return "/delivery-home";
+      case "systemAdmin":
+        return "/admin-home";
+      default:
+        return "/"; // Default to customer home
+    }
+  };
+
+  const homeRoute = getHomeRoute();
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -25,57 +59,14 @@ function Header() {
         {},
         { withCredentials: true } // Include credentials (cookies)
       );
-
-      // Clear any frontend-stored tokens 
+      // Clear any frontend-stored tokens
       localStorage.removeItem("auth_token");
-
       // Redirect the user to the login page
       navigate("/login");
     } catch (err) {
       console.error("Error during sign-out:", err.response?.data?.error);
     }
   };
-
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      const token = localStorage.getItem("auth_token");
-      if (!token) return;
-
-      try {
-        const response = await fetch("http://localhost:5003/api/cart", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          const itemsWithQuantity = (data.items || []).map((item) => ({
-            ...item,
-            quantity: item.quantity || 1,
-          }));
-          setCartItems(itemsWithQuantity);
-        } else {
-          console.error("Failed to fetch cart");
-        }
-      } catch (err) {
-        console.error("Error fetching cart:", err);
-      }
-    };
-
-    fetchCartItems();
-    // Listen to cart updates globally
-    const handleCartUpdate = () => {
-      fetchCartItems(); // Refresh when event is triggered
-    };
-
-    window.addEventListener("cartUpdated", handleCartUpdate);
-
-    return () => {
-      window.removeEventListener("cartUpdated", handleCartUpdate);
-    };
-  }, [cartUpdated]); // run effect when cartUpdated changes
-
-  // Get the number of items in the cart
-  const numberOfItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <>
@@ -86,67 +77,45 @@ function Header() {
             <button className="icon-button menu-button" onClick={toggleSidebar}>
               <MenuIcon />
             </button>
-            <a href="/" className="logo-container">
+            <Link to={homeRoute} className="logo-container">
               <div className="logo">FoodSprint</div>
-            </a>
+            </Link>
           </div>
-
 
           {/* Right side - Auth buttons and icons */}
           <div className="header-right">
-            <div className="desktop-menu">
-              <Link to="/register">
-                <button className="primary-button">Sign Up</button>
-              </Link>
-              <Link to="/login">
-                <button className="text-button-login">Login</button>
-              </Link>
-              <button className="text-button" onClick={handleSignOut}>
-                Sign Out
-              </button>
-              <button className="icon-button profile-button">
-                <PersonIcon />
-              </button>
-              <Link to="/cart">
+            {isLoggedIn ? (
+              // Buttons to display when the user is logged in
+              <>
+                <button className="icon-button profile-button">
+                  <PersonIcon />
+                </button>
                 <button className="icon-button cart-button">
                   <ShoppingCartIcon />
-                  <span className="badge">{numberOfItems}</span>
+                  <span className="badge">3</span>
                 </button>
-              </Link>
-
-              <button className="icon-button notification-button">
-                <NotificationsIcon />
-                <span className="badge">2</span>
-              </button>
-            </div>
-
-            {/* Mobile icons */}
-            <div className="mobile-menu">
-              <button className="icon-button cart-button">
-                <ShoppingCartIcon />
-                <span className="badge">3</span>
-              </button>
-              <button className="icon-button notification-button">
-                <NotificationsIcon />
-                <span className="badge">2</span>
-              </button>
-              <button className="icon-button profile-button">
-                <PersonIcon />
-              </button>
-              <Link to="/register">
-                <button className="primary-button">Sign Up</button>
-              </Link>
-              <Link to="/login">
-                <button className="text-button-login">Login</button>
-              </Link>
-              <button className="text-button" onClick={handleSignOut}>
-                Sign Out
-              </button>
-            </div>
+                <button className="icon-button notification-button">
+                  <NotificationsIcon />
+                  <span className="badge">2</span>
+                </button>
+                <button className="text-button" onClick={handleSignOut}>
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              // Buttons to display when the user is not logged in
+              <>
+                <Link to="/register">
+                  <button className="primary-button">Sign Up</button>
+                </Link>
+                <Link to="/login">
+                  <button className="text-button-login">Login</button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
-
       {/* Sidebar */}
       <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />
     </>
