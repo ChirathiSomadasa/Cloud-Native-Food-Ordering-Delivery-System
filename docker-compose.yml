@@ -20,7 +20,21 @@ services:
     ports:
       - "5004:5004"
     depends_on:
+      - 
+  
+  order-management:
+    build: ./order_management_service
+    ports:
+      - "5003:5003"
+    depends_on:
       - mongo
+
+  delivery-management:
+    build: ./delivery_management_service
+    ports:
+      - "5008:5008"
+    depends_on:
+      - mongo    
 
   frontend:
     build: ./frontend
@@ -29,9 +43,14 @@ services:
     environment:
       - REACT_APP_USER_AUTHENTICATION_API_URL=http://user-authentication:5001
       - REACT_APP_RESTAURANT_MANAGEMENT_API_URL=http://restaurant-management:5004
+      - REACT_APP_RESTAURANT_MANAGEMENT_API_URL=http://order-management:5003
+      - REACT_APP_DELIVERY_MANAGEMENT_API_URL=http://delivery-management:5008
+  
     depends_on:
       - user-authentication
       - restaurant-management
+      - order-management
+      - delivery-management
 
 volumes:
   mongod_data:

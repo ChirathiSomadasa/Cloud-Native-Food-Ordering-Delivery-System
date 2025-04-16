@@ -443,3 +443,22 @@
       grid-template-columns: 1fr;
     }
   }
+
+  
+  .add-to-cart-btn {
+    background-color: transparent;
+    color: #f4a405;
+    border: 1px solid #f4a405;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 20px;
+    margin-left: 220px;
+  }
+  
+  .add-to-cart-btn:hover {
+    background-color: #f4a405;
+    color: white;
+  }
