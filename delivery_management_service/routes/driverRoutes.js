@@ -21,4 +21,10 @@ router.put('/decline', verifyToken, verifyRole(['deliveryPersonnel']), declineDe
 // Route to update the driver's location during delivery
 router.put('/update-location', verifyToken, verifyRole(['deliveryPersonnel']), updateDriverLocation);
 
+// Add this route to get live driver location
+// router.get('/location/:deliveryId', deliveryController.getDriverLocation);
+
+// Update location & emit via socket
+router.post('/location/update', authenticate, deliveryController.updateDriverLocationSocket);
+
 module.exports = router;

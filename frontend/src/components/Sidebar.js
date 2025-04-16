@@ -78,7 +78,7 @@ function Sidebar({ isOpen, onClose }) {
               <NotificationsIcon />
               <span>Notifications</span>
             </a>
-            <a href="/deliveries" className="sidebar-link" onClick={onClose}>
+            <a href="/deliveries/deliveryHome" className="sidebar-link" onClick={onClose}>
               <DeliveryDiningIcon />
               <span>Deliveries</span>
             </a>

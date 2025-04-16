@@ -19,6 +19,9 @@ import PaymentForm from "./pages/customer/payment/PaymentForm";//Thamindu
 
 //delivery related imports
 import DeliveryDetails from "./pages/customer/delivery/DeliveryDetails";
+import DeliveryHomeUser from "./pages/customer/delivery/DeliveryHomeUser";
+import TrackDelivery from "./pages/customer/delivery/TrackDelivery";
+import YourDeliveriesUser from "./pages/customer/delivery/YourDeliveriesUser";
 import IncomingOrderRequest from "./pages/deliveryPersonnel/deliveryRequests/IncomingOrderRequest";
 import OrderRequestDriverStatus from "./pages/deliveryPersonnel/deliveryRequests/OrderRequestDriverStatus";
 import DeliveryStatus from "./pages/deliveryPersonnel/deliveryRequests/DeliveryStatus";
@@ -47,7 +50,10 @@ function App() {
       <Route path="/payment" element={<PaymentForm/>}/>
 
     {/* delivery related routes */}
+    <Route path="/deliveries/deliveryHome" element={<DeliveryHomeUser/>}/>
     <Route path="/deliveries/deliveryDetails" element={<DeliveryDetails/>}/>
+    <Route path="/deliveries/track_deleveries" element={<TrackDelivery/>}/>
+    <Route path="/deliveries/your_deliveries" element={<YourDeliveriesUser/>}/>
     <Route path="/delivery-home/incoming_order" element={<IncomingOrderRequest/>}/>
     <Route path="/delivery-home/order_status" element={<OrderRequestDriverStatus/>}/>
     <Route path="/delivery-home/delivery_status" element={<DeliveryStatus/>}/>
