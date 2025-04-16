@@ -17,4 +17,3 @@ spec:
         image: cloud-native-food-ordering-delivery-system-restaurant-management:latest
         ports:
         - containerPort: 5004
-        
