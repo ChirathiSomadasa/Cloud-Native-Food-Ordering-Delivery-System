@@ -1,8 +1,8 @@
-.status-container {
+.del_status-container {
     text-align: center;
     padding: 40px;
     font-family: Arial, sans-serif;
-    background-color: white;
+    background-color: #f4e7d5;
   }
   
   h2 {
@@ -11,39 +11,40 @@
     margin-bottom: 20px;
   }
   
-  .status-image {
+  .del_status-image {
     width: 180px;
     margin-bottom: 20px;
   }
   
-  .accepted-text {
+  .del_accepted-text {
     font-size: 16px;
-    color: #413cd2;
+    color: #7b5303;
     margin-bottom: 30px;
     line-height: 1.6;
     font-weight: bold;
   }
   
-  .order-id {
+  .del_order-id {
     color: #000;
   }
   
-  .pickup-box {
-    background-color: #d9ecff;
+  .del_pickup-box {
+    background-color: #f7f7f6;
     display: inline-block;
     padding: 20px 30px;
     border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   }
   
-  .pickup-text {
+  .del_pickup-text {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 15px;
     color: #000;
   }
   
-  .ok-button {
-    background-color: #1a1ae4;
+  .del_ok-button {
+    background-color: #f5a90c;
     color: white;
     border: none;
     padding: 10px 30px;
@@ -53,7 +54,7 @@
     cursor: pointer;
   }
   
-  .ok-button:hover {
-    background-color: #1212b0;
+  .del_ok-button:hover {
+    background-color: #b37902;
   }
   

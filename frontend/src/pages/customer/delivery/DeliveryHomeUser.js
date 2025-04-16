@@ -20,7 +20,7 @@ const DeliveryHomeUser = () => {
 
   const handleNavigation = (path) => {
     if (!isAuthenticated) {
-      alert('You must be logged in to continue.');
+      alert('Please Login to continue with our delivery feature');
       return;
     }
     navigate(path);

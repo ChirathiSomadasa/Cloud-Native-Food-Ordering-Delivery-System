@@ -1,63 +1,97 @@
 .delivery-container {
-    text-align: center;
-    padding: 40px;
-    font-family: Arial, sans-serif;
-    background-color: white;
-    height: 100vh;
-  }
-  
-  h2 {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 30px;
-  }
-  
-  .form-box {
-    background-color: #d9ecff;
-    display: inline-block;
-    text-align: left;
-    padding: 30px;
-    border-radius: 8px;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .form-group label {
-    display: inline-block;
-    width: 160px;
-    font-weight: 500;
-  }
-  
-  .form-group input {
-    width: 300px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    background-color: #fef6f6;
-  }
-  
-  .button-container {
-    text-align: right;
-    margin-top: 15px;
-  }
-  
-  .proceed-btn {
-    background-color: #0000cc;
-    color: white;
-    font-weight: bold;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .proceed-btn:hover {
-    background-color: #000099;
-  }
-  
-  .searching-text {
-    margin-top: 40px;
-    font-size: 20px;
-    font-weight: bold;
-  }
-  
+  padding: 40px;
+  font-family: Arial, sans-serif;
+  background-color: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  justify-content: flex-start; /* Make sure the content is aligned at the top */
+}
+
+.delivery-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.delivery-content {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+  margin-bottom: 40px; /* Space for "Searching for available nearby drivers" */
+}
+
+.image-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9f9f9;
+  border-radius: 0px;
+  overflow: hidden;
+}
+
+.delivery-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0px;
+}
+
+.form-box {
+  flex: 1;
+  background-color: #fff2d6;
+  padding: 30px;
+  border-radius: 0px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: inline-block;
+  width: 160px;
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 300px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  background-color: #fef6f6;
+}
+
+.button-container {
+  text-align: right;
+  margin-top: 15px;
+}
+
+.proceed-btn {
+  background-color: #f5a90c;
+  color: white;
+  font-weight: bold;
+  padding: 20px 30px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.proceed-btn:hover {
+  background-color: #b37902;
+}
+
+.searching-text {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+  padding-bottom: 40px;
+}
