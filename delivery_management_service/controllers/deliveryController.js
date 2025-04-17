@@ -30,6 +30,15 @@ exports.createDelivery = async (req, res) => {
       }
     );
 
+//     const menuItemId = order.itemId[0];
+// const { data: menuItem } = await axios.get(`http://localhost:5002/api/menu/${menuItemId}`);
+
+// const restaurantId = menuItem.restaurantId;
+// const { data: restaurant } = await axios.get(`http://localhost:5001/api/restaurant/${restaurantId}`);
+
+// const restaurantName = restaurant.name;
+
+
     if (!order || !order.itemId || order.itemId.length === 0) {
       return res.status(400).json({ error: 'Order or items not found' });
     }
