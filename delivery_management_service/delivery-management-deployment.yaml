@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: delivery-management
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: delivery-management
+  template:
+    metadata:
+      labels:
+        app: delivery-management
+    spec:
+      containers:
+      - name: delivery-management
+        image: cloud-native-food-ordering-delivery-system-delivery-management:latest
+        ports:
+        - containerPort: 5008

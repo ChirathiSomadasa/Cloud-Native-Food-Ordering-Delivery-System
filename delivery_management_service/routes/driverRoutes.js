@@ -7,6 +7,7 @@ const {
 } = require('../controllers/driverController');
 const { verifyToken, verifyRole } = require('../middleware/authMiddleware');
 
+
 const router = express.Router();
 
 // Route to get available deliveries (status: 'pending')
@@ -24,7 +25,5 @@ router.put('/update-location', verifyToken, verifyRole(['deliveryPersonnel']), u
 // Add this route to get live driver location
 // router.get('/location/:deliveryId', deliveryController.getDriverLocation);
 
-// Update location & emit via socket
-router.post('/location/update', authenticate, deliveryController.updateDriverLocationSocket);
 
 module.exports = router;

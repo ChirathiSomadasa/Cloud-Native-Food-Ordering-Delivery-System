@@ -12,7 +12,9 @@ import PeopleIcon from "@mui/icons-material/People";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import StorefrontIcon from "@mui/icons-material/Storefront";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle"; 
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
+
 
 function Sidebar({ isOpen, onClose }) {
   const navigate = useNavigate();

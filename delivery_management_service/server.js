@@ -17,23 +17,6 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: {
-    origin: '*',
-  }
-});
-
-global.io = io; // So you can use io in controllers if needed
-
-io.on('connection', (socket) => {
-  console.log('New client connected:', socket.id);
-
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
-  });
-});
-
 // Routes
 app.use('/delivery', deliveryRoutes);
 app.use('/driver', driverRoutes);
