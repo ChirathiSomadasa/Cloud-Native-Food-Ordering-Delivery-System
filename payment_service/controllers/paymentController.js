@@ -1,10 +1,11 @@
 const Payment = require('../models/Payment');
 const axios = require('axios');
+const paypalClient = require("../config/paypalConfig");
 
 
 
 
-// Create new payment 
+// Create new payment //check
 const createPayment = async (req, res) => {
     try {
         const { orderId, amount, restaurantId, paymentMethod } = req.body;
@@ -44,11 +45,10 @@ const createPayment = async (req, res) => {
     }
 };
 
-
-// Get payment by ID
+// Get payment by ID  //check
 const getPayment = async (req, res) => {
     try {
-        const payment = await Payment.findById(req.params.id);
+        const payment = await Payment.findOne({ orderId: req.params.id });
         if (!payment) {
             return res.status(404).json({ message: 'Payment not found' });
         }
@@ -57,7 +57,6 @@ const getPayment = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
 
 // Update payment status
 const updatePaymentStatus = async (req, res) => {
@@ -78,14 +77,77 @@ const updatePaymentStatus = async (req, res) => {
 };
 
 
-// Initialize online payment
+
+// PayPal  // check // Capture PayPal payment details and save to DB
+const capturePayPalDetails = async (req, res) => {
+    try {
+        const { orderId, payerName, amount, currency, paymentDetails } = req.body;
+
+        const newPayment = new Payment({
+            customerId: req.user.id, // This comes from the JWT
+            orderId,
+            payerName,
+            amount,
+            currency,
+            paymentDetails,
+        });
+
+        await newPayment.save();
+        res.status(201).json({ message: "Payment recorded successfully" });
+    } catch (err) {
+        console.error("Error saving payment:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+// not check, mot working
+const createPayPalOrder = async (req, res) => {
+    try {
+        const { amount, currency } = req.body;
+
+        const request = new paypal.orders.OrdersCreateRequest();
+        request.prefer("return=representation");
+        request.requestBody({
+            intent: "CAPTURE",
+            purchase_units: [
+                {
+                    amount: {
+                        currency_code: currency || "USD",
+                        value: amount,
+                    },
+                },
+            ],
+        });
+
+        const order = await paypalClient.execute(request);
+        res.status(201).json({ id: order.result.id });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+const capturePayPalOrder = async (req, res) => {
+    try {
+        const { orderId } = req.body;
+
+        const request = new paypal.orders.OrdersCaptureRequest(orderId);
+        request.requestBody({});
+
+        const capture = await paypalClient.execute(request);
+        res.status(200).json({ status: "success", details: capture.result });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+
+// PayHere (Sri Lanka) - Online Payment Integration   // not check, not working
 const initializeOnlinePayment = async (req, res) => {
     try {
         const { orderId, amount, customerEmail, customerName } = req.body;
 
-        // Example PayHere configuration (replace with your payment gateway)
         const paymentConfig = {
-            merchant_id: process.env.PAYMENT_MERCHANT_ID,
+            merchant_id: process.env.PAYHERE_MERCHANT_ID,
             return_url: process.env.PAYMENT_RETURN_URL,
             cancel_url: process.env.PAYMENT_CANCEL_URL,
             notify_url: process.env.PAYMENT_NOTIFY_URL,
@@ -95,89 +157,53 @@ const initializeOnlinePayment = async (req, res) => {
             currency: "LKR",
             first_name: customerName,
             email: customerEmail,
-            phone: "0771234567", // You might want to add this to your form
-            address: "Customer Address", // You might want to add this to your form
-            city: "Colombo", // You might want to add this to your form
+            phone: "0771234567", // Optional
+            address: "Customer Address", // Optional
+            city: "Colombo", // Optional
             country: "Sri Lanka",
         };
 
-        // Generate payment URL (this will depend on your payment gateway)
-        const paymentUrl = generatePaymentGatewayUrl(paymentConfig);
-
-        res.json({ 
-            paymentUrl,
-            orderId 
-        });
+        const paymentUrl = `https://sandbox.payhere.lk/pay/checkout?${new URLSearchParams(paymentConfig).toString()}`;
+        res.json({ paymentUrl });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
-
-
-// Handle payment notification
 const handlePaymentNotification = async (req, res) => {
     try {
-        const { order_id, payment_id, status } = req.body;
+        const { order_id, status } = req.body;
 
-        // Verify payment signature/hash from payment gateway
-        if (verifyPaymentSignature(req.body)) {
-            // Update payment status in database
+        if (status === "success") {
             await Payment.findOneAndUpdate(
                 { orderId: order_id },
-                { 
-                    status: status === 'success' ? 'completed' : 'failed',
-                    paymentReference: payment_id
-                }
+                { status: "completed" }
             );
-
-            res.json({ status: 'success' });
         } else {
-            res.status(400).json({ status: 'invalid signature' });
+            await Payment.findOneAndUpdate(
+                { orderId: order_id },
+                { status: "failed" }
+            );
         }
+
+        res.status(200).send("Notification processed");
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-
-const fetchOrderAndCustomerDetails = async (req, res) => {
-    try {
-        const { orderId } = req.params;
-
-        // Fetch order details
-        const orderResponse = await axios.get(`http://localhost:5003/api/order/${orderId}`);
-        const order = orderResponse.data;
-
-        if (!order) {
-            return res.status(404).json({ error: 'Order not found' });
-        }
-
-        // Fetch customer details using customerId from the order
-        const customerResponse = await axios.get(`http://localhost:5001/api/user/${order.customerId}`);
-        const customer = customerResponse.data;
-
-        if (!customer) {
-            return res.status(404).json({ error: 'Customer not found' });
-        }
-
-        // Return order and customer details
-        res.json({
-            orderId: order._id,
-            customerName: customer.name,
-            customerEmail: customer.email,
-        });
-    } catch (error) {
-        console.error('Error fetching order or customer details:', error.message);
-        res.status(500).json({ error: 'Error fetching order or customer details' });
-    }
-};
 
 
 module.exports = {
     createPayment,
     getPayment,
     updatePaymentStatus,
+
+    // PayPal
+    createPayPalOrder,
+    capturePayPalOrder,
+    capturePayPalDetails, //check
+
+    // PayHere
     initializeOnlinePayment,
     handlePaymentNotification,
-    fetchOrderAndCustomerDetails
 };

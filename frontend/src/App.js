@@ -15,7 +15,7 @@ import MenuItemEdit from "./pages/RestaurantAdmin/menuItem/MenuItemEdit";
 import ManageUsers from "./pages/systemAdmin/manageUsers/ManageUsers";
 import Cart from "./pages/customer/cart/Cart";//Piumi
 import MyOrders from "./pages/customer/cart/MyOrders";
-import PaymentForm from "./pages/customer/payment/PaymentForm";//Thamindu
+import PaymentDetails from "./pages/customer/payment/PaymentDetails";//Thamindu
 
 //delivery related imports
 import DeliveryDetails from "./pages/customer/delivery/DeliveryDetails";
@@ -47,7 +47,7 @@ function App() {
       <Route path="/manage-users" element={<ManageUsers />} />
       <Route path="/cart" element={<Cart/>}/>
       <Route path="/my-orders" element={<MyOrders />} />
-      <Route path="/payment" element={<PaymentForm/>}/>
+      <Route path="/payment-details" element={<PaymentDetails/>}/>
 
     {/* delivery related routes */}
     <Route path="/deliveries/deliveryHome" element={<DeliveryHomeUser/>}/>

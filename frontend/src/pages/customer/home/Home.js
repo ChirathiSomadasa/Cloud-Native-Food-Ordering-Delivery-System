@@ -38,6 +38,54 @@ function Home() {
     fetchMenuItems();
   }, [currentPage]); // Re-fetch when the current page changes
 
+  //Piumi
+  const handleAddToCart = async (item) => {
+    try {
+      const token = localStorage.getItem("auth_token"); // Retrieve token from localStorage
+      if (!token) {
+        alert("You must be logged in to add items to the cart.");
+        return;
+      }
+
+      const response = await fetch("http://localhost:5003/api/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` // Add the token here
+        },
+        body: JSON.stringify({
+          itemId: item.id,
+          name: item.name,
+          price: item.price,
+          img: item.image
+        })
+      });
+
+      const data = await response.json();
+      console.log("Sending item to cart:", item);
+      console.log("Sending to backend:", {
+        itemId: item.id,
+        name: item.name,
+        price: item.price,
+        img: item.image
+      });
+
+      if (response.ok) {
+        alert("Added to cart!");
+      } else {
+        console.error(data);
+        alert(data.error || "Failed to add item to cart.");
+      }
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+    }
+    window.dispatchEvent(new Event("cartUpdated")); // notify Header
+
+  };
+
+
+  //
+
   if (loading && currentPage === 1) {
     return <div className="loading">Loading...</div>;
   }
@@ -111,6 +159,7 @@ function Home() {
                       <p className="description-label">Description:</p>
                       <p className="description-text">{item.description || "No description available."}</p>
                     </div>
+                    <button onClick={() => handleAddToCart(item)} className="add-to-cart-btn">Add to Cart</button>
                   </div>
                 </div>
               ))
