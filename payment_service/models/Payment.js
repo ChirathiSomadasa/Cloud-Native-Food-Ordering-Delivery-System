@@ -1,5 +1,57 @@
 const mongoose = require('mongoose');
 
+// const paymentSchema = new mongoose.Schema(
+//     {
+//         paymentId: mongoose.Schema.Types.ObjectId, // Unique ID for the payment
+
+//         customerId: { 
+//             type: mongoose.Schema.Types.ObjectId, 
+//             ref: 'user', // Reference to User model
+//             required: true 
+//         },
+//         restaurantId: { 
+//             type: mongoose.Schema.Types.ObjectId, 
+//             ref: 'Restaurant', // Reference to Restaurant model
+//             required: true 
+//         },
+//         orderId: {
+//             type: mongoose.Schema.Types.ObjectId,
+//             ref: 'Order', // Reference to Order model
+//             required: true
+//         },
+
+//         amount: {
+//             type: Number,
+//             required: true // This will be fetched from the Order model
+//         },
+//         currency: {
+//             type: String,
+//             default: 'LKR' // Default currency
+//         },
+//         paymentMethod: {
+//             type: String,
+//             enum: ['Credit Card', 'Debit Card', 'Cash'],
+//             required: true
+//         },
+
+//         status: {
+//             type: String,
+//             enum: ['pending', 'completed', 'failed'],
+//             default: 'pending'
+//         },
+
+//         paymentReference: {
+//             type: String
+//         },
+//         createdAt: {
+//             type: Date,
+//             default: Date.now
+//         }
+
+//     },
+//     { timestamps: true }
+// );
+
 const paymentSchema = new mongoose.Schema(
     {
         paymentId: mongoose.Schema.Types.ObjectId, // Unique ID for the payment
@@ -9,44 +61,31 @@ const paymentSchema = new mongoose.Schema(
             ref: 'user', // Reference to User model
             required: true 
         },
-        restaurantId: { 
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'Restaurant', // Reference to Restaurant model
-            required: true 
-        },
         orderId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Order', // Reference to Order model
+            type: String,
             required: true
         },
-
+        payerName: {
+            type: String,
+            required: true,
+        },
         amount: {
             type: Number,
-            required: true // This will be fetched from the Order model
-        },
+            required: true,
+        },              
         currency: {
             type: String,
-            default: 'LKR' // Default currency
+            required: true,
         },
-        paymentMethod: {
-            type: String,
-            enum: ['Credit Card', 'Debit Card', 'Cash'],
-            required: true
+        paymentDetails: {
+            type: Object,
+            required: true,  // whole PayPal response
         },
-
-        status: {
-            type: String,
-            enum: ['pending', 'completed', 'failed'],
-            default: 'pending'
-        },
-
-        paymentReference: {
-            type: String
-        },
-        createdAt: {
+        paidAt: { 
             type: Date,
-            default: Date.now
-        }
+            required: true, 
+            default: Date.now 
+        },
 
     },
     { timestamps: true }

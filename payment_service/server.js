@@ -31,3 +31,10 @@ connectDB().then(() => {
 // Routes
 const paymentRoutes = require('./routes/paymentRoutes');
 app.use('/api/payment', paymentRoutes);
+
+
+// PayPal Client ID Route
+// This route is used to send the PayPal client ID to the frontend
+app.get('/api/config/paypal', (req, res) => 
+  res.send(process.env.PAYPAL_CLIENT_ID)
+);

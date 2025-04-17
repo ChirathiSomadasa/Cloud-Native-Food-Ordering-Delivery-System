@@ -15,7 +15,7 @@ import MenuItemEdit from "./pages/RestaurantAdmin/menuItem/MenuItemEdit";
 import ManageUsers from "./pages/systemAdmin/manageUsers/ManageUsers";
 import Cart from "./pages/customer/cart/Cart";//Piumi
 import MyOrders from "./pages/customer/cart/MyOrders";
-import PaymentForm from "./pages/customer/payment/PaymentForm";//Thamindu
+import PaymentDetails from "./pages/customer/payment/PaymentDetails";//Thamindu
 
 
 
@@ -40,6 +40,15 @@ function App() {
       <Route path="/cart" element={<Cart/>}/>
       <Route path="/my-orders" element={<MyOrders />} />
       <Route path="/payment" element={<PaymentForm/>}/>
+      <Route path="/payment-details" element={<PaymentDetails/>}/>
+
+    {/* delivery related routes */}
+    <Route path="/deliveries/deliveryDetails" element={<DeliveryDetails/>}/>
+    <Route path="/delivery-home/incoming_order" element={<IncomingOrderRequest/>}/>
+    <Route path="/delivery-home/order_status" element={<OrderRequestDriverStatus/>}/>
+    <Route path="/delivery-home/delivery_status" element={<DeliveryStatus/>}/>
+    <Route path="/restuarant-home/delivery_status" element={<DeliveryRequestStatus/>}/>
+
       </Routes>
     </BrowserRouter>
   );
