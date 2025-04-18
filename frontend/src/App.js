@@ -26,6 +26,8 @@ import IncomingOrderRequest from "./pages/deliveryPersonnel/deliveryRequests/Inc
 import OrderRequestDriverStatus from "./pages/deliveryPersonnel/deliveryRequests/OrderRequestDriverStatus";
 import DeliveryStatus from "./pages/deliveryPersonnel/deliveryRequests/DeliveryStatus";
 import DeliveryRequestStatus from "./pages/RestaurantAdmin/deliveryStatus/DeliveryRequestStatus";
+import Footer from "./components/Footer";
+
 
 
 function App() {
@@ -59,6 +61,7 @@ function App() {
     <Route path="/delivery-home/delivery_status" element={<DeliveryStatus/>}/>
     <Route path="/restuarant-home/delivery_status" element={<DeliveryRequestStatus/>}/>
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }
