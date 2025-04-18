@@ -1,4 +1,5 @@
 const Payment = require('../models/Payment');
+const Order = require("../../order_management_service/models/Order");
 const axios = require('axios');
 const paypalClient = require("../config/paypalConfig");
 
@@ -81,18 +82,39 @@ const updatePaymentStatus = async (req, res) => {
 // PayPal  // check // Capture PayPal payment details and save to DB
 const capturePayPalDetails = async (req, res) => {
     try {
-        const { orderId, payerName, amount, currency, paymentDetails } = req.body;
+        console.log("Request Body:", req.body); // Log the incoming request body
+
+        const { paypalOrderId, restaurantOrderId, payerName, amount, currency, paymentDetails } = req.body;
+
+        if (!paypalOrderId || !restaurantOrderId || !payerName || !amount || !currency || !paymentDetails) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+
+        // Find the corresponding order by PayPal orderId
+        const order = await Order.findById(restaurantOrderId);
+        console.log("Order retrieved successfully:", order);
+        if (!order) {
+            console.error("Order not found for restaurantOrderId:", restaurantOrderId);
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        console.log("✅ Order found:", order._id);
+
 
         const newPayment = new Payment({
             customerId: req.user.id, // This comes from the JWT
-            orderId,
+            restaurantOrderId,//: order._id, // This is the order ID from the Order service
+            paypalOrderId, // This is the PayPal order ID
             payerName,
             amount,
             currency,
             paymentDetails,
+            paidAt: new Date(),
         });
-
+        
+        await newPayment.validate();
         await newPayment.save();
+        console.log("💾 Payment saved successfully:", newPayment._id);
         res.status(201).json({ message: "Payment recorded successfully" });
     } catch (err) {
         console.error("Error saving payment:", err);
