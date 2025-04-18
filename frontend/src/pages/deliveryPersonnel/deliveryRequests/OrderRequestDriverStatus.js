@@ -10,7 +10,7 @@ const OrderRequestDriverStatus = () => {
       {/* <img src={deliveryImage} alt="Delivery Illustration" className="del_status-image" /> */}
 
       <p className="del_accepted-text">
-        You have accepted the order:<span className="del_order-id">id</span><br />
+        You have been assigned the order:<span className="del_order-id">id</span><br />
         You will be notified when the order is ready to go
       </p>
 

@@ -1,0 +1,82 @@
+.home-container {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #fffaf3;
+    padding: 20px;
+  }
+  
+  .hero-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff2cc;
+    padding: 25px;
+    border-radius: 12px;
+  }
+  
+  .hero-text {
+    max-width: 50%;
+  }
+  
+  .hero-text h2 {
+    font-size: 36px;
+    font-weight: bold;
+  }
+  
+  .highlight {
+    color: #000;
+  }
+  
+  .highlight-yellow {
+    color: orange;
+    font-weight: bold;
+  }
+  
+  .hero-text h3 {
+    font-size: 28px;
+    margin: 10px 0;
+    color: #333;
+  }
+  
+  .hero-text p {
+    font-size: 20px;
+    color: #555;
+    margin-bottom: 20px;
+  }
+    .hero-image img {
+    max-width: 600px;
+    border-radius: 12px;
+  }
+  
+  .action-section {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .action-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border: 2px solid #ffe6b3;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .action-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #000;
+  }
+  
+  .action-btn {
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
