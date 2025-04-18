@@ -56,6 +56,8 @@ function Cart() {
         
     }, []);
 
+
+
     const removeItem = async (id) => {
         const token = localStorage.getItem("auth_token");
         console.log("Attempting to remove item with ID:", id);
