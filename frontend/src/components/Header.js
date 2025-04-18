@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import "./Header.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ import PersonIcon from "@mui/icons-material/Person";
 function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const [cartItems, setCartItems] = useState();
 
   // Check if the user is logged in by verifying the presence of the auth token
   const isLoggedIn = !!localStorage.getItem("auth_token");
@@ -68,6 +69,52 @@ function Header() {
     }
   };
 
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      const token = localStorage.getItem("auth_token");
+      if (!token) return;
+
+      try {
+        const response = await fetch("http://localhost:5003/api/cart", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const itemsWithQuantity = (data.items || []).map((item) => ({
+            ...item,
+            quantity: item.quantity || 1,
+          }));
+          setCartItems(itemsWithQuantity);
+        } else {
+          console.error("Failed to fetch cart");
+        }
+      } catch (err) {
+        console.error("Error fetching cart:", err);
+      }
+    };
+
+    fetchCartItems();
+
+    const handleCartUpdate = () => {
+      fetchCartItems();
+    };
+
+    // Add listener
+    window.addEventListener("cartUpdated", handleCartUpdate);
+
+    //  Cleanup
+    return () => {
+      window.removeEventListener("cartUpdated", handleCartUpdate);
+    };
+  }, []);
+
+  // After successfully adding an item to the cart
+  window.dispatchEvent(new Event("cartUpdated"));
+
+  // Get the number of items in the cart
+  const numberOfItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+
   return (
     <>
       <header className="header">
@@ -92,7 +139,7 @@ function Header() {
                 </button>
                 <button className="icon-button cart-button">
                   <ShoppingCartIcon />
-                  <span className="badge">3</span>
+                  <span className="badge">{numberOfItems}</span>
                 </button>
                 <button className="icon-button notification-button">
                   <NotificationsIcon />
