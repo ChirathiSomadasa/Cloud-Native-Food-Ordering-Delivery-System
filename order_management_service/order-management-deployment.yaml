@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-management
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: order-management
+  template:
+    metadata:
+      labels:
+        app: order-management
+    spec:
+      containers:
+      - name: order-management
+        image: cloud-native-food-ordering-delivery-system-order-management:latest
+        ports:
+        - containerPort: 5003

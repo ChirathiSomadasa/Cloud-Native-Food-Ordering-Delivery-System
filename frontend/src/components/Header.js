@@ -11,7 +11,7 @@ import PersonIcon from "@mui/icons-material/Person";
 function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState();
+  const [cartItems, setCartItems] = useState([]); // not false
 
   // Check if the user is logged in by verifying the presence of the auth token
   const isLoggedIn = !!localStorage.getItem("auth_token");
@@ -73,7 +73,6 @@ function Header() {
     const fetchCartItems = async () => {
       const token = localStorage.getItem("auth_token");
       if (!token) return;
-
       try {
         const response = await fetch("http://localhost:5003/api/cart", {
           headers: { Authorization: `Bearer ${token}` },
@@ -94,26 +93,26 @@ function Header() {
       }
     };
 
+  
     fetchCartItems();
-
+  
     const handleCartUpdate = () => {
       fetchCartItems();
     };
-
+  
     // Add listener
     window.addEventListener("cartUpdated", handleCartUpdate);
-
-    //  Cleanup
+  
+    // Cleanup
     return () => {
       window.removeEventListener("cartUpdated", handleCartUpdate);
     };
   }, []);
 
-  // After successfully adding an item to the cart
-  window.dispatchEvent(new Event("cartUpdated"));
+  const numberOfItems = cartItems.reduce((total, item) => total + item.quantity, 0); 
+      // After successfully adding an item to the cart
+      window.dispatchEvent(new Event("cartUpdated"));
 
-  // Get the number of items in the cart
-  const numberOfItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <>
@@ -137,10 +136,12 @@ function Header() {
                 <button className="icon-button profile-button">
                   <PersonIcon />
                 </button>
+                <Link to="/cart">
                 <button className="icon-button cart-button">
                   <ShoppingCartIcon />
                   <span className="badge">{numberOfItems}</span>
                 </button>
+                </Link>
                 <button className="icon-button notification-button">
                   <NotificationsIcon />
                   <span className="badge">2</span>

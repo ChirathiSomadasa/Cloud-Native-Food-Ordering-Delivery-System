@@ -61,7 +61,12 @@ const paymentSchema = new mongoose.Schema(
             ref: 'user', // Reference to User model
             required: true 
         },
-        orderId: {
+        restaurantOrderId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Order", // Reference to Order model
+            required: true
+        },
+        paypalOrderId: {
             type: String,
             required: true
         },
@@ -86,9 +91,10 @@ const paymentSchema = new mongoose.Schema(
             required: true, 
             default: Date.now 
         },
+        createdAt: { type: Date, default: Date.now },
+        updatedAt: { type: Date, default: Date.now },
 
     },
-    { timestamps: true }
 );
 
 module.exports = mongoose.model('Payment', paymentSchema);

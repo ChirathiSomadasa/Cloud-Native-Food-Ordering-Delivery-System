@@ -109,7 +109,7 @@ function Sidebar({ isOpen, onClose }) {
               {/* Customer-specific links */}
               {userRole === "customer" && (
                 <>
-                  <Link to="/orders" className="sidebar-link" onClick={onClose}>
+                  <Link to="/my-orders" className="sidebar-link" onClick={onClose}>
                     <ListAltIcon />
                     <span>Orders</span>
                   </Link>
