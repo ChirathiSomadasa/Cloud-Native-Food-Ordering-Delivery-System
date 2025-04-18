@@ -1,4 +1,4 @@
-.order-request-container {
+.deliveryorder-request-container {
     text-align: center;
     padding: 40px;
     font-family: Arial, sans-serif;
@@ -11,13 +11,15 @@
     margin-bottom: 20px;
   }
   
-  .order-image {
-    width: 180px;
-    margin-bottom: 20px;
+  .deliveryorder-image {
+    width: 400px;
+    margin: 0 auto 20px;
+    display: block;
+  
   }
   
-  .order-info-box {
-    background-color: #d9ecff;
+  .deliveryorder-info-box {
+    background-color: #fff2d6;
     display: inline-block;
     text-align: left;
     padding: 20px 30px;
@@ -25,19 +27,19 @@
     margin-top: 10px;
   }
   
-  .order-info-box p {
+  .deliveryorder-info-box p {
     margin: 10px 0;
     font-size: 16px;
   }
   
-  .action-buttons {
+  .deliveryorder_action-buttons {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
   }
   
-  .accept-btn,
-  .decline-btn {
+  .deliveryorder_accept-btn,
+  .deliveryorder_decline-btn {
     padding: 10px 20px;
     font-size: 16px;
     font-weight: bold;
@@ -47,21 +49,21 @@
     border-radius: 4px;
   }
   
-  .accept-btn {
+  .deliveryorder_accept-btn {
     background-color: #28a745;
     color: white;
   }
   
-  .accept-btn:hover {
+  .deliveryorder_accept-btn:hover {
     background-color: #218838;
   }
   
-  .decline-btn {
+  .deliveryorder_decline-btn {
     background-color: #c82333;
     color: white;
   }
   
-  .decline-btn:hover {
+  .deliveryorder_decline-btn:hover {
     background-color: #a71d2a;
   }
   

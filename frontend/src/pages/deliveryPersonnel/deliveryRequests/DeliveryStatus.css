@@ -1,4 +1,4 @@
-.delivery-status-container {
+.driver_delivery-status-container {
     max-width: 700px;
     margin: 40px auto;
     background-color: white;
@@ -8,22 +8,22 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   }
   
-  .delivery-title {
+  .driver_delivery-title {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 25px;
   }
   
-  .order-details-section {
+  .driver_order-details-section {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 30px;
     flex-wrap: wrap;
+    font-weight: bold;
   }
   
-  .order-details-title {
-    color: #5a3ff9;
+  .driver_order-details-title {
     font-weight: bold;
     font-size: 18px;
     flex-basis: 100%;
@@ -31,8 +31,8 @@
     text-align: left;
   }
   
-  .order-info-box {
-    background-color: #fff9d6;
+  .driver_order-info-box {
+    background-color: #ecd65a;
     padding: 15px;
     border-radius: 10px;
     text-align: left;
@@ -40,34 +40,35 @@
     font-size: 15px;
   }
   
-  .order-image img {
-    width: 150px;
+  .driver_order-image img {
+    width: 300px;
     height: auto;
   }
   
-  .status-box {
-    background-color: #e0f2ff;
+  .driver_status-box {
+    background-color: #f0e5d6;
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 20px;
   }
   
-  .status-label {
+  .driver_status-label {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
   }
   
-  .done-button {
-    background-color: #1d1dc9;
+  .driver_done-button {
+    background-color: #f5a90c;
     color: white;
     padding: 8px 25px;
     border: none;
+    font-weight: bold;
     border-radius: 5px;
     cursor: pointer;
   }
   
-  .done-button:hover {
-    background-color: #1414a0;
+  .driver_done-button:hover {
+    background-color: #7b5303;
   }
   
