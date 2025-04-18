@@ -166,9 +166,9 @@ function Cart() {
     
             alert("Order placed successfully!");
             // Optionally clear only selected orders from cart
-            const remainingCartItems = cartItems.filter(item => !selectedOrders.includes(item._id));
-            setCartItems(remainingCartItems);
-            setSelectedOrders([]);
+            // const remainingCartItems = cartItems.filter(item => !selectedOrders.includes(item._id));
+            // setCartItems(remainingCartItems);
+            // setSelectedOrders([]);
         } catch (error) {
             console.error("Error placing order:", error.response?.data || error.message);
             alert("Failed to place order. Please try again.");
@@ -228,26 +228,70 @@ function Cart() {
                     const payer = details.payer;
                     const purchaseUnit = details.purchase_units[0];
 
-                    localStorage.setItem("order_id", details.id);// Store paypal order ID in local storage
+                    localStorage.setItem("PayPalorder_id", details.id);// Store paypal order ID in local storage
 
                     alert(`Transaction completed by ${details.payer.name.given_name}`);
                     console.log("Payment Details:", details);
 
                     try {
-                        await axios.post("http://localhost:5010/api/payment/paypalDetails",
-                            {
-                                orderId: details.id,
+                        // Trigger checkout logic to create the order in the backend
+                        const token = localStorage.getItem("auth_token");
+                        if (!token) {
+                            alert("Please log in to proceed with checkout.");
+                            return;
+                        }
+
+                        const selectedItems = cartItems.filter(item => selectedOrders.includes(item._id));
+                        const orderResponses = [];
+
+                        for (const item of selectedItems) {
+                            const orderData = {
+                                itemId: item._id,
+                                quantity: item.quantity,
+                                totalPrice: item.price * item.quantity,
+                            };
+                
+                            const response = await axios.post(
+                                "http://localhost:5003/api/order/add",
+                                orderData,
+                                { headers: { Authorization: `Bearer ${token}` } }
+                            );
+                            orderResponses.push(response.data);
+                        }
+                
+                        console.log("Orders placed:", orderResponses);
+
+                        await new Promise(res => setTimeout(res, 1000)); // 1000ms delay to ensure orders are created before saving payment details
+
+                
+                        // Save payment details with the order reference
+                        for (const order of orderResponses) {
+                            if (!order._id) {
+                                console.error("❌ Invalid order ID, skipping payment post");
+                                continue;
+                            }
+
+                            const paymentRequestBody = {
+                                restaurantOrderId: order._id, // Use the MongoDB _id of the order
+                                paypalOrderId: details.id, // PayPal order ID
                                 payerName: `${payer.name.given_name} ${payer.name.surname}`,
                                 amount: parseFloat(purchaseUnit.amount.value),
                                 currency: purchaseUnit.amount.currency_code,
                                 paymentDetails: details,
-                            },
-                            {
-                                headers: {
-                                    Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-                                },
-                            }
-                        );
+                            };
+                            console.log("Payment Request Body:", paymentRequestBody);
+
+                            await axios.post(
+                                "http://localhost:5010/api/payment/paypalDetails",
+                                paymentRequestBody,
+                                {
+                                    headers: {
+                                        Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+                                    },
+                                }
+                            );
+                        }
+                
                         console.log("✅ Payment info saved to DB");
                     } catch (error) {
                         console.error("❌ Failed to save payment:", error);
@@ -329,13 +373,13 @@ function Cart() {
                 </div>
             </div>
 
-            <button
+            {/* <button
                 className="checkout-button"
                 disabled={selectedOrders.length === 0}
                 onClick={handleCheckout}
             >
                 CHECK OUT
-            </button>
+            </button> */}
             {sdkReady && selectedOrders.length > 0 && (
                 <div id="paypal-button-container" 
                     style={{
