@@ -129,3 +129,60 @@ exports.updateDriverLocation = async (req, res) => {
     res.status(500).json({ error: 'Error updating driver location', details: err.message });
   }
 };
+
+// Get current driver location
+// exports.getDriverLocation = async (req, res) => {
+//   const { deliveryId } = req.params;
+
+//   try {
+//     const delivery = await Delivery.findById(deliveryId);
+
+//     if (!delivery) {
+//       return res.status(404).json({ error: 'Delivery not found' });
+//     }
+
+//     if (!delivery.driverLocation) {
+//       return res.status(404).json({ error: 'Driver location not yet available' });
+//     }
+
+//     res.status(200).json({
+//       driverLocation: delivery.driverLocation,
+//     });
+//   } catch (err) {
+//     res.status(500).json({
+//       error: 'Error fetching driver location',
+//       details: err.message
+//     });
+//   }
+// };
+
+
+// Real-time update via socket
+exports.updateDriverLocationSocket = async (req, res) => {
+  const { deliveryId, lat, lng } = req.body;
+  const driverId = req.user.id;
+
+  try {
+    const delivery = await Delivery.findById(deliveryId);
+    if (!delivery) return res.status(404).json({ error: 'Delivery not found' });
+
+    if (!delivery.driverId || delivery.driverId.toString() !== driverId) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    delivery.driverLocation = { lat, lng };
+    await delivery.save();
+
+    // Emit the updated location to clients listening to this deliveryId
+    global.io.emit(`driverLocationUpdate:${deliveryId}`, {
+      deliveryId,
+      lat,
+      lng
+    });
+
+    res.status(200).json({ message: 'Driver location updated and broadcasted' });
+  } catch (err) {
+    res.status(500).json({ error: 'Error updating location', details: err.message });
+  }
+};
+

@@ -12,7 +12,9 @@ import PeopleIcon from "@mui/icons-material/People";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import StorefrontIcon from "@mui/icons-material/Storefront";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle"; 
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
+
 
 function Sidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
@@ -104,6 +106,26 @@ function Sidebar({ isOpen, onClose }) {
           )}
 
           {/* Navigation */}
+          <nav className="sidebar-nav">
+          <Link to="/my-orders">
+            <a href="/orders" className="sidebar-link" onClick={onClose}>
+              <ListAltIcon />
+              <span>Orders</span>
+            </a>
+            </Link>
+            <a href="/cart" className="sidebar-link" onClick={onClose}>
+              <ShoppingCartIcon />
+              <span>Cart</span>
+            </a>
+            <a href="/notifications" className="sidebar-link" onClick={onClose}>
+              <NotificationsIcon />
+              <span>Notifications</span>
+            </a>
+            <a href="/deliveries/deliveryHome" className="sidebar-link" onClick={onClose}>
+              <DeliveryDiningIcon />
+              <span>Deliveries</span>
+            </a>
+          </nav>
           {isLoggedIn && (
             <nav className="sidebar-nav">
               {/* Customer-specific links */}
