@@ -1,57 +1,108 @@
-import React, { useEffect, useState } from "react";
-import "./Home.css";
-import HomeLandingPageImage from "../../../images/home_landing_img.jpg";
+"use client"
+
+import { useEffect, useState } from "react"
+import "./Home.css"
+import HomeLandingPageImage from "../../../images/home_landing_img.jpg"
 
 function Home() {
-  const [foodItems, setFoodItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1); // Track the current page
-  const [totalPages, setTotalPages] = useState(1); // Track the total number of pages
+  const [foodItems, setFoodItems] = useState([])
+  const [filteredItems, setFilteredItems] = useState([])
+  const [restaurants, setRestaurants] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null)
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5004/api/menu-items/home-menu-items?page=${currentPage}&limit=6`
-        );
+        const response = await fetch(`http://localhost:5004/api/menu-items/home-menu-items?page=${currentPage}&limit=6`)
         if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
+          const errorText = await response.text()
+          throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`)
         }
-        const data = await response.json();
+        const data = await response.json()
 
         // Validate the data structure
         if (!Array.isArray(data.data)) {
-          throw new Error("Invalid data format received from the server.");
+          throw new Error("Invalid data format received from the server.")
         }
 
-        setFoodItems(data.data); // Set the fetched menu items
-        setTotalPages(data.totalPages); // Set the total number of pages
-        setLoading(false);
+        setFoodItems(data.data)
+        setFilteredItems(data.data)
+        setTotalPages(data.totalPages)
+
+        // Extract unique restaurants
+        const uniqueRestaurants = [...new Set(data.data.map((item) => item.restaurant))]
+          .filter((restaurant) => restaurant) // Filter out null/undefined values
+          .sort()
+
+        setRestaurants(uniqueRestaurants)
+        setLoading(false)
       } catch (err) {
-        console.error("Error fetching menu items:", err.message);
-        setError(err.message || "An unexpected error occurred.");
-        setLoading(false);
+        console.error("Error fetching menu items:", err.message)
+        setError(err.message || "An unexpected error occurred.")
+        setLoading(false)
       }
-    };
-    fetchMenuItems();
-  }, [currentPage]); // Re-fetch when the current page changes
+    }
+    fetchMenuItems()
+  }, [currentPage])
+
+  useEffect(() => {
+    // Filter items when restaurant selection or search query changes
+    let results = foodItems;
+  
+    if (selectedRestaurant) {
+      results = results.filter((item) => item.restaurant === selectedRestaurant);
+    }
+  
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      results = results.filter((item) => {
+        // Check if the search query matches the food name, description, restaurant name, or price
+        const matchesName = item.name.toLowerCase().includes(query);
+        const matchesDescription =
+          item.description && item.description.toLowerCase().includes(query);
+        const matchesRestaurant =
+          item.restaurant && item.restaurant.toLowerCase().includes(query);
+        const matchesPrice =
+          item.price &&
+          item.price.toString().toLowerCase().includes(query); // Convert price to string for comparison
+  
+        return matchesName || matchesDescription || matchesRestaurant || matchesPrice;
+      });
+    }
+  
+    setFilteredItems(results);
+  }, [selectedRestaurant, searchQuery, foodItems]);
 
   if (loading && currentPage === 1) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading">Loading...</div>
   }
 
   if (error) {
-    return <div className="error">Error: {error}</div>;
+    return <div className="error">Error: {error}</div>
   }
 
   // Handle pagination button clicks
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
+      setCurrentPage(newPage)
+      setSelectedRestaurant(null) // Reset restaurant filter when changing page
     }
-  };
+  }
+
+  // Handle restaurant selection
+  const handleRestaurantSelect = (restaurant) => {
+    setSelectedRestaurant(restaurant === selectedRestaurant ? null : restaurant)
+  }
+
+  // Handle search input
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value)
+  }
 
   return (
     <div className="customer-home">
@@ -65,11 +116,11 @@ function Home() {
               From Top Restaurants
             </h1>
             <p className="hero-description-c">
-              Order your favorite meals from the best local restaurants and enjoy doorstep delivery
-              in 30 minutes or less. Fresh, delicious food is just a few clicks away.
+              Order your favorite meals from the best local restaurants and enjoy doorstep delivery in 30 minutes or
+              less. Fresh, delicious food is just a few clicks away.
             </p>
             <button className="order-button-c">
-              Order Now <span className="arrow"></span>
+              Order Now <span className="material-icons arrow-icon">arrow_forward</span>
             </button>
           </div>
           <div className="hero-image-c">
@@ -84,63 +135,94 @@ function Home() {
               type="text"
               className="search-input-h"
               placeholder="Search for food, restaurants, or cuisines..."
+              value={searchQuery}
+              onChange={handleSearchChange}
             />
             <button className="search-button-h">Search</button>
           </div>
         </section>
 
-        {/* Trending Section */}
-        <section className="trending-section">
-          <div className="section-header">
-            <h2 className="section-title">
-              Tailored to your <span className="highlight">taste</span>
-            </h2>
-          </div>
-          <div className="food-grid">
-            {foodItems.length > 0 ? (
-              foodItems.map((item) => (
-                <div className="food-card" key={item.id}>
-                  <div className="food-image">
-                    <img src={item.image || "/placeholder.svg"} alt={item.name} />
-                  </div>
-                  <div className="food-details">
-                    <h3 className="food-name">{item.name}</h3>
-                    <p className="restaurant-name">{item.restaurant || "Unknown Restaurant"}</p>
-                    <p className="food-price">Rs.{(item.price || 0).toFixed(2)}</p>
-                    <div className="description">
-                      <p className="description-label">Description:</p>
-                      <p className="description-text">{item.description || "No description available."}</p>
+        {/* Main Content with Restaurant Filter */}
+        <div className="main-content">
+          {/* Restaurant Filter Sidebar */}
+          <aside className="restaurant-sidebar">
+            <h3 className="sidebar-title">Restaurants</h3>
+            <ul className="restaurant-list">
+              <li
+                className={`restaurant-item ${selectedRestaurant === null ? "active" : ""}`}
+                onClick={() => handleRestaurantSelect(null)}
+              >
+                All Restaurants
+              </li>
+              {restaurants.map((restaurant, index) => (
+                <li
+                  key={index}
+                  className={`restaurant-item ${selectedRestaurant === restaurant ? "active" : ""}`}
+                  onClick={() => handleRestaurantSelect(restaurant)}
+                >
+                  {restaurant}
+                </li>
+              ))}
+            </ul>
+          </aside>
+
+          {/* Trending Section */}
+          <section className="trending-section">
+            <div className="section-header">
+              <h2 className="section-title">
+                {selectedRestaurant ? (
+                  <>
+                    Menu from <span className="highlight">{selectedRestaurant}</span>
+                  </>
+                ) : (
+                  <>
+                    Tailored to your <span className="highlight">taste</span>
+                  </>
+                )}
+              </h2>
+            </div>
+            <div className="food-grid">
+              {filteredItems.length > 0 ? (
+                filteredItems.map((item) => (
+                  <div className="food-card" key={item.id}>
+                    <div className="food-image">
+                      <img src={item.image || "/placeholder.svg"} alt={item.name} />
+                    </div>
+                    <div className="food-details">
+                      <h3 className="food-name">{item.name}</h3>
+                      <p className="restaurant-name">{item.restaurant || "Unknown Restaurant"}</p>
+                      <p className="food-price">Rs.{(item.price || 0).toFixed(2)}</p>
+                      <div className="description">
+                        <p className="description-label">Description:</p>
+                        <p className="description-text">{item.description || "No description available."}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <div className="no-items">No menu items found.</div>
-            )}
-          </div>
+                ))
+              ) : (
+                <div className="no-items">No menu items found.</div>
+              )}
+            </div>
 
-          {/* Pagination Controls */}
-          <div className="pagination">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
-        </section>
+            {/* Pagination Controls */}
+            {!selectedRestaurant && (
+              <div className="pagination">
+                <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                  Previous
+                </button>
+                <span>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                  Next
+                </button>
+              </div>
+            )}
+          </section>
+        </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Home;
+export default Home
