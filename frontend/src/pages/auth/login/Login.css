@@ -78,7 +78,8 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 0.9rem;
-  width: 95%; 
+  width: 95%;
+  background-color: white !important; 
 }
 
 .inputL[type="text"]:focus{
@@ -87,18 +88,20 @@
   box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.1);
 }
 
-.labelpwd[type="password"]{
+.inputpwd[type="password"]{
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 0.9rem;
-  width: 95%; 
+  width: 100% !important; 
+  background-color: white !important ;
 }
 
-.labelpwd[type="password"]:focus {
+.inputpwd[type="password"]:focus {
   outline: none;
   border-color: #e09400;
   box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.1);
+  
 }
 
 /* Password input container */
