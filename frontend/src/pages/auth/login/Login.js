@@ -84,7 +84,7 @@ function Login() {
           </div>
 
           <div className="form-group password-group">
-            <label className="labelL" htmlFor="password">
+            <label className="labelpwd" htmlFor="password">
               Password
             </label>
             <div className="password-input-container">

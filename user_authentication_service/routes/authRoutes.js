@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login,getAllUsers, deleteUser,logout} = require('../controllers/authController');
+const { register, login,getAllUsers, deleteUser,logout,getUserDetails,updateUser,deleteUserAccount} = require('../controllers/authController');
 const { verifyToken, verifyRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -14,5 +14,11 @@ router.delete('/delete/:id', verifyToken, verifyRole(['systemAdmin']), deleteUse
 
 // Logout route
 router.post('/logout', logout);
+
+router.get('/me', verifyToken, getUserDetails); // Fetch user details (authenticated users only)
+
+router.put('/update', verifyToken, updateUser); // Update user details (authenticated users only)
+
+router.delete('/delete', verifyToken, deleteUserAccount); // Delete user account (authenticated users only)
 
 module.exports = router;

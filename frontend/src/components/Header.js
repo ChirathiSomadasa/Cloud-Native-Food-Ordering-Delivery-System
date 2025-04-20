@@ -87,9 +87,11 @@ function Header() {
             {isLoggedIn ? (
               // Buttons to display when the user is logged in
               <>
+               <Link to="/profile">
                 <button className="icon-button profile-button">
                   <PersonIcon />
                 </button>
+                </Link>
                 <button className="icon-button cart-button">
                   <ShoppingCartIcon />
                   <span className="badge">3</span>
