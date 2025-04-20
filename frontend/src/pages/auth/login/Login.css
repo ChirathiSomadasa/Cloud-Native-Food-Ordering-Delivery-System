@@ -73,8 +73,7 @@
   font-weight: 500;
 }
 
-.inputL[type="text"],
-.inputL[type="password"] {
+.inputL[type="text"]{
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -83,8 +82,21 @@
   background-color: white !important; 
 }
 
-.inputL[type="text"]:focus,
-.inputL[type="password"]:focus {
+.inputL[type="text"]:focus{
+  outline: none;
+  border-color: #e09400;
+  box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.1);
+}
+
+.labelpwd[type="password"]{
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  width: 95%; 
+}
+
+.labelpwd[type="password"]:focus {
   outline: none;
   border-color: #e09400;
   box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.1);
@@ -94,6 +106,7 @@
 /* Password input container */
 .password-input-container {
   position: relative;
+  width: 100% !important;
 }
 
 .toggle-password {

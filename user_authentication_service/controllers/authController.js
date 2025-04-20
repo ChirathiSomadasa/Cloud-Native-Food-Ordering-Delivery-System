@@ -132,3 +132,60 @@ exports.logout = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+// Get user details for profile
+exports.getUserDetails = async (req, res) => {
+  try {
+    const userId = req.user.id; // Extract user ID from JWT token
+    const user = await User.findById(userId, 'first_name last_name mobile_number email city');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ Status: 'Success', data: user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// update user details for profile
+exports.updateUser = async (req, res) => {
+  try {
+    const userId = req.user.id; // Extract user ID from JWT token
+    const { first_name, last_name, mobile_number, city } = req.body;
+
+    // Validate mobile number
+    if (mobile_number && !/^\d{10}$/.test(mobile_number)) {
+      return res.status(400).json({ error: 'Mobile number must be 10 digits' });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { first_name, last_name, mobile_number, city },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ Status: 'Success', message: 'User updated successfully', data: updatedUser });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// delete user details for profile
+exports.deleteUserAccount = async (req, res) => {
+  try {
+    const userId = req.user.id; // Extract user ID from JWT token
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.clearCookie('auth_token'); // Clear the auth token cookie
+    res.json({ Status: 'Success', message: 'User account deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
