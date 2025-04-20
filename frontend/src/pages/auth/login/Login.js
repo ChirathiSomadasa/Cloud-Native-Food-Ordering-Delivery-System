@@ -84,12 +84,12 @@ function Login() {
           </div>
 
           <div className="form-group password-group">
-            <label className="labelpwd" htmlFor="password">
+            <label className="labelL" htmlFor="password">
               Password
             </label>
             <div className="password-input-container">
               <input
-                className="inputL"
+                className="inputpwd"
                 type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
