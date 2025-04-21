@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import "./Home.css";
-import HomeLandingPageImage from "../../../images/home_landing_img.jpg";
+import { useEffect, useState } from "react"
+import "./Home.css"
+import HomeLandingPageImage from "../../../images/home_landing_img.jpg"
+
 
 function Home() {
   const [foodItems, setFoodItems] = useState([]);
