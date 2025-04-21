@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import "./Home.css"
 import HomeLandingPageImage from "../../../images/home_landing_img.jpg"
