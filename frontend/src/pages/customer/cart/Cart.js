@@ -53,7 +53,7 @@ function Cart() {
         } else {
             setSdkReady(true);
         }
-        
+
     }, []);
 
 
@@ -145,38 +145,49 @@ function Cart() {
             alert("Please log in to proceed with checkout.");
             return;
         }
-    
+
         const selectedItems = cartItems.filter(item => selectedOrders.includes(item._id));
-    
+
         try {
             for (const item of selectedItems) {
                 const orderData = {
                     //restaurantId: item.restaurantId, // This must be part of cart item
-                    itemId: item._id,
+                    itemId: item.itemId,
                     quantity: item.quantity,
                     totalPrice: item.price * item.quantity
                 };
-    
+
                 const response = await axios.post(
                     "http://localhost:5003/api/order/add",
                     orderData,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
-    
+
                 console.log("Order placed:", response.data);
             }
-    
+
             alert("Order placed successfully!");
-            // Optionally clear only selected orders from cart
-            // const remainingCartItems = cartItems.filter(item => !selectedOrders.includes(item._id));
-            // setCartItems(remainingCartItems);
-            // setSelectedOrders([]);
+            //Optionally clear only selected orders from cart
+            const remainingCartItems = cartItems.filter(item => !selectedOrders.includes(item._id));
+            setCartItems(remainingCartItems);
+            setSelectedOrders([]);
+            // Remove ordered items from cart in backend
+            for (const id of selectedOrders) {
+                try {
+                    await axios.delete(`http://localhost:5003/api/cart/remove/${id}`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                } catch (err) {
+                    console.error(`Failed to remove item ${id} from backend cart`, err);
+                }
+            }
+
         } catch (error) {
             console.error("Error placing order:", error.response?.data || error.message);
             alert("Failed to place order. Please try again.");
         }
     };
-    
+
 
     const selectedTotal = cartItems
         .filter((item) => selectedOrders.includes(item._id))
@@ -188,9 +199,9 @@ function Cart() {
 
     //// Function to dynamically load the PayPal SDK script
     const addPayPalScript = async () => {
-        const {data: clientId} = await axios.get("http://localhost:5010/api/config/paypal");
+        const { data: clientId } = await axios.get("http://localhost:5010/api/config/paypal");
         console.log(clientId);
-            
+
         // Load PayPal script dynamically
         const script = document.createElement("script");
         script.type = "text/javascript";
@@ -248,11 +259,11 @@ function Cart() {
 
                         for (const item of selectedItems) {
                             const orderData = {
-                                itemId: item._id,
+                                itemId: item.itemId,
                                 quantity: item.quantity,
                                 totalPrice: item.price * item.quantity,
                             };
-                
+
                             const response = await axios.post(
                                 "http://localhost:5003/api/order/add",
                                 orderData,
@@ -260,12 +271,30 @@ function Cart() {
                             );
                             orderResponses.push(response.data);
                         }
-                
+
                         console.log("Orders placed:", orderResponses);
+
+                        alert("Order placed successfully!");
+
+                        //  Remove ordered items from cart
+                        const remainingCartItems = cartItems.filter(item => !selectedOrders.includes(item._id));
+                        setCartItems(remainingCartItems);
+                        setSelectedOrders([]);
+
+                        for (const id of selectedOrders) {
+                            try {
+                                await axios.delete(`http://localhost:5003/api/cart/remove/${id}`, {
+                                    headers: { Authorization: `Bearer ${token}` },
+                                });
+                            } catch (err) {
+                                console.error(`Failed to remove item ${id} from backend cart`, err);
+                            }
+                        }
+
 
                         await new Promise(res => setTimeout(res, 1000)); // 1000ms delay to ensure orders are created before saving payment details
 
-                
+
                         // Save payment details with the order reference
                         for (const order of orderResponses) {
                             if (!order._id) {
@@ -293,12 +322,12 @@ function Cart() {
                                 }
                             );
                         }
-                
+
                         console.log("✅ Payment info saved to DB");
                     } catch (error) {
                         console.error("❌ Failed to save payment:", error);
                     }
-                    
+
                 },
                 onError: (err) => {
                     console.error("PayPal Payment Error:", err);
@@ -314,76 +343,87 @@ function Cart() {
 
     return (
         <>
-        <div className="cart-container">
-            <h2 className="cart-title">My Orders</h2>
-            <button className="clear-cart-button" onClick={clearCart}>
-                Clear Cart
-            </button>
+            <div className="cart-container">
+                <h2 className="cart-title">My Orders</h2>
+                <button className="clear-cart-button" onClick={clearCart}>
+                    Clear Cart
+                </button>
 
-            <div className="cart-items">
-                {cartItems.length === 0 ? (
-                    <p className="empty-cart">Your cart is empty.</p>
-                ) : (
-                    cartItems.map((item) => (
-                        <div key={item._id} className="cart-item">
-                            <input
-                                type="checkbox"
-                                className="cart-checkbox"
-                                checked={selectedOrders.includes(item._id)}
-                                onChange={() => handleSelectOrder(item._id)}
-                            />
-                            <img
-                                src={item.img.startsWith("http") || item.img.startsWith("/") ? item.img : `/images/${item.img}`}
-                                alt={item.name}
-                                className="cart-item-img"
-                            />
+                <div className="cart-items">
+                    {cartItems.length === 0 ? (
+                        <p className="empty-cart">Your cart is empty.</p>
+                    ) : (
+                        cartItems.map((item) => (
+                            <div key={item._id} className="cart-item">
+                                <input
+                                    type="checkbox"
+                                    className="cart-checkbox"
+                                    checked={selectedOrders.includes(item._id)}
+                                    onChange={() => handleSelectOrder(item._id)}
+                                />
+                                <img
+                                    src={item.img.startsWith("http") || item.img.startsWith("/") ? item.img : `/images/${item.img}`}
+                                    alt={item.name}
+                                    className="cart-item-img"
+                                />
 
-                            <div className="cart-item-details">
-                                <span className="cart-item-name">{item.name}</span>
-                                <span className="cart-item-price">
-                                    LKR.{item.price.toFixed(2)}
-                                </span>
+                                <div className="cart-item-details">
+                                    <span className="cart-item-name">{item.name}</span>
+                                    <span className="cart-item-price">
+                                        LKR.{item.price.toFixed(2)}
+                                    </span>
+                                </div>
+                                <div className="quantity-btn">
+                                    <button onClick={() => updateQuantity(item._id, -1)}>-</button>
+                                    <span className="quantity">{item.quantity}</span>
+                                    <button onClick={() => updateQuantity(item._id, 1)}>+</button>
+                                </div>
+                                <button
+                                    onClick={() => removeItem(item._id)}
+                                    className="remove-btn"
+                                >
+                                    <DeleteIcon />
+                                </button>
                             </div>
-                            <div className="quantity-btn">
-                                <button onClick={() => updateQuantity(item._id, -1)}>-</button>
-                                <span className="quantity">{item.quantity}</span>
-                                <button onClick={() => updateQuantity(item._id, 1)}>+</button>
-                            </div>
-                            <button
-                                onClick={() => removeItem(item._id)}
-                                className="remove-btn"
-                            >
-                                <DeleteIcon />
-                            </button>
-                        </div>
-                    ))
+                        ))
+                    )}
+                </div>
+
+                <div className="cart-summary">
+                    <div className="summary-row">
+                        <span>Subtotal</span>
+                        <span>LKR.{selectedTotal.toFixed(2)}</span>
+                    </div>
+                    <div className="summary-row">
+                        <span>Delivery</span>
+                        <span>LKR.{deliveryFee.toFixed(2)}</span>
+                    </div>
+                    <div className="summary-row total">
+                        <span>Total</span>
+                        <span>LKR.{totalPrice.toFixed(2)}</span>
+                    </div>
+                </div>
+
+                {/*<button
+                    className="checkout-button"
+                    disabled={selectedOrders.length === 0}
+                    onClick={handleCheckout}
+                >
+                    CHECK OUT
+                </button>*/}
+                {sdkReady && selectedOrders.length > 0 && (
+                    <div id="paypal-button-container"
+                        style={{
+                            marginTop: "20px",
+                            maxWidth: "300px",
+                            marginLeft: "auto",
+                            marginRight: "auto",
+                            display: "block",
+                            textAlign: "center",
+                        }}
+                    ></div>
                 )}
-            </div>
-
-            <div className="cart-summary">
-                <div className="summary-row">
-                    <span>Subtotal</span>
-                    <span>LKR.{selectedTotal.toFixed(2)}</span>
-                </div>
-                <div className="summary-row">
-                    <span>Delivery</span>
-                    <span>LKR.{deliveryFee.toFixed(2)}</span>
-                </div>
-                <div className="summary-row total">
-                    <span>Total</span>
-                    <span>LKR.{totalPrice.toFixed(2)}</span>
-                </div>
-            </div>
-
-            {/* <button
-                className="checkout-button"
-                disabled={selectedOrders.length === 0}
-                onClick={handleCheckout}
-            >
-                CHECK OUT
-            </button> */}
-            {sdkReady && selectedOrders.length > 0 && (
-                <div id="paypal-button-container" 
+                <button className="checkout-button"
                     style={{
                         marginTop: "20px",
                         maxWidth: "300px",
@@ -391,24 +431,13 @@ function Cart() {
                         marginRight: "auto",
                         display: "block",
                         textAlign: "center",
+                        color: "black",
                     }}
-                ></div>
-            )}
-            <button className="checkout-button"  
-                style={{
-                    marginTop: "20px",
-                    maxWidth: "300px",
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                    display: "block",
-                    textAlign: "center",
-                    color: "black",
-                }}
-                onClick={handlePaymentDetailsClick}
-            >
-                Payment Details
-            </button>
-        </div>
+                    onClick={handlePaymentDetailsClick}
+                >
+                    Payment Details
+                </button>
+            </div>
         </>
     );
 }
