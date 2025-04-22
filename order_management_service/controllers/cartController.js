@@ -4,11 +4,11 @@ const mongoose = require("mongoose");
 
 // Add to Cart
 exports.addToCart = async (req, res) => {
-  const { itemId, name, price, img } = req.body;
+  const { itemId, name, price, img,restaurantId  } = req.body;
   const userId = req.user.id;
 
   // Debugging the received data
-  console.log("Received in addToCart:", { itemId, name, price, img });
+  console.log("Received in addToCart:", { itemId, name, price, img ,restaurantId });
 
   if (!itemId) {
     return res.status(400).json({ error: "Item ID is required" });
@@ -26,7 +26,7 @@ exports.addToCart = async (req, res) => {
     if (existingItem) {
       existingItem.quantity += 1;
     } else {
-      cart.items.push({ itemId, name, price, img, quantity: 1 });
+      cart.items.push({ itemId, name, price, img, quantity: 1,restaurantId  });
     }
 
     await cart.save();

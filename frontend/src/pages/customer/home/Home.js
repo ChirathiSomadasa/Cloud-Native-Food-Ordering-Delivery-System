@@ -57,7 +57,9 @@ function Home() {
           itemId: item.id,
           name: item.name,
           price: item.price,
-          img: item.image
+          img: item.image,
+          restaurantId: item.restaurantId
+
         })
       });
 
@@ -67,7 +69,8 @@ function Home() {
         itemId: item.id,
         name: item.name,
         price: item.price,
-        img: item.image
+        img: item.image,
+        restaurantId: item.restaurantId
       });
 
       if (response.ok) {

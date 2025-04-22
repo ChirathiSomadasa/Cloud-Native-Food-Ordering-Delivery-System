@@ -56,8 +56,6 @@ function Cart() {
 
     }, []);
 
-
-
     const removeItem = async (id) => {
         const token = localStorage.getItem("auth_token");
         console.log("Attempting to remove item with ID:", id);
@@ -122,14 +120,10 @@ function Cart() {
         }
     };
 
-
-
     const clearCart = () => {
         setCartItems([]);
         setSelectedOrders([]);
     };
-
-
 
     const handleSelectOrder = (id) => {
         if (selectedOrders.includes(id)) {
@@ -335,9 +329,6 @@ function Cart() {
             }).render("#paypal-button-container");
         }
     }, [sdkReady, selectedOrders, totalPrice]);
-
-
-
 
     if (loading) return <div>Loading...</div>;
 
