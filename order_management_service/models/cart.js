@@ -6,7 +6,6 @@ const cartSchema = new Schema({
   items: [
     {
       itemId: { type: mongoose.Schema.Types.ObjectId, ref: 'MenuItem', required: true },
-      restaurantId: {type: mongoose.Schema.Types.ObjectId,ref: 'Restaurant',required: true},
       name: String,
       price: Number,
       quantity: { type: Number, default: 1 },
