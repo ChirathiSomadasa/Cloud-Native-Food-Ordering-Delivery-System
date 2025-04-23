@@ -1,8 +1,10 @@
+const mongoose = require("mongoose");
 const Payment = require('../models/Payment');
 const Order = require("../../order_management_service/models/Order");
 const axios = require('axios');
 const paypalClient = require("../config/paypalConfig");
 
+mongoose.set("debug", true);
 
 
 
@@ -78,7 +80,7 @@ const updatePaymentStatus = async (req, res) => {
 };
 
 
-
+// 8,@-YwE,
 // PayPal  // check // Capture PayPal payment details and save to DB
 const capturePayPalDetails = async (req, res) => {
     try {
@@ -91,6 +93,7 @@ const capturePayPalDetails = async (req, res) => {
         }
 
         // Find the corresponding order by PayPal orderId
+        console.log("Searching for order with restaurantOrderId:", restaurantOrderId);
         const order = await Order.findById(restaurantOrderId);
         console.log("Order retrieved successfully:", order);
         if (!order) {
@@ -118,9 +121,26 @@ const capturePayPalDetails = async (req, res) => {
         res.status(201).json({ message: "Payment recorded successfully" });
     } catch (err) {
         console.error("Error saving payment:", err);
+        res.status(500).json({ message: "Server error", error: err.message });
+    }
+};
+// PayPal - get all Paypal details 
+const getPayPalDetails = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const payment = await Payment.findOne({ orderId });
+        if (!payment) { 
+            return res.status(404).json({ message: "Payment not found" });
+        }   
+        res.status(200).json(payment);
+    } catch (error) {
+        console.error("Error fetching PayPal details:", error);
         res.status(500).json({ message: "Server error" });
     }
 };
+
+
+
 
 // not check, mot working
 const createPayPalOrder = async (req, res) => {
@@ -224,6 +244,7 @@ module.exports = {
     createPayPalOrder,
     capturePayPalOrder,
     capturePayPalDetails, //check
+    getPayPalDetails,
 
     // PayHere
     initializeOnlinePayment,

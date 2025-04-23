@@ -19,14 +19,17 @@ app.use(cookieParser());
 
 
 // Connect to the database and start the server
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`✅ Server is running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ Failed to start the server:', err.message);
+    process.exit(1); // make sure it doesn't hang
   });
-}).catch((err) => {
-  console.error('Failed to start the server:', err.message);
-});
-
+  
 
 // Routes
 const paymentRoutes = require('./routes/paymentRoutes');
