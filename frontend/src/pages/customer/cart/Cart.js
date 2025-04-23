@@ -259,6 +259,7 @@ function Cart() {
 
                         for (const item of selectedItems) {
                             const orderData = {
+                                restaurantId: item.restaurantId,
                                 itemId: item.itemId,
                                 quantity: item.quantity,
                                 totalPrice: item.price * item.quantity,
