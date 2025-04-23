@@ -151,7 +151,7 @@ function Cart() {
         try {
             for (const item of selectedItems) {
                 const orderData = {
-                    //restaurantId: item.restaurantId, // This must be part of cart item
+                    restaurantId: item.restaurantId, // This must be part of cart item
                     itemId: item.itemId,
                     quantity: item.quantity,
                     totalPrice: item.price * item.quantity
@@ -404,13 +404,13 @@ function Cart() {
                     </div>
                 </div>
 
-                {/*<button
+                {<button
                     className="checkout-button"
                     disabled={selectedOrders.length === 0}
                     onClick={handleCheckout}
                 >
                     CHECK OUT
-                </button>*/}
+                </button>}
                 {sdkReady && selectedOrders.length > 0 && (
                     <div id="paypal-button-container"
                         style={{
