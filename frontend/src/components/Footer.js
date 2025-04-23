@@ -15,22 +15,22 @@ function Footer() {
             <h2 className="footer-logo">FoodSprint</h2>
             <p className="footer-tagline">Fast delivery, delicious food, right to your door</p>
             <div className="footer-social">
-              <a href="https://facebook.com" className="social-link" aria-label="Facebook">
+              <Link to="https://facebook.com" className="social-link" aria-label="Facebook">
                 <Facebook size={20} />
-              </a>
-              <a href="https://instagram.com" className="social-link" aria-label="Instagram">
+              </Link>
+              <Link to="https://instagram.com" className="social-link" aria-label="Instagram">
                 <Instagram size={20} />
-              </a>
-              <a
-                href="https://wa.me/?text=Order%20delicious%20food%20from%20FoodExpress!"
+              </Link>
+              <Link
+                to="https://wa.me/?text=Order%20delicious%20food%20from%20FoodExpress!"
                 className="social-link"
                 aria-label="WhatsApp"
               >
                 <Phone size={20} />
-              </a>
-              <a href="https://youtube.com" className="social-link" aria-label="YouTube">
+              </Link>
+              <Link to="https://youtube.com" className="social-link" aria-label="YouTube">
                 <Youtube size={20} />
-              </a>
+              </Link>
             </div>
           </div>
 

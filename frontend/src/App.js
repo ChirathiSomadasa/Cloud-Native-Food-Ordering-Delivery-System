@@ -13,6 +13,7 @@ import VerifyRestaurant from "./pages/systemAdmin/verifyRestaurant/VerifyRestaur
 import MenuItemList from "./pages/RestaurantAdmin/menuItem/MenuItemList";
 import MenuItemEdit from "./pages/RestaurantAdmin/menuItem/MenuItemEdit";
 import ManageUsers from "./pages/systemAdmin/manageUsers/ManageUsers";
+import Profile from "./pages/auth/profile/Profile";
 import Cart from "./pages/customer/cart/Cart";//Piumi
 import MyOrders from "./pages/customer/cart/MyOrders";
 import PaymentDetails from "./pages/customer/payment/PaymentDetails";//Thamindu
@@ -27,8 +28,6 @@ import OrderRequestDriverStatus from "./pages/deliveryPersonnel/deliveryRequests
 import DeliveryStatus from "./pages/deliveryPersonnel/deliveryRequests/DeliveryStatus";
 import DeliveryRequestStatus from "./pages/RestaurantAdmin/deliveryStatus/DeliveryRequestStatus";
 import Footer from "./components/Footer";
-
-
 
 function App() {
   return (
@@ -47,10 +46,10 @@ function App() {
       <Route path="/menu-item-list" element={<MenuItemList />} />
       <Route path="/edit-menu-item/:id" element={<MenuItemEdit />} />
       <Route path="/manage-users" element={<ManageUsers />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/cart" element={<Cart/>}/>
       <Route path="/my-orders" element={<MyOrders />} />
       <Route path="/payment-details" element={<PaymentDetails/>}/>
-
     {/* delivery related routes */}
     <Route path="/deliveries/deliveryHome" element={<DeliveryHomeUser/>}/>
     <Route path="/deliveries/deliveryDetails" element={<DeliveryDetails/>}/>

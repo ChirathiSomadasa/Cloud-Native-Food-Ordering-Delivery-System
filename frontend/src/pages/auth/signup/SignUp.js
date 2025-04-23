@@ -205,7 +205,7 @@ function SignUp() {
                 First Name
               </label>
               <input
-                className="inputS"
+                className="inputSU"
                 type="text"
                 id="FirstName"
                 name="FirstName"
@@ -220,7 +220,7 @@ function SignUp() {
                 Last Name
               </label>
               <input
-                className="inputS"
+                className="inputSU"
                 type="text"
                 id="LastName"
                 name="LastName"

@@ -89,7 +89,7 @@ function Login() {
             </label>
             <div className="password-input-container">
               <input
-                className="inputL"
+                className="inputpwd"
                 type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
