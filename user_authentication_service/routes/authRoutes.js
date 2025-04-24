@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login,getAllUsers, deleteUser,logout,getUserDetails,updateUser,deleteUserAccount} = require('../controllers/authController');
+const { register, login,getAllUsers, deleteUser,logout,getUserDetails,updateUser,deleteUserAccount,getCustomerById} = require('../controllers/authController');
 const { verifyToken, verifyRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -20,6 +20,8 @@ router.get('/me', verifyToken, getUserDetails); // Fetch user details (authentic
 router.put('/update', verifyToken, updateUser); // Update user details (authenticated users only)
 
 router.delete('/delete', verifyToken, deleteUserAccount); // Delete user account (authenticated users only)
+
+router.get('/get-customer-id', verifyToken, getCustomerById); // Fetch customer ID (authenticated users only)
 
 module.exports = router;
 

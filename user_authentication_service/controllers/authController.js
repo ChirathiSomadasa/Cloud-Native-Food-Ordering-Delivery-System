@@ -189,3 +189,17 @@ exports.deleteUserAccount = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Get specific customer details by ID (for logged-in user)
+exports.getCustomerById = async (req, res) => {
+  try {
+    const userId = req.user.id; // Extracted from the JWT token
+    if (!userId) {
+      return res.status(404).json({ error: 'User ID not found in token' });
+    }
+
+    res.json({ customerId: userId }); // Send only the ID
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
