@@ -180,7 +180,7 @@ const RestaurantOrders = () => {
                                     </td>
                                     <td>
                                                       <button
-                                                        className="delete-btn"
+                                                        className="order-delete-btn"
                                                         onClick={() => handleDeleteOrder(order._id)}
                                                       >
                                                         <Trash2 size={18} />
