@@ -129,7 +129,7 @@ const RestaurantOrders = () => {
             <h1 >My Orders</h1>
 
             {loading ? (
-                <p>Loading orders...</p>
+                <p class="loading-message">Loading orders...</p>
             ) : error ? (
                 <p className="text-red-600">{error}</p>
             ) : orders.length === 0 ? (

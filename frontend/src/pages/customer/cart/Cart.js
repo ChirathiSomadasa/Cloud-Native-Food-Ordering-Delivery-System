@@ -134,14 +134,10 @@ function Cart() {
         }
     };
 
-
-
     const clearCart = () => {
         setCartItems([]);
         setSelectedOrders([]);
     };
-
-
 
     const handleSelectOrder = (id) => {
         if (selectedOrders.includes(id)) {
@@ -377,7 +373,7 @@ function Cart() {
 
 
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div  className="loading-message">Loading...</div>;
 
     return (
         <>

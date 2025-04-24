@@ -44,7 +44,6 @@ function MyOrders() {
         }
       } catch (err) {
         console.error("Error fetching orders:", err);
-        setError("Failed to load orders.");
       } finally {
         setLoading(false);
       }
@@ -54,14 +53,14 @@ function MyOrders() {
   }, []);
   
 
-  if (loading) return <div>Loading your orders...</div>;
+  if (loading) return <div  className="loading-message">Loading your orders...</div>;
   if (error) return <div>{error}</div>;
 
   return (
     <div className="orders-container">
       <h2>Order Status Tracking Page</h2>
       {orders.length === 0 ? (
-        <p>No orders placed yet.</p>
+        <p class="no-orders-message">No orders placed yet.</p>
       ) : (
         orders.map((order) => (
           <div key={order._id} className="order-card">
