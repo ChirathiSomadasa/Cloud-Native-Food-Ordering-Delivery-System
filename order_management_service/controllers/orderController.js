@@ -162,3 +162,23 @@ exports.deleteOrderForRestaurant = async (req, res) => {
         res.status(500).send("Failed to delete order.");
     }
 };
+
+exports. getNewOrderCount = async (req, res) => {
+  try {
+    const restaurantId = req.user.restaurantId;
+    if (!restaurantId) {
+      return res.status(400).json({ error: "Restaurant ID missing in token" });
+    }
+    console.log("Restaurant ID from token:", req.user.restaurantId);
+
+    const count = await Order.countDocuments({
+      restaurant: restaurantId,
+      status: "pending", // or your "new" status
+    });
+
+    res.json({ count });
+  } catch (err) {
+    console.error("Error in getNewOrderCount:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

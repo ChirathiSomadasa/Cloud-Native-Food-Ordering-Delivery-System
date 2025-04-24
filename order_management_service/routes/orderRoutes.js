@@ -1,6 +1,6 @@
 const express = require('express');
 const { placeOrder, getOrder, getOrdersForRestaurant,deleteOrderForRestaurant,
-     updateOrderStatus, updateOrder,cancelOrder,getOrdersForCustomer,getRestaurantOrders } = require('../controllers/orderController');
+     updateOrderStatus, updateOrder,cancelOrder,getOrdersForCustomer,getRestaurantOrders,getNewOrderCount } = require('../controllers/orderController');
 const { verifyToken, verifyRole } = require('../middleware/authMiddleware');
 const router = express.Router();
 
@@ -16,6 +16,7 @@ router.put("/:id/update", verifyToken,verifyRole(['customer']), updateOrder);
 router.put('/update-status/:orderId', verifyToken, verifyRole(['restaurantAdmin']), updateOrderStatus);//checked
 router.get('/restaurant/:restaurantId', verifyToken, verifyRole(['restaurantAdmin']), getRestaurantOrders);
 router.delete('/delete/:orderId', verifyToken, verifyRole(['restaurantAdmin']), deleteOrderForRestaurant);//checked
+router.get('/new-count', verifyToken, verifyRole(['restaurantAdmin']),getNewOrderCount);
 
  
 

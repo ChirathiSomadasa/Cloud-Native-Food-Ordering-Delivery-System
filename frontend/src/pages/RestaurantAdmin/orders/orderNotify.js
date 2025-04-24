@@ -62,10 +62,10 @@ const RestaurantOrders = () => {
             alert("Please log in to update order status.");
             return;
         }
-    
+
         const currentIndex = statusCycle.indexOf(currentStatus);
         const nextStatus = statusCycle[(currentIndex + 1) % statusCycle.length];
-    
+
         try {
             const res = await fetch(`http://localhost:5003/api/order/update-status/${orderId}`, {
                 method: "PUT",
@@ -75,12 +75,12 @@ const RestaurantOrders = () => {
                 },
                 body: JSON.stringify({ status: nextStatus })
             });
-    
+
             const responseText = await res.text();
             console.log("Response from server:", responseText);
-    
+
             if (!res.ok) throw new Error("Failed to update order status");
-    
+
             setOrders(prev =>
                 prev.map(order =>
                     order._id === orderId ? { ...order, status: nextStatus } : order
@@ -92,17 +92,17 @@ const RestaurantOrders = () => {
         }
     };
 
-      // Function to handle user deletion
-      const handleDeleteOrder = async (orderId) => {
+    // Function to handle user deletion
+    const handleDeleteOrder = async (orderId) => {
         const token = localStorage.getItem('auth_token');
         if (!token) {
             alert("Please log in to delete an order.");
             return;
         }
-    
+
         const confirmDelete = window.confirm("Are you sure you want to delete this order?");
         if (!confirmDelete) return;
-    
+
         try {
             const res = await fetch(`http://localhost:5003/api/order/delete/${orderId}`, {
                 method: "DELETE",
@@ -110,12 +110,12 @@ const RestaurantOrders = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             const responseText = await res.text();
             console.log("Delete response:", responseText);
-    
+
             if (!res.ok) throw new Error("Failed to delete order");
-    
+
             setOrders(prev => prev.filter(order => order._id !== orderId));
             alert("Order deleted successfully.");
         } catch (err) {
@@ -123,9 +123,7 @@ const RestaurantOrders = () => {
             alert("Failed to delete the order.");
         }
     };
-    
-      
-    
+
     return (
         <div className="manage-order-container">
             <h1 >My Orders</h1>
@@ -158,7 +156,7 @@ const RestaurantOrders = () => {
                                     <td className="orders-td">{order.customerId}</td>
                                     <td className="orders-td">LKR.{order.totalPrice}</td>
                                     <td className="orders-td">
-                                    {order.itemName}
+                                        {order.itemName}
                                     </td>
                                     <td className="orders-td">{order.quantity}</td>
                                     <td className="orders-td">
@@ -173,19 +171,19 @@ const RestaurantOrders = () => {
                                                             ? "status-Ready"
                                                             : ""
                                                 }`}
-                                                onClick={() => handleStatusClick(order._id, order.status)}
+                                            onClick={() => handleStatusClick(order._id, order.status)}
                                         >
                                             {order.status}
                                         </span>
                                     </td>
                                     <td>
-                                                      <button
-                                                        className="order-delete-btn"
-                                                        onClick={() => handleDeleteOrder(order._id)}
-                                                      >
-                                                        <Trash2 size={18} />
-                                                      </button>
-                                                    </td>
+                                        <button
+                                            className="order-delete-btn"
+                                            onClick={() => handleDeleteOrder(order._id)}
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </td>
 
                                 </tr>
                             ))}
