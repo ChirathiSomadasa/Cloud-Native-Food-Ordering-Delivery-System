@@ -94,18 +94,19 @@ const capturePayPalDetails = async (req, res) => {
 
         // Find the corresponding order by PayPal orderId
         console.log("Searching for order with restaurantOrderId:", restaurantOrderId);
-        const order = await Order.findById(restaurantOrderId);
+        const order = await Order.findOne({ _id: restaurantOrderId }).maxTimeMS(20000);
         console.log("Order retrieved successfully:", order);
+
         if (!order) {
             console.error("Order not found for restaurantOrderId:", restaurantOrderId);
-            return res.status(404).json({ message: "Order not found" });
+            return res.status(404).json({ message: "Order not found", orderId: restaurantOrderId });
         }
 
         console.log("✅ Order found:", order._id);
 
 
         const newPayment = new Payment({
-            customerId: req.user.id, // This comes from the JWT
+            customerId: req.user?.id, // This comes from the JWT
             restaurantOrderId,//: order._id, // This is the order ID from the Order service
             paypalOrderId, // This is the PayPal order ID
             payerName,
