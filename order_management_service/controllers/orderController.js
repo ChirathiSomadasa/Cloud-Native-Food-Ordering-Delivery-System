@@ -4,15 +4,13 @@ const Restaurant = require('../../restaurant_management_service/models/Restauran
 const MenuItem = require('../../restaurant_management_service/models/MenuItem');
 const User = require('../../user_authentication_service/models/User');
 
-const { sendSMS } = require('../services/smsService');
-
 
 //place a order
 exports.placeOrder = async (req, res) => {
   try {
     console.log("Received order data:", req.body); // Debugging
 
-    const { itemId, restaurantId, quantity, totalPrice } = req.body;
+    const { itemId, restaurantId, quantity,itemName, totalPrice } = req.body;
     if (!itemId || !restaurantId || !quantity || !totalPrice) {
       return res.status(400).json({ error: "Invalid order data" });
     }
@@ -27,15 +25,11 @@ exports.placeOrder = async (req, res) => {
       restaurantId,
       itemId,
       quantity,
+      itemName,
       totalPrice,
       status: "Pending",
     });
 
-    // Send SMS to customer
-    await sendSMS(order.customerPhone, `Your order #${order._id} has been placed!`);
-
-    // Send SMS to restaurant admin
-    await sendSMS(order.restaurantAdminPhone, `New order assigned: Order #${order._id}`);
 
     await order.save();
     res.status(201).json(order);
@@ -84,9 +78,10 @@ exports.getOrdersForCustomer = async (req, res) => {
   }
 };
 
-exports. getRestaurantOrders = async (req, res) => {
+exports.getRestaurantOrders = async (req, res) => {
   try {
     const orders = await Order.find({ restaurantId: req.params.restaurantId });
+
     res.json(orders);
   } catch (error) {
     console.error(error);
@@ -94,37 +89,18 @@ exports. getRestaurantOrders = async (req, res) => {
   }
 };
 
-
-// Get orders for a specific restaurant
-exports.getOrdersForRestaurant = async (req, res) => {
-  try {
-    const { restaurantId } = req.params;
-
-    // Validate restaurant ID
-    if (!restaurantId) {
-      return res.status(400).json({ error: "Restaurant ID is required" });
-    }
-
-    // Fetch orders associated with this restaurant
-    const orders = await Order.find({ restaurantId });
-
-    // If no orders found, return an empty array
-    res.json(orders);
-  } catch (error) {
-    console.error("Error fetching restaurant orders:", error);
-    res.status(500).json({ error: "Error fetching restaurant orders" });
-  }
-};
-
 exports.updateOrderStatus = async (req, res) => {
-  try {
-    const { status } = req.body;
-    const order = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true });
-    if (!order) return res.status(404).json({ error: 'Order not found' });
-    res.json(order);
-  } catch (error) {
-    res.status(500).json({ error: 'Error updating order status' });
-  }
+  const { status } = req.body;
+    const { orderId } = req.params;
+
+    try {
+        const updatedOrder = await Order.findByIdAndUpdate(orderId, { status }, { new: true });
+        if (!updatedOrder) return res.status(404).json({ message: 'Order not found' });
+        res.json(updatedOrder);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
 };
 
 // Cancel an existing order
@@ -177,3 +153,12 @@ exports.updateOrder = async (req, res) => {
   }
 };
 
+exports.deleteOrderForRestaurant = async (req, res) => {
+  const { orderId } = req.params;
+    try {
+        await Order.findByIdAndDelete(orderId);
+        res.status(200).send("Order deleted successfully.");
+    } catch (err) {
+        res.status(500).send("Failed to delete order.");
+    }
+};

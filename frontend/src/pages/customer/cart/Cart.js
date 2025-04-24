@@ -187,6 +187,7 @@ function Cart() {
                 const orderData = {
                     restaurantId: item.restaurantId, // This must be part of cart item
                     itemId: item.itemId,
+                    itemName:item.name,
                     quantity: item.quantity,
                     totalPrice: item.price * item.quantity
                 };
