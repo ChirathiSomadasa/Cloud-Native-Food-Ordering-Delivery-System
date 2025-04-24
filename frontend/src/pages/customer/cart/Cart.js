@@ -199,6 +199,8 @@ function Cart() {
                 console.log("Order placed:", response.data);
                 createdOrderIds.push(response.data._id); // <-- store order._id
             }
+            // Store order IDs in localStorage
+            localStorage.setItem("placed_order_ids", JSON.stringify(createdOrderIds));
 
             alert("Order placed successfully!");
             setCartItems(cartItems.filter(item => !selectedOrders.includes(item._id)));
