@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import "./Header.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,7 +12,6 @@ function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]); // not false
-
 
   // Check if the user is logged in by verifying the presence of the auth token
   const isLoggedIn = !!localStorage.getItem("auth_token");
@@ -74,12 +73,11 @@ function Header() {
     const fetchCartItems = async () => {
       const token = localStorage.getItem("auth_token");
       if (!token) return;
-  
       try {
         const response = await fetch("http://localhost:5003/api/cart", {
           headers: { Authorization: `Bearer ${token}` },
         });
-  
+
         if (response.ok) {
           const data = await response.json();
           const itemsWithQuantity = (data.items || []).map((item) => ({
@@ -94,6 +92,7 @@ function Header() {
         console.error("Error fetching cart:", err);
       }
     };
+
   
     fetchCartItems();
   
@@ -114,7 +113,6 @@ function Header() {
       // After successfully adding an item to the cart
       window.dispatchEvent(new Event("cartUpdated"));
 
-  
 
   return (
     <>

@@ -3,35 +3,36 @@ const Order = require('../models/Order');
 const Restaurant = require('../../restaurant_management_service/models/Restaurant');
 const MenuItem = require('../../restaurant_management_service/models/MenuItem');
 
- 
+
 //place a order
 exports.placeOrder = async (req, res) => {
   try {
-      console.log("Received order data:", req.body); // Debugging
+    console.log("Received order data:", req.body); // Debugging
 
-      const {  itemId,quantity, totalPrice } = req.body;
-      if ( !itemId || !quantity || !totalPrice) {
-          return res.status(400).json({ error: "Invalid order data" });
-      }
+    const { itemId, restaurantId, quantity, totalPrice } = req.body;
+    if (!itemId || !restaurantId || !quantity || !totalPrice) {
+      return res.status(400).json({ error: "Invalid order data" });
+    }
 
-      const customerId = req.user?.id; // Ensure req.user exists
-      if (!customerId) {
-          return res.status(401).json({ error: "Unauthorized - No customer ID" });
-      }
+    const customerId = req.user?.id; // Ensure req.user exists
+    if (!customerId) {
+      return res.status(401).json({ error: "Unauthorized - No customer ID" });
+    }
 
-      const order = new Order({
-          customerId,
-          itemId,
-          quantity,
-          totalPrice,
-          status: "Pending",
-      });
+    const order = new Order({
+      customerId,
+      restaurantId,
+      itemId,
+      quantity,
+      totalPrice,
+      status: "Pending",
+    });
 
-      await order.save();
-      res.status(201).json(order);
+    await order.save();
+    res.status(201).json(order);
   } catch (error) {
-      console.error("Error placing order:", error); // Log full error
-      res.status(500).json({ error: "Error placing order" });
+    console.error("Error placing order:", error); // Log full error
+    res.status(500).json({ error: "Error placing order" });
   }
 };
 /*example
@@ -78,15 +79,15 @@ exports.getOrdersForCustomer = async (req, res) => {
 exports.getOrdersForRestaurant = async (req, res) => {
   try {
     const { restaurantId } = req.params;
-    
+
     // Validate restaurant ID
     if (!restaurantId) {
       return res.status(400).json({ error: "Restaurant ID is required" });
     }
-    
+
     // Fetch orders associated with this restaurant
     const orders = await Order.find({ restaurantId });
-    
+
     // If no orders found, return an empty array
     res.json(orders);
   } catch (error) {

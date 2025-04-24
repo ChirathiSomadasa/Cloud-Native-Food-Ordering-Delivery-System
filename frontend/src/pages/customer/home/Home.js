@@ -95,17 +95,19 @@ function Home() {
           itemId: item.id,
           name: item.name,
           price: item.price,
-          img: item.image
+          img: item.image,
+          restaurantId:item.restaurantId
         })
       });
 
       const data = await response.json();
-      console.log("Sending item to cart:", item);
       console.log("Sending to backend:", {
         itemId: item.id,
         name: item.name,
         price: item.price,
-        img: item.image
+        img: item.image,
+        restaurantId:item.restaurantId
+
       });
 
       if (response.ok) {
