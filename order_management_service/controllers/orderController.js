@@ -62,21 +62,22 @@ exports.getOrder = async (req, res) => {
 //get details of specific customer
 exports.getOrdersForCustomer = async (req, res) => {
   try {
-    const customerId = req.user?.id; // Ensure req.user exists
-    if (!customerId) {
-      return res.status(401).json({ error: "Unauthorized - No customer ID" });
-    }
+    const { customerId } = req.params;
 
-    // Fetch orders associated with this customer
     const orders = await Order.find({ customerId });
 
-    // If no orders found, return an empty array
-    res.json(orders);
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this customer" });
+    }
+
+    res.status(200).json(orders);
   } catch (error) {
-    console.error("Error fetching customer orders:", error);
-    res.status(500).json({ error: "Error fetching customer orders" });
+    console.error("Backend: Error fetching orders:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
+
 
 exports.getRestaurantOrders = async (req, res) => {
   try {
