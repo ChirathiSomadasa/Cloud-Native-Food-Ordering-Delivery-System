@@ -20,7 +20,8 @@ const PaymentDetails = ({ orderId }) => {
     const fetchPaymentDetails = async () => {
       try {
 
-        const orderId = localStorage.getItem("order_id");
+        const storedOrderIds = JSON.parse(localStorage.getItem("placed_order_ids") || "[]");
+        const orderId = storedOrderIds.length > 0 ? storedOrderIds[0] : null;
         if (!orderId) {
           throw new Error("Order ID not found in local storage");
         }
