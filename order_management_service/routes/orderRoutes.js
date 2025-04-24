@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/add',verifyToken,verifyRole(['customer']), placeOrder);//checked
 //router.get('/:id', verifyToken, verifyRole(['customer', 'restaurantAdmin']), getOrder);//checked
 router.delete('/:id', verifyToken, verifyRole(['customer']), cancelOrder);//checked
-router.get('/customer/orders', verifyToken, verifyRole(['customer']), getOrdersForCustomer); // Get all orders for a customer
+router.get('/:customerId',  getOrdersForCustomer); // Get all orders for a customer
 router.put("/:id/update", verifyToken,verifyRole(['customer']), updateOrder);
 
 // Restaurant Admin Routes
