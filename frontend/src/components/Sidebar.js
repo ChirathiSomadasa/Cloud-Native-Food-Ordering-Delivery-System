@@ -98,7 +98,7 @@ function Sidebar({ isOpen, onClose }) {
             <div className="profile-section">
               <div className="profile-info">
                 <Link to="/profile" className="sidebar-link" onClick={onClose}>
-                  <AccountCircleIcon /> 
+                  <AccountCircleIcon />
                   <span>Manage account</span>
                 </Link>
               </div>
@@ -106,12 +106,12 @@ function Sidebar({ isOpen, onClose }) {
           )}
 
           {/* Navigation */}
-          <nav className="sidebar-nav">
-          <Link to="/my-orders">
-            <a href="/orders" className="sidebar-link" onClick={onClose}>
-              <ListAltIcon />
-              <span>Orders</span>
-            </a>
+          {/* <nav className="sidebar-nav">
+            <Link to="/restaurant-orders">
+              <a href="/orders" className="sidebar-link" onClick={onClose}>
+                <ListAltIcon />
+                <span>Orders</span>
+              </a>
             </Link>
             <a href="/cart" className="sidebar-link" onClick={onClose}>
               <ShoppingCartIcon />
@@ -125,7 +125,7 @@ function Sidebar({ isOpen, onClose }) {
               <DeliveryDiningIcon />
               <span>Deliveries</span>
             </a>
-          </nav>
+          </nav> */}
           {isLoggedIn && (
             <nav className="sidebar-nav">
               {/* Customer-specific links */}
@@ -153,6 +153,12 @@ function Sidebar({ isOpen, onClose }) {
               {/* Restaurant Admin-specific links */}
               {userRole === "restaurantAdmin" && (
                 <>
+                  <Link to="/restaurant-orders">
+                    <a href="/orders" className="sidebar-link" onClick={onClose}>
+                      <ListAltIcon />
+                      <span>Orders</span>
+                    </a>
+                  </Link>
                   <Link
                     to="/addMenuItem"
                     className="sidebar-link"

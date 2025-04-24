@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 const Order = require('../models/Order');
 const Restaurant = require('../../restaurant_management_service/models/Restaurant');
 const MenuItem = require('../../restaurant_management_service/models/MenuItem');
+const User = require('../../user_authentication_service/models/User');
+
+const { sendSMS } = require('../services/smsService');
 
 
 //place a order
@@ -27,6 +30,12 @@ exports.placeOrder = async (req, res) => {
       totalPrice,
       status: "Pending",
     });
+
+    // Send SMS to customer
+    await sendSMS(order.customerPhone, `Your order #${order._id} has been placed!`);
+
+    // Send SMS to restaurant admin
+    await sendSMS(order.restaurantAdminPhone, `New order assigned: Order #${order._id}`);
 
     await order.save();
     res.status(201).json(order);
@@ -74,6 +83,17 @@ exports.getOrdersForCustomer = async (req, res) => {
     res.status(500).json({ error: "Error fetching customer orders" });
   }
 };
+
+exports. getRestaurantOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ restaurantId: req.params.restaurantId });
+    res.json(orders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error while fetching orders." });
+  }
+};
+
 
 // Get orders for a specific restaurant
 exports.getOrdersForRestaurant = async (req, res) => {
