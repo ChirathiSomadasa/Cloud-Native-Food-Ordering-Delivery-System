@@ -1,0 +1,8 @@
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: email-secrets
+# type: Opaque
+# data:
+#   email-user: eW91ci1lbWFpbEBnbWFpbC5jb20=     # Replace with your base64 encoded email
+#   email-password: eW91ci1hcHAtcGFzc3dvcmQ=      # Replace with your base64 encoded password

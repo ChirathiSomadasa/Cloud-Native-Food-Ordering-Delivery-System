@@ -339,7 +339,7 @@ function Cart() {
                                     setPaypalReady(false);
                                 } catch (error) {
                                     console.error("❌ Failed to save payment:", error);
-                                    alert("Failed to process payment. Please try again.");
+                                    alert("Failed to process payment. Please try again."); ///// error coming
                                 }
                             },
                             onError: (err) => {
@@ -425,32 +425,7 @@ function Cart() {
                 >
                     Go to checkout
                 </button>}
-                {/* {sdkReady && selectedOrders.length > 0 && (
-                    <div id="paypal-button-container"
-                        style={{
-                            marginTop: "20px",
-                            maxWidth: "300px",
-                            marginLeft: "auto",
-                            marginRight: "auto",
-                            display: "block",
-                            textAlign: "center",
-                        }}
-                    ></div>
-                )}
-                <button className="checkout-button"
-                    style={{
-                        marginTop: "20px",
-                        maxWidth: "300px",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                        display: "block",
-                        textAlign: "center",
-                        color: "black",
-                    }}
-                    onClick={handlePaymentDetailsClick}
-                >
-                    Payment Details
-                </button> */}
+                
             </div>
 
 
