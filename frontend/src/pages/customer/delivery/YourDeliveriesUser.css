@@ -6,10 +6,9 @@
   
   .your-deliveries-title {
     text-align: center;
-    font-size: 24px;
-    font-weight: 600;
-    color: #4A3AFF;
-    margin-bottom: 30px;
+    font-size: 40px;
+    font-weight: 800;
+    color: #ffac0782;
   }
   
   .your-deliveries-content {
@@ -29,16 +28,37 @@
   
   .delivery-card {
     background-color: #FFF9E5;
-    border-left: 5px solid #FFD700;
+    border-left: 5px solid #6d5d02;
     padding: 16px 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
   }
   
   .delivery-card p {
     margin: 5px 0;
     font-size: 15px;
   }
+  /* Blue and bold for Order Ref Number */
+.delivery-card p:first-child strong {
+  color: #007bff;
+  font-weight: bold;
+}
+
+/* Red text for declined deliveries */
+.delivery-card .declined {
+  color: red;
+  font-weight: bold;
+}
+
+/* SLR instead of $ */
+.delivery-card p span.price {
+  font-weight: bold;
+  color: #000;
+}
+.delivery-card p strong {
+  font-weight: 600;
+  color: #555;
+}
   
   .delivery-image {
     flex: 1;
@@ -52,3 +72,9 @@
     height: auto;
   }
   
+  .error-message {
+    color: red;
+    font-weight: bold;
+    margin: 20px 0;
+    text-align: center;
+  }

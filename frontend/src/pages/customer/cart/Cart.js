@@ -15,6 +15,15 @@ function Cart() {
     const handlePaymentDetailsClick = () => {
         navigate("/payment-details"); // Navigate to the payment details page
     };
+    // const handleDeliveryDetailsClick = () => {
+    //     const selectedItems = cartItems.filter(item => selectedOrders.includes(item._id));
+    //     navigate("/deliveries/deliveryDetails", {
+    //         state: {
+    //             items: selectedItems
+    //         }
+    //     });
+    // };
+    
 
     useEffect(() => {
         const fetchCartItems = async () => {
@@ -437,6 +446,21 @@ function Cart() {
                 >
                     Payment Details
                 </button>
+                {/* {<button
+                    className="checkout-button"
+                    style={{
+                        marginTop: "20px",
+                        maxWidth: "300px",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                        display: "block",
+                        textAlign: "center",
+                        color: "black",
+                    }}
+                    onClick={handleDeliveryDetailsClick}
+                >
+                    Delivery
+                </button>} */}
             </div>
         </>
     );
