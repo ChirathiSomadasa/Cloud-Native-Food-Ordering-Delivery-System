@@ -17,7 +17,7 @@ import Profile from "./pages/auth/profile/Profile";
 import Cart from "./pages/customer/cart/Cart";//Piumi
 import MyOrders from "./pages/customer/cart/MyOrders";
 import PaymentDetails from "./pages/customer/payment/PaymentDetails";//Thamindu
-
+import ManageFinancial from "./pages/systemAdmin/ManageFinancial/ManageFinancial";//Thamindu
 //delivery related imports
 import DeliveryDetails from "./pages/customer/delivery/DeliveryDetails";
 import DeliveryHomeUser from "./pages/customer/delivery/DeliveryHomeUser";
@@ -50,6 +50,7 @@ function App() {
       <Route path="/cart" element={<Cart/>}/>
       <Route path="/my-orders" element={<MyOrders />} />
       <Route path="/payment-details" element={<PaymentDetails/>}/>
+      <Route path="/manage-financials" element={<ManageFinancial/>}/>
     {/* delivery related routes */}
     <Route path="/deliveries/deliveryHome" element={<DeliveryHomeUser/>}/>
     <Route path="/deliveries/deliveryDetails" element={<DeliveryDetails/>}/>
