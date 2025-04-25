@@ -11,8 +11,8 @@ const app = express();
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Added OPTIONS
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'] // Added Accept
 }));
 app.use(express.json());
 app.use(cookieParser());

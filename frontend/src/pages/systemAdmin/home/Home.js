@@ -39,7 +39,7 @@ function Home() {
             <p className="card-description">Process payments and manage financial records</p>
           </div>
           <div className="card-content">
-            <button className="admin-button">Manage Finances</button>
+            <Link to="/manage-financials"><button className="admin-button">Manage Finances</button></Link>
           </div>
         </div>
       </div>

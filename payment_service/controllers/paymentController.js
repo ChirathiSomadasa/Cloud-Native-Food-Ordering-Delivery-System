@@ -5,7 +5,7 @@ const axios = require("axios");
 const { sendPaymentConfirmation } = require("../services/emailService");
 const paypalClient = require("../config/paypalConfig");
 
-mongoose.set("debug", true);
+
 
 // Create new payment //check
 const createPayment = async (req, res) => {
@@ -46,7 +46,6 @@ const createPayment = async (req, res) => {
     // console.error('Error creating payment:', error.message); // Log the error for debugging
   }
 };
-
 // Get payment by ID  //check
 const getPayment = async (req, res) => {
   try {
@@ -59,7 +58,6 @@ const getPayment = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 // Update payment status
 const updatePaymentStatus = async (req, res) => {
   try {
@@ -82,49 +80,6 @@ const updatePaymentStatus = async (req, res) => {
 
 
 // 8,@-YwE,
-// PayPal  // check // Capture PayPal payment details and save to DB
-// const capturePayPalDetails = async (req, res) => {
-//     try {
-//         console.log("Request Body:", req.body); // Log the incoming request body
-
-//         const { paypalOrderId, restaurantOrderId, payerName, amount, currency, paymentDetails } = req.body;
-
-//         if (!paypalOrderId || !restaurantOrderId || !payerName || !amount || !currency || !paymentDetails) {
-//             return res.status(400).json({ message: "Missing required fields" });
-//         }
-
-//         // Find the corresponding order by PayPal orderId
-//         console.log("Searching for order with restaurantOrderId:", restaurantOrderId);
-//         const order = await Order.findOne({ _id: restaurantOrderId }).maxTimeMS(20000);
-//         console.log("Order retrieved successfully:", order);
-
-//         if (!order) {
-//             console.error("Order not found for restaurantOrderId:", restaurantOrderId);
-//             return res.status(404).json({ message: "Order not found", orderId: restaurantOrderId });
-//         }
-
-//         console.log("✅ Order found:", order._id);
-
-//         const newPayment = new Payment({
-//             customerId: req.user?.id, // This comes from the JWT
-//             restaurantOrderId,//: order._id, // This is the order ID from the Order service
-//             paypalOrderId, // This is the PayPal order ID
-//             payerName,
-//             amount,
-//             currency,
-//             paymentDetails,
-//             paidAt: new Date(),
-//         });
-
-//         await newPayment.validate();
-//         await newPayment.save();
-//         console.log("💾 Payment saved successfully:", newPayment._id);
-//         res.status(201).json({ message: "Payment recorded successfully" });
-//     } catch (err) {
-//         console.error("Error saving payment:", err);
-//         res.status(500).json({ message: "Server error", error: err.message });
-//     }
-// };
 const capturePayPalDetails = async (req, res) => {
     try {
         console.log("Request Body:", req.body);
@@ -240,19 +195,47 @@ const capturePayPalDetails = async (req, res) => {
     }
 };
 // PayPal - get all Paypal details
-const getPayPalDetails = async (req, res) => {
+const getAllPayments = async (req, res) => {
   try {
-    const { orderId } = req.params;
-    const payment = await Payment.findOne({ orderId });
-    if (!payment) {
-      return res.status(404).json({ message: "Payment not found" });
+    console.log('User in request:', req.user); // Debug log
+    console.log('User role:', req.user?.role); // Debug log
+
+    // Verify if the user is an admin
+    if (req.user?.role !== 'systemAdmin') {
+      console.log('Access denied - user role is not systemAdmin');
+      return res.status(403).json({ message: 'Unauthorized - Admin access required' });
     }
-    res.status(200).json(payment);
+
+    const payments = await Payment.find()
+      .sort({ paidAt: -1 }); // Sort by date, newest first
+
+    res.json(payments);
   } catch (error) {
-    console.error("Error fetching PayPal details:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: error.message });
   }
 };
+// PayPal - delete payment details from sys admin
+const deletePayment = async (req, res) => {
+  try {
+      const paymentId = req.params.id;
+      
+      // Verify if the user is an admin
+      if (req.user?.role !== 'systemAdmin') {
+          return res.status(403).json({ message: 'Unauthorized - Admin access required' });
+      }
+
+      const payment = await Payment.findByIdAndDelete(paymentId);
+      
+      if (!payment) {
+          return res.status(404).json({ message: 'Payment not found' });
+      }
+
+      res.status(200).json({ message: 'Payment deleted successfully' });
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
+
 
 
 
@@ -357,7 +340,8 @@ module.exports = {
   createPayPalOrder,
   capturePayPalOrder,
   capturePayPalDetails, //check
-  getPayPalDetails,
+  getAllPayments,
+  deletePayment,
 
   // PayHere
   initializeOnlinePayment,
