@@ -2,12 +2,15 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    const options = { dbName: "foodOrderDeliverydb" };
+    const options = { 
+      dbName: "foodOrderDeliverydb", 
+      serverSelectionTimeoutMS: 30000  
+    }; 
     await mongoose.connect(process.env.MONGO_URL, options);
-    console.log("Connected to database");
+    console.log("✅ Connected to MongoDB");
   } catch (error) {
-    console.error("Database connection failed:", error.message);
-    process.exit(1); // Exit process with failure
+    console.error("❌ MongoDB connection failed:", error.message);
+    throw error; // Let the caller handle it
   }
 };
 
