@@ -10,6 +10,20 @@ const deliverySchema = new Schema({
     ref: 'User',
     required: true
   },
+  driverId: {
+    type: String,
+    required: true 
+  },
+  driverDetails: {
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, required: true },
+    phoneNumber: { type: String, required: true },
+    location: {
+      latitude: { type: Number, required: true },
+      longitude: { type: Number, required: true },
+    }
+  },
 
   // driverId: {
   //   type: objectId,
@@ -44,6 +58,7 @@ const deliverySchema = new Schema({
         enum: ['pending', 'accepted', 'declined', 'processing', 'picked-up', 'on-the-way', 'delivered'],
         default: 'pending'
       },
+      
       // driverLocation: {
       //   lat: { type: Number },
       //   lng: { type: Number }

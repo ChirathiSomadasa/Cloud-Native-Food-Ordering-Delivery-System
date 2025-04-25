@@ -38,7 +38,39 @@ exports.createDelivery = async (req, res) => {
     }
 
     const customerId = req.user.id;
-
+    const availableDrivers = [
+        {
+          driverId: '680233e60a39e47782ac19f4',
+          firstName: 'Saman',
+          lastName: 'Perera',
+          email: 'saman.perera@example.com',
+          phoneNumber: '1122334455',
+          latitude: 6.9271,  
+          longitude: 79.8612, 
+        },
+        {
+          driverId: '6801f1e064d4fb354657bbe1',
+          firstName: 'Nadeesha',
+          lastName: 'Kumari',
+          email: 'nadeesha.kumari@example.com',
+          phoneNumber: '2233445566',
+          latitude: 7.4801,  
+          longitude: 80.3563, 
+        },
+        {
+          driverId: '680b2d0fcbdee3836fd28e89',
+          firstName: 'Pradeep',
+          lastName: 'Fernando',
+          email: 'pradeep.fernando@example.com',
+          phoneNumber: '3344556677',
+          latitude: 6.9615,  
+          longitude: 79.9786, 
+        },
+      
+    ];
+    
+    const randomDriver = availableDrivers[Math.floor(Math.random() * availableDrivers.length)];
+    console.log('🛵 Selected Driver ID:', randomDriver);
     // Automatically assign a driver (for simplicity, we fetch the first available delivery driver)
     // const availableDriver = await mongoose.model('user').findOne({
     //   role: 'deliveryPersonnel',
@@ -60,7 +92,17 @@ exports.createDelivery = async (req, res) => {
       paymentAmount,
       distance,
       estimatedDeliveryTime,
-      // driverId: availableDriver._id, // Assign the found driver
+      driverId: randomDriver.driverId,
+      driverDetails: {  // Adding driver details to the delivery
+        firstName: randomDriver.firstName,
+        lastName: randomDriver.lastName,
+        email: randomDriver.email,
+        phoneNumber: randomDriver.phoneNumber,
+        location: {
+          latitude: randomDriver.latitude,
+          longitude: randomDriver.longitude,
+        }
+      },
       deliveryFee,
       totalAmount,
       // driverLocation,
@@ -77,7 +119,7 @@ exports.createDelivery = async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating delivery:', error);
-    return res.status(500).json({ message: 'Failed to create delivery. Please try again.' });
+    return res.status(500).json({ message: 'Failed to create delivery. Please try again.(2)' });
   }
 };
 

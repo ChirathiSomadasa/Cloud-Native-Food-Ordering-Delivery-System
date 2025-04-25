@@ -106,7 +106,7 @@ const DeliveryDetails = () => {
     } catch (error) {
       console.error('Failed to create delivery:', error);
 
-      let message = 'Failed to create delivery. Please try again.';
+      let message = 'Failed to create delivery. Please try again.(1)';
       if (error.response?.data?.message) {
         message = `Error: ${error.response.data.message}`;
       } else if (typeof error.response?.data === 'string') {
