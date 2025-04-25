@@ -17,3 +17,35 @@ spec:
         image: cloud-native-food-ordering-delivery-system-payment-service:latest
         ports:
         - containerPort: 5010
+
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: payment-service
+# spec:
+#   replicas: 3
+#   selector:
+#     matchLabels:
+#       app: payment-service
+#   template:
+#     metadata:
+#       labels:
+#         app: payment-service
+#     spec:
+#       containers:
+#       - name: payment-service
+#         image: cloud-native-food-ordering-delivery-system-payment-service:latest
+#         ports:
+#         - containerPort: 5010
+#         env:
+#         - name: EMAIL_USER
+#           valueFrom:
+#             secretKeyRef:
+#               name: email-secrets
+#               key: email-user
+#         - name: EMAIL_PASSWORD
+#           valueFrom:
+#             secretKeyRef:
+#               name: email-secrets
+#               key: email-password
