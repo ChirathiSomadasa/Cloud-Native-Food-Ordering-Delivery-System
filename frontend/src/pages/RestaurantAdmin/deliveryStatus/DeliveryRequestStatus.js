@@ -37,8 +37,25 @@ const DeliveryRequestStatus = () => {
   }, []);
 
   // Handle the notification state for each delivery
-  const handleNotify = (index) => {
-    setNotifiedDeliveries((prev) => [...prev, index]);
+  const handleNotify = async (index, deliveryId) => {
+    try {
+      const response = await fetch(`http://localhost:5008/driver/notify_delivery/${deliveryId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      const result = await response.json();
+  
+      if (response.ok) {
+        setNotifiedDeliveries((prev) => [...prev, index]);
+      } else {
+        console.error('Notification failed:', result.message);
+      }
+    } catch (error) {
+      console.error('Error notifying driver:', error);
+    }
   };
 
   // Show loading screen when data is being fetched

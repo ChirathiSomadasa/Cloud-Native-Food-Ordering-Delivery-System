@@ -2,6 +2,7 @@ const Delivery = require('../models/Delivery');
 const User = require('../../user_authentication_service/models/User');
 const Order = require('../../order_management_service/models/Order');
 const axios = require('axios'); 
+const jwt = require('jsonwebtoken');
 
 // Get available deliveries for drivers (status: 'pending')
 exports.getAvailableDeliveries = async (req, res) => {
@@ -203,6 +204,135 @@ exports.getAllAssignedDeliveries = async (req, res) => {
   } catch (error) {
     console.error('Error fetching assigned deliveries:', error);
     return res.status(500).json({ message: 'Failed to fetch assigned deliveries. Please try again.' });
+  }
+};
+
+
+
+// notifyDelivery controller
+exports.notifyDelivery = async (req, res) => {
+  const { deliveryId } = req.params;
+  try {
+    const delivery = await Delivery.findById(deliveryId);
+
+    if (!delivery) {
+      return res.status(404).json({ message: 'Delivery not found' });
+    }
+
+    if (delivery.isNotified) {
+      return res.status(400).json({ message: 'Driver already notified' });
+    }
+
+    // Update the delivery status and set notified flag
+    delivery.isNotified = true;
+    delivery.deliveryStatus = 'ready_for_pickup'; // Or any other logic
+    await delivery.save();
+
+    res.status(200).json({
+      message: 'Driver notified successfully',
+      delivery,
+    });
+  } catch (error) {
+    console.error('Notification error:', error);
+    res.status(500).json({ message: 'Server error while notifying driver' });
+  }
+};
+
+
+
+exports.getAssignedDelivery = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'Authorization token missing' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Ensure token includes driver's id
+    const driverId = decoded.id;
+
+    // Find an assigned delivery for this driver that is not completed
+    const delivery = await Delivery.findOne({
+      driverId,
+      deliveryStatus: { $ne: 'completed' },
+    });
+
+    if (!delivery) {
+      return res.status(200).json({ delivery: null }); // No delivery found
+    }
+
+    // Include isReady flag for frontend
+    const isReady = delivery.deliveryStatus === 'ready_for_pickup';
+
+    res.status(200).json({ delivery, isReady });
+  } catch (error) {
+    console.error('Error getting assigned delivery:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getReadyForPickupDelivery = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'Authorization token missing' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const driverId = decoded.id;
+
+    const delivery = await Delivery.findOne({
+      driverId,
+      deliveryStatus: 'ready_for_pickup',
+    });
+
+    if (!delivery) {
+      return res.status(200).json({ delivery: null });
+    }
+
+    res.status(200).json({ delivery });
+  } catch (error) {
+    console.error('Error fetching ready_for_pickup delivery:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+// Controller to update the status of a delivery
+exports.updateDeliveryStatus = async (req, res) => {
+  const { deliveryId } = req.params;
+  const { deliveryStatus } = req.body;
+
+  try {
+    const delivery = await Delivery.findById(deliveryId);
+
+    if (!delivery) {
+      return res.status(404).json({ message: 'Delivery not found' });
+    }
+
+    console.log('Before update, delivery status:', delivery.status);
+
+    // Update the status field
+    delivery.status = deliveryStatus;
+
+    // Log the new status before saving
+    console.log('After update, new delivery status:', delivery.status);
+
+    // Save the updated delivery object
+    await delivery.save();
+
+    console.log('Delivery status saved successfully');
+
+    return res.status(200).json({
+      message: `Delivery status updated to ${deliveryStatus}`,
+      delivery: delivery, // Return the updated delivery object
+    });
+  } catch (error) {
+    console.error('Error updating delivery status:', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
