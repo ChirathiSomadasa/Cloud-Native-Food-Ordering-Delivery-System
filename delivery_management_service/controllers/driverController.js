@@ -186,3 +186,23 @@ exports.updateDriverLocationSocket = async (req, res) => {
   }
 };
 
+
+// Controller to get all assigned deliveries
+exports.getAllAssignedDeliveries = async (req, res) => {
+  try {
+    // Fetch all deliveries where a driver has been assigned (i.e., driverId is not null)
+    const deliveries = await Delivery.find({ driverId: { $ne: null } }).populate('driverId', 'firstName lastName email phoneNumber'); // Populate driver details
+
+    // Check if deliveries were found
+    if (!deliveries || deliveries.length === 0) {
+      return res.status(404).json({ message: 'No deliveries assigned to drivers.' });
+    }
+
+    // Respond with the list of deliveries
+    return res.status(200).json(deliveries);
+  } catch (error) {
+    console.error('Error fetching assigned deliveries:', error);
+    return res.status(500).json({ message: 'Failed to fetch assigned deliveries. Please try again.' });
+  }
+};
+

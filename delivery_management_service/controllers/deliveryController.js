@@ -13,8 +13,7 @@ exports.createDelivery = async (req, res) => {
     const {
       receiverName,
       deliveryAddress,
-      restaurantName,
-      orderedItems,
+      restaurants,
       paymentStatus,
       paymentAmount,
       distance,
@@ -23,12 +22,11 @@ exports.createDelivery = async (req, res) => {
       totalAmount,
       // driverLocation
     } = req.body;
-
+    console.log("🚚 Incoming delivery request:", req.body);
     // Validate that the required fields are present
     if (
       !receiverName ||
       !deliveryAddress ||
-      !orderedItems ||
       !paymentAmount ||
       !distance ||
       !deliveryFee ||
@@ -86,8 +84,7 @@ exports.createDelivery = async (req, res) => {
       customerId,
       receiverName,
       deliveryAddress,
-      restaurantName,
-      orderedItems,
+      restaurants,
       paymentStatus: paymentStatus || 'Paid',
       paymentAmount,
       distance,
@@ -208,17 +205,44 @@ exports.markFoodReady = async (req, res) => {
   const { deliveryId } = req.body;
 
   try {
-    const delivery = await Delivery.findById(deliveryId);
-    if (!delivery) return res.status(404).json({ error: 'Delivery not found' });
+    // Fetch the delivery by ID
+    const delivery = await Delivery.findById(deliveryId).populate('driverId');  // Populate the driver information
 
-    delivery.deliveryStatus = 'picked-up'; // Update status
+    if (!delivery) {
+      return res.status(404).json({ error: 'Delivery not found' });
+    }
+
+    // Update the delivery status to 'picked-up'
+    delivery.deliveryStatus = 'picked-up';
     await delivery.save();
 
-    res.status(200).json({ message: 'Food is ready and picked up for delivery', delivery });
+    // Fetching the assigned driver's information
+    const driver = delivery.driverId;  // The populated driverId field
+
+    // Sending the response back with the updated delivery and driver information
+    res.status(200).json({
+      message: 'Food is ready and picked up for delivery',
+      delivery,
+      driver: {
+        driverId: driver.driverId,
+        firstName: driver.firstName,
+        lastName: driver.lastName,
+        email: driver.email,
+        phoneNumber: driver.phoneNumber,
+        location: {
+          latitude: driver.latitude,
+          longitude: driver.longitude,
+        },
+      },
+    });
   } catch (err) {
-    res.status(500).json({ error: 'Error marking food as ready', details: err.message });
+    res.status(500).json({
+      error: 'Error marking food as ready',
+      details: err.message,
+    });
   }
 };
+
 
 // Get all deliveries for the currently logged-in user
 exports.getDeliveriesForUser = async (req, res) => {

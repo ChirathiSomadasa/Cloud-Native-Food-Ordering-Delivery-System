@@ -67,18 +67,24 @@ const YourDeliveriesUser = () => {
                   <div key={index} className="delivery-card">
                     <p><strong>Receiver Name:</strong> {delivery.receiverName}</p>
                     <p><strong>Address:</strong> {delivery.deliveryAddress}</p>
-                    <p><strong>Restaurant:</strong> {delivery.restaurantName}</p>
-                    <p><strong>Items:</strong></p>
-                    <ul className="ordered-items-ul">
-                      {delivery.orderedItems.map((item, i) => (
-                        <li key={i}>
-                          {item.name} × {item.quantity} = LKR {(item.price * item.quantity).toFixed(2)}
-                        </li>
-                      ))}
-                    </ul>
-                    <p><strong>Payment Amount:</strong> LKR {delivery.paymentAmount.toFixed(2)}</p>
-                    <p><strong>Delivery Fee:</strong> LKR {delivery.deliveryFee.toFixed(2)}</p>
-                    <p><strong>Total Amount:</strong> LKR {delivery.totalAmount.toFixed(2)}</p>
+
+                    {delivery.restaurants?.map((restaurant, i) => (
+                      <div key={i} className="restaurant-section">
+                        <p><strong>Restaurant:</strong> {restaurant.restaurantName}</p>
+                        <p><strong>Items:</strong></p>
+                        <ul className="ordered-items-ul">
+                          {restaurant.orderedItems?.map((item, j) => (
+                            <li key={j}>
+                              {item.name} × {item.quantity} = LKR {(item.price * item.quantity).toFixed(2)}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+
+                    <p><strong>Payment Amount:</strong> LKR {delivery.paymentAmount?.toFixed(2)}</p>
+                    <p><strong>Delivery Fee:</strong> LKR {delivery.deliveryFee?.toFixed(2)}</p>
+                    <p><strong>Total Amount:</strong> LKR {delivery.totalAmount?.toFixed(2)}</p>
                     <p><strong>Distance:</strong> {delivery.distance} km</p>
                     <p><strong>Estimated Time:</strong> {delivery.estimatedDeliveryTime}</p>
                     <p><strong>Status:</strong> 

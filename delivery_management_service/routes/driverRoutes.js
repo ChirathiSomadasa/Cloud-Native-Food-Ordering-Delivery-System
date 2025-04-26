@@ -4,6 +4,7 @@ const {
   acceptDelivery,
   declineDelivery,
   updateDriverLocation,
+  getAllAssignedDeliveries,
 } = require('../controllers/driverController');
 const { verifyToken, verifyRole } = require('../middleware/authMiddleware');
 
@@ -21,6 +22,8 @@ router.put('/decline', verifyToken, verifyRole(['deliveryPersonnel']), declineDe
 
 // Route to update the driver's location during delivery
 router.put('/update-location', verifyToken, verifyRole(['deliveryPersonnel']), updateDriverLocation);
+
+router.get('/deliveries_res', verifyToken, verifyRole(['restaurantAdmin']), getAllAssignedDeliveries);
 
 // Add this route to get live driver location
 // router.get('/location/:deliveryId', deliveryController.getDriverLocation);

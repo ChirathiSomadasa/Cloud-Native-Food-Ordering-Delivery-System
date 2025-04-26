@@ -39,14 +39,18 @@ const deliverySchema = new Schema({
 
   receiverName: { type: String, required: true },
   deliveryAddress: { type: String, required: true },
-  restaurantName: { type: String, required: true },
-    orderedItems: [
-      {
-        name: { type: String, required: true },
-        price: { type: Number, required: true },
-        quantity: { type: Number, required: true }
-      }
-    ],
+  restaurants: [
+    {
+      restaurantName: { type: String, required: true }, // Restaurant name directly stored
+      orderedItems: [
+        {
+          name: { type: String, required: true },
+          price: { type: Number, required: true },
+          quantity: { type: Number, required: true },
+        },
+      ],
+    },
+  ],
     paymentStatus: { type: String, default: 'Paid' },
     paymentAmount: { type: Number, required: true },
     distance: { type: Number, required: true },
@@ -57,6 +61,10 @@ const deliverySchema = new Schema({
         type: String,
         enum: ['pending', 'accepted', 'declined', 'processing', 'picked-up', 'on-the-way', 'delivered'],
         default: 'pending'
+      },
+      isNotified: {
+        type: Boolean,
+        default: false,
       },
       
       // driverLocation: {

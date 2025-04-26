@@ -9,12 +9,11 @@ const DeliveryDetails = () => {
   const location = useLocation();
 
   const items = location.state?.items || [];
-  const restaurantId = items.length > 0 ? items[0].restaurantId : '';
   const totalItemAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
 
   const [receiverName, setReceiverName] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
-  const [restaurantName, setRestaurantName] = useState('Loading...');
+  const [restaurantData, setRestaurantData] = useState([]);
   const [paymentStatus] = useState('Paid');
   const [paymentAmount] = useState(totalItemAmount);
   const [distanceKm, setDistanceKm] = useState(0);
@@ -22,62 +21,149 @@ const DeliveryDetails = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
+  const hardcodedRestaurants = {
+    '67e5441c09bef4b21b6417c3': { name: 'Cafe Amaki', address: 'Kurunegala', lat: 7.4863, lng: 80.3629 },
+    '67e54cc32603c6fa0217e729': { name: 'Choco Loco', address: 'Kurunegala', lat: 7.4863, lng: 80.3629 },
+    '67e57b2ee241c0b6a5cc0eaa': { name: 'Grain & Greens', address: 'Anuradhapura', lat: 8.3114, lng: 80.4037 },
+    '67e677ac014d303b13134e47': { name: 'Frost & Flavours', address: 'Kurunegala', lat: 7.4863, lng: 80.3629 },
+    '6809d1211d6f19eb59963fbf': { name: 'The Hungry Spoon', address: 'Galle', lat: 6.0535, lng: 80.2210 },
+  };
+
   useEffect(() => {
-    const fetchRestaurantName = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5004/api/restaurants/${restaurantId}`);
-        setRestaurantName(response.data.name);
-      } catch (err) {
-        console.error('Error fetching restaurant name:', err);
-        setRestaurantName('Unknown Restaurant');
+    const fetchRestaurantData = async () => {
+      const groupedData = {};
+      for (const item of items) {
+        const restaurantId = item.restaurantId;
+        if (!groupedData[restaurantId]) {
+          groupedData[restaurantId] = {
+            name: hardcodedRestaurants[restaurantId]?.name || 'Unknown Restaurant',
+            lat: hardcodedRestaurants[restaurantId]?.lat,
+            lng: hardcodedRestaurants[restaurantId]?.lng,
+            items: [],
+            totalAmount: 0,
+          };
+        }
+
+        groupedData[restaurantId].items.push(item);
+        groupedData[restaurantId].totalAmount += item.price * item.quantity;
       }
+
+      const restaurantsArray = Object.values(groupedData);
+      setRestaurantData(restaurantsArray);
     };
 
-    if (restaurantId) fetchRestaurantName();
-  }, [restaurantId]);
+    if (items.length > 0) fetchRestaurantData();
+  }, [items]);
 
-  // Calculate estimated delivery time based on distance
+  // Haversine formula to calculate distance between two coordinates
+  const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return parseFloat((R * c).toFixed(2));
+  };
+
+  // Mock geocoding: convert deliveryAddress to lat/lng (replace with real geocoding if needed)
+  const getMockLatLngFromAddress = (address) => {
+    address = address.toLowerCase();
+
+    // Hardcoded cities and their latitudes and longitudes
+    const cityCoordinates = {
+      'colombo': { lat: 6.9271, lng: 79.8612 }, // Colombo
+      'nuwara eliya': { lat: 6.9480, lng: 80.7917 }, // Nuwara Eliya
+      'galle': { lat: 6.0535, lng: 80.2210 }, // Galle
+      'jaffna': { lat: 9.6615, lng: 80.0229 }, // Jaffna
+      'kurunegala': { lat: 7.4863, lng: 80.3629 }, // Kurunegala (already in your example)
+      'anuradhapura': { lat: 8.3114, lng: 80.4037 }, // Anuradhapura (already in your example)
+      'kandy': { lat: 7.2906, lng: 80.6337 }, // Default Kandy
+    };
+
+    // Check if the address contains any of the hardcoded city names
+    for (const city in cityCoordinates) {
+      if (address.includes(city)) {
+        return cityCoordinates[city];
+      }
+    }
+
+    return { lat: 7.2906, lng: 80.6337 }; // Default: Kandy if city is not found
+  };
+
+  useEffect(() => {
+    if (deliveryAddress && restaurantData.length > 0) {
+      const userLoc = getMockLatLngFromAddress(deliveryAddress);
+      const restaurantLoc = { lat: restaurantData[0].lat, lng: restaurantData[0].lng };
+
+      const distance = haversineDistance(
+        userLoc.lat,
+        userLoc.lng,
+        restaurantLoc.lat,
+        restaurantLoc.lng
+      );
+
+      const validDistance = distance > 0 ? distance : 5; 
+      setDistanceKm(validDistance);
+
+    }
+  }, [deliveryAddress, restaurantData]);
+
   const calculateEstimatedTime = (distanceKm) => {
     let estimatedTimeInSeconds = 0;
+
     if (distanceKm <= 5) {
       estimatedTimeInSeconds = 12 * 60; // 12 minutes
     } else {
       const extraKm = distanceKm - 5;
-      estimatedTimeInSeconds = 12 * 60 + extraKm * (2 * 60 + 50); // 2 min 50 sec per extra km
+      estimatedTimeInSeconds = 12 * 60 + extraKm * (2 * 60 + 50); // 2 min 50 sec per km
     }
 
-    // Convert to mm:ss or a readable format like "15 minutes"
-    const minutes = Math.floor(estimatedTimeInSeconds / 60);
-    const seconds = estimatedTimeInSeconds % 60;
-    return `${minutes} minute${minutes !== 1 ? 's' : ''}${seconds > 0 ? ` ${seconds} seconds` : ''}`;
+    const totalMinutes = Math.round(estimatedTimeInSeconds / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    let result = '';
+    if (hours > 0) {
+      result += `${hours} hour${hours > 1 ? 's' : ''}`;
+    }
+    if (minutes > 0) {
+      if (hours > 0) result += ' ';
+      result += `${minutes} minute${minutes > 1 ? 's' : ''}`;
+    }
+
+    return result || '0 minutes';
   };
 
   const handleProceed = async () => {
-    if (
-      !receiverName ||
-      !deliveryAddress ||
-      items.length === 0 ||
-      !paymentStatus ||
-      !paymentAmount ||
-      !distanceKm
-    ) {
+    if (!receiverName || !deliveryAddress || items.length === 0 || !paymentStatus || !paymentAmount) {
       setError('All fields are required to be filled to proceed.');
       return;
     }
 
     const deliveryFee = distanceKm <= 5 ? 200 : 200 + (distanceKm - 5) * 25;
     const totalAmount = (parseFloat(paymentAmount) + deliveryFee).toFixed(2);
-    const estimatedDeliveryTime = calculateEstimatedTime(distanceKm); // Get estimated time
+    const estimatedDeliveryTime = calculateEstimatedTime(distanceKm);
 
     const deliveryData = {
       receiverName,
       deliveryAddress,
-      restaurantName,
-      orderedItems: items,
+      restaurants: restaurantData.map((restaurant) => ({
+        restaurantName: restaurant.name,
+        orderedItems: restaurant.items.map((item) => ({
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+      })),
       paymentAmount: parseFloat(paymentAmount),
       paymentStatus,
       distance: distanceKm,
-      estimatedDeliveryTime, // use calculated value
+      estimatedDeliveryTime,
       deliveryFee,
       totalAmount,
     };
@@ -104,9 +190,7 @@ const DeliveryDetails = () => {
         alert('Something went wrong. Please try again.');
       }
     } catch (error) {
-      console.error('Failed to create delivery:', error);
-
-      let message = 'Failed to create delivery. Please try again.(1)';
+      let message = 'Failed to create delivery. Please try again.';
       if (error.response?.data?.message) {
         message = `Error: ${error.response.data.message}`;
       } else if (typeof error.response?.data === 'string') {
@@ -124,93 +208,78 @@ const DeliveryDetails = () => {
 
   const deliveryFee = distanceKm <= 5 ? 200 : 200 + (distanceKm - 5) * 25;
   const grandTotal = (parseFloat(paymentAmount) + deliveryFee).toFixed(2);
-  const estimatedDeliveryTime = calculateEstimatedTime(distanceKm); // Get estimated time
+  const estimatedDeliveryTime = calculateEstimatedTime(distanceKm);
 
   return (
-    <div className="delivery-container">
-      <h2 className="delivery-title">Recipient & Delivery Details</h2>
+    <div className="delivery-template-container">
+      <h2 className="form-heading">Delivery Details</h2>
 
-      <div className="delivery-content">
-        {!isSubmitting && (
-          <div className="image-section">
-            <img src={deliveryImage} alt="Delivery Visual" className="delivery-image" />
-          </div>
-        )}
+      <div className="form-layout">
+        <div className="form-left">
+          <img src={deliveryImage} alt="Delivery Illustration" className="left-illustration" />
+        </div>
 
-        {!isSubmitting && (
-          <div className="form-box">
-            <div className="form-group">
-              <label>Receiver Name:</label>
-              <input
-                type="text"
-                value={receiverName}
-                onChange={(e) => setReceiverName(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Customer Address:</label>
-              <input
-                type="text"
-                value={deliveryAddress}
-                onChange={(e) => setDeliveryAddress(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Restaurant:</label>
-              <input type="text" value={restaurantName} disabled />
-            </div>
-            <div className="form-group">
-              <label>Payment Status:</label>
-              <input type="text" value={paymentStatus} disabled />
-            </div>
-            <div className="form-group">
-              <label>Ordered Items:</label>
-              <ul className="ordered-items-list">
-                {items.map((item, index) => (
-                  <li key={index}>
-                    {item.name} × {item.quantity} = <strong>LKR {(item.price * item.quantity).toFixed(2)}</strong>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="form-group">
-              <label>Delivery Distance (in km):</label>
-              <input
-                type="number"
-                value={distanceKm}
-                onChange={(e) => setDistanceKm(parseFloat(e.target.value))}
-              />
-            </div>
-            <div className="form-group">
-              <label>Delivery Fee:</label>
-              <p>LKR 200 for first 5km + LKR 25/km after that</p>
-              <p style={{ fontWeight: 'bold' }}>Fee: LKR {deliveryFee}</p>
-            </div>
-            <div className="form-group">
-              <label>Estimated Delivery Time:</label>
-              <p style={{ fontWeight: 'bold' }}>{estimatedDeliveryTime}</p>
-            </div>
-            <div className="form-group">
-              <label>Total Amount (Items + Delivery):</label>
-              <p style={{ fontWeight: 'bold', fontSize: '16px' }}>LKR {grandTotal}</p>
-            </div>
-            <div className="button-container">
-              <button className="proceed-btn" onClick={handleProceed}>Proceed</button>
-            </div>
-            {error && <p className="error-text" style={{ color: 'red' }}>{error}</p>}
+        <div className="form-right">
+          <div className="input-row">
+            <label>Receiver Name:</label>
+            <input type="text" value={receiverName} onChange={(e) => setReceiverName(e.target.value)} />
           </div>
-        )}
+
+          <div className="input-row">
+            <label>Receiver Address:</label>
+            <input type="text" value={deliveryAddress} onChange={(e) => setDeliveryAddress(e.target.value)} />
+          </div>
+
+          {restaurantData.map((restaurant, index) => (
+            <div key={index} className="restaurant-box">
+              <div><strong>Restaurant name:</strong> {restaurant.name}</div>
+              <div><strong>Items ordered:</strong></div>
+              {restaurant.items.map((item, i) => (
+                <div key={i} className="item-line">
+                  item {i + 1}×{item.quantity}= {item.price * item.quantity}
+                </div>
+              ))}
+              <hr />
+              <div className="total-line">
+                total Amount for {restaurant.name}  = <strong>LKR {restaurant.totalAmount.toFixed(2)}</strong>
+              </div>
+            </div>
+          ))}
+
+          <div className="input-row">
+            <label>Delivery Distance (km):</label>
+            <input type="text" value={distanceKm || ''} readOnly />
+          </div>
+
+          <div className="delivery-charges">
+            <span style={{ color: 'red' }}>
+              Delivery charges:<br />
+              LKR 200 for first 5km + LKR 25/km after that
+            </span>
+          </div>
+
+          <div className="input-row">
+            <label>Estimated Delivery Time:</label>
+            <input type="text" readOnly value={estimatedDeliveryTime} />
+          </div>
+
+          <div className="amount-box">
+            <div><strong>= Total Amount (Items + Delivery):</strong></div>
+            <input type="text" readOnly value={`LKR ${grandTotal}`} />
+          </div>
+
+          <button className="proceed-btn" onClick={handleProceed}>Proceed</button>
+          {error && <p className="error-text">{error}</p>}
+        </div>
       </div>
 
-      {isSubmitting && (
-        <p className="searching-text">Searching for available nearby drivers...</p>
-      )}
+      {isSubmitting && <p className="searching-text">Searching for available nearby drivers...</p>}
 
       {showSuccessPopup && (
         <div className="popup-overlay">
           <div className="popup-content">
             <h3>✅ Order Placed Successfully</h3>
-            <p>Your delivery request has been received and is being processed. A driver will be assigned shortly.</p>
+            <p>Your delivery request has been received and is being processed.</p>
             <button className="ok-btn" onClick={() => navigate('/')}>OK</button>
           </div>
         </div>
