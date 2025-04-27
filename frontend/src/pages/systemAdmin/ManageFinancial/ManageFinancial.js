@@ -55,7 +55,15 @@ function ManageFinancial() {
 
             const data = await response.json();
             console.log('Received data:', data);
-            setPayments(data);
+            // setPayments(data);
+            if (Array.isArray(data)) {
+                setPayments(data);
+            } else if (Array.isArray(data.payments)) {
+                setPayments(data.payments);
+            } else {
+                throw new Error("Invalid data format: expected an array");
+            }
+            
             setLoading(false);
         } catch (err) {
             console.error('Error details:', err);
@@ -66,6 +74,14 @@ function ManageFinancial() {
 
     useEffect(() => {
         fetchPayments();
+
+        // Set up fetch payments every 30 seconds
+        const interval = setInterval(() => {
+            fetchPayments();
+        }, 30000);
+
+        // Cleanup interval on component unmount
+        return () => clearInterval(interval);
     }, []);
 
     // Function to handle payment deletion
@@ -131,6 +147,7 @@ function ManageFinancial() {
                     <TableHead>
                         <TableRow>
                             <TableCell>Customer ID</TableCell>
+                            <TableCell>Customer Name</TableCell>
                             <TableCell>Payment ID</TableCell>
                             <TableCell>Restaurant Order ID</TableCell>
                             <TableCell>Payer Name</TableCell>
@@ -144,7 +161,10 @@ function ManageFinancial() {
                         {payments.map((payment) => (
                             <TableRow key={payment._id}>
                                 <TableCell>{payment.customerId}</TableCell>
-                                <TableCell>{payment.paymentId}</TableCell>
+                                <TableCell>
+                                    {payment.customerFirstName} {payment.customerLastName}
+                                </TableCell>
+                                <TableCell>{payment._id}</TableCell>
                                 <TableCell>{payment.restaurantOrderId}</TableCell>
                                 <TableCell>{payment.payerName}</TableCell>
                                 <TableCell>
