@@ -6,7 +6,7 @@ import './DeliveryStatus.css';
 const DeliveryStatus = () => {
   const [delivery, setDelivery] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState('ready_for_pickup'); // Track the current delivery status
+  const [status, setStatus] = useState('');
   const navigate = useNavigate();
 
   const token = localStorage.getItem('auth_token');
@@ -22,6 +22,7 @@ const DeliveryStatus = () => {
       const data = await res.json();
       if (res.ok && data.delivery) {
         setDelivery(data.delivery);
+        setStatus(data.delivery.deliveryStatus);
       } else {
         setDelivery(null);
       }
@@ -44,8 +45,15 @@ const DeliveryStatus = () => {
       });
 
       if (res.ok) {
-        alert(`Delivery status updated to ${newStatus}`);
-        setStatus(newStatus); // Update the status in the component state
+        const updated = await res.json();
+        setStatus(updated.delivery.deliveryStatus);
+
+        // If delivered, clear delivery after short delay
+        if (newStatus === 'delivered') {
+          setTimeout(() => {
+            setDelivery(null);
+          }, 1000); // optional: wait 1s before hiding
+        }
       }
     } catch (err) {
       console.error('Failed to update status:', err);
@@ -79,37 +87,30 @@ const DeliveryStatus = () => {
         </div>
       </div>
 
-      {/* Order is picked up section */}
       {status === 'ready_for_pickup' && (
         <div className="driver_status-box light-blue">
           <p className="driver_status-label">Order is ready for pickup</p>
           <button
             className="driver_done-button"
-            onClick={() => {
-              updateDeliveryStatus('picked-up');
-            }}
+            onClick={() => updateDeliveryStatus('picked-up')}
           >
             Done
           </button>
         </div>
       )}
 
-      {/* Order is picked up section */}
       {status === 'picked-up' && (
         <div className="driver_status-box light-blue">
-          <p className="driver_status-label">Order is picked up</p>
+          <p className="driver_status-label">Order is delivered</p>
           <button
             className="driver_done-button"
-            onClick={() => {
-              updateDeliveryStatus('delivered');
-            }}
+            onClick={() => updateDeliveryStatus('delivered')}
           >
             Done
           </button>
         </div>
       )}
 
-      {/* Order is delivered section */}
       {status === 'delivered' && (
         <div className="driver_status-box light-blue">
           <p className="driver_status-label">Order is delivered</p>

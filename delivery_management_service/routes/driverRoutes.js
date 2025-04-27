@@ -9,6 +9,7 @@ const {
   getAssignedDelivery,
   getReadyForPickupDelivery,
   updateDeliveryStatus,
+  getDeliveryStatus,
 } = require('../controllers/driverController');
 const { verifyToken, verifyRole } = require('../middleware/authMiddleware');
 
@@ -25,7 +26,7 @@ router.put('/accept', verifyToken, verifyRole(['deliveryPersonnel']), acceptDeli
 router.put('/decline', verifyToken, verifyRole(['deliveryPersonnel']), declineDelivery);
 
 // Route to update the driver's location during delivery
-router.put('/update-location', verifyToken, verifyRole(['deliveryPersonnel']), updateDriverLocation);
+// router.put('/update-location', verifyToken, verifyRole(['deliveryPersonnel']), updateDriverLocation);
 
 router.get('/deliveries_res', verifyToken, verifyRole(['restaurantAdmin']), getAllAssignedDeliveries);
 
@@ -39,5 +40,12 @@ router.get('/delivery-ready',getReadyForPickupDelivery);
 
 // Update delivery status (picked-up, delivered, etc.)
 router.put('/update-status/:deliveryId', updateDeliveryStatus);
+
+// Update driver location
+router.put('/delivery/:deliveryId/location',updateDriverLocation);
+
+router.get('/delivery-status/:deliveryId', getDeliveryStatus);
+
+
 
 module.exports = router;

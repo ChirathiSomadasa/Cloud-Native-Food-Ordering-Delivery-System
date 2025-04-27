@@ -124,13 +124,14 @@ const DeliveryRequestStatus = () => {
             {!notifiedDeliveries.includes(index) ? (
               <div className="notify-box">
                 <p className="notify-text">Notify driver for pickup</p>
-                <button className="notify-button" onClick={() => handleNotify(index)}>
+                <button className="notify-button" onClick={() => handleNotify(index, delivery._id)}
+                >
                   Notify
                 </button>
               </div>
             ) : (
               <div className="driver-on-way-box">
-                🚚 Driver is on the way for pickup!
+                🚚 Driver is notified!
               </div>
             )}
           </div>

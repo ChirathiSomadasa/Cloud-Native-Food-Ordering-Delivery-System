@@ -59,7 +59,7 @@ const deliverySchema = new Schema({
     totalAmount: { type: Number, required: true },
     deliveryStatus: {
         type: String,
-        enum: ['pending', 'accepted', 'declined', 'ready_for_pickup', 'picked-up', 'on-the-way', 'delivered'],
+        enum: ['pending',  'ready_for_pickup', 'picked-up', 'delivered'],
         default: 'pending'
       },
       isNotified: {

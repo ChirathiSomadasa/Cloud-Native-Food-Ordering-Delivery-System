@@ -4,6 +4,7 @@ const Order = require('../../order_management_service/models/Order');
 const axios = require('axios'); 
 const jwt = require('jsonwebtoken');
 
+
 // Get available deliveries for drivers (status: 'pending')
 exports.getAvailableDeliveries = async (req, res) => {
   try {
@@ -313,26 +314,96 @@ exports.updateDeliveryStatus = async (req, res) => {
       return res.status(404).json({ message: 'Delivery not found' });
     }
 
-    console.log('Before update, delivery status:', delivery.status);
+    console.log('Before update, delivery status:', delivery.deliveryStatus);
+    console.log('Received new status from client:', deliveryStatus);
 
-    // Update the status field
-    delivery.status = deliveryStatus;
+    // Update the correct field
+    delivery.deliveryStatus = deliveryStatus;
 
-    // Log the new status before saving
-    console.log('After update, new delivery status:', delivery.status);
+    console.log('After update, new delivery status:', delivery.deliveryStatus);
 
-    // Save the updated delivery object
     await delivery.save();
 
     console.log('Delivery status saved successfully');
 
     return res.status(200).json({
       message: `Delivery status updated to ${deliveryStatus}`,
-      delivery: delivery, // Return the updated delivery object
+      delivery,
     });
   } catch (error) {
     console.error('Error updating delivery status:', error);
     return res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+// Update delivery status
+// exports.updateDeliveryStatus = async (req, res) => {
+//   const { deliveryId } = req.params;
+//   const { status } = req.body;
+
+//   try {
+//     const delivery = await Delivery.findById(deliveryId);
+//     if (!delivery) return res.status(404).json({ error: 'Delivery not found' });
+
+//     delivery.deliveryStatus = status;
+//     await delivery.save();
+
+//     // Emit to room
+//     req.io.to(deliveryId).emit('statusUpdate', status);
+
+//     res.json({ message: 'Delivery status updated', delivery });
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
+// Update driver location
+exports.updateDriverLocation = async (req, res) => {
+  const { deliveryId } = req.params;
+  const { lat, lng } = req.body;
+
+  try {
+    // Here you can save it if you want, or just broadcast
+    req.io.to(deliveryId).emit('locationUpdate', { lat, lng });
+    res.json({ message: 'Location updated' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getDeliveryStatus = async (req, res) => {
+  try {
+    // Find the most recently created delivery
+    const delivery = await Delivery.findOne().sort({ createdAt: -1 });
+
+    if (!delivery) {
+      return res.status(404).json({ message: 'No deliveries found' });
+    }
+
+    // Check if the delivery object is valid before accessing its properties
+    if (!delivery._id) {
+      return res.status(400).json({ message: 'Invalid delivery data, missing _id' });
+    }
+
+    // Return the delivery status to the frontend
+    return res.status(200).json({
+      message: 'Most recent delivery status fetched successfully',
+      delivery,
+    });
+  } catch (error) {
+    console.error('Error fetching delivery status:', error);
+    return res.status(500).json({ message: 'Server error while fetching delivery status' });
+  }
+};
+
+
+
+
+
+
+
+
+
+
 
