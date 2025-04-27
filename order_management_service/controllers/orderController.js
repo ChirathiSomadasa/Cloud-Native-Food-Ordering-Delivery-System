@@ -3,14 +3,14 @@ const Order = require('../models/Order');
 const Restaurant = require('../../restaurant_management_service/models/Restaurant');
 const MenuItem = require('../../restaurant_management_service/models/MenuItem');
 const User = require('../../user_authentication_service/models/User');
-
+const jwt = require('jsonwebtoken');
 
 //place a order
 exports.placeOrder = async (req, res) => {
   try {
     console.log("Received order data:", req.body); // Debugging
 
-    const { itemId, restaurantId, quantity,itemName, totalPrice } = req.body;
+    const { itemId, restaurantId, quantity, itemName, totalPrice } = req.body;
     if (!itemId || !restaurantId || !quantity || !totalPrice) {
       return res.status(400).json({ error: "Invalid order data" });
     }
@@ -20,6 +20,7 @@ exports.placeOrder = async (req, res) => {
       return res.status(401).json({ error: "Unauthorized - No customer ID" });
     }
 
+    //place a new order as following
     const order = new Order({
       customerId,
       restaurantId,
@@ -62,7 +63,13 @@ exports.getOrder = async (req, res) => {
 //get details of specific customer
 exports.getOrdersForCustomer = async (req, res) => {
   try {
-    const { customerId } = req.params;
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized: No token provided" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // or your secret key
+    const customerId = decoded.id; // assuming your JWT payload includes user id
 
     const orders = await Order.find({ customerId });
 
@@ -78,7 +85,7 @@ exports.getOrdersForCustomer = async (req, res) => {
 };
 
 
-
+//get orders for restaurant admin
 exports.getRestaurantOrders = async (req, res) => {
   try {
     const orders = await Order.find({ restaurantId: req.params.restaurantId });
@@ -90,18 +97,19 @@ exports.getRestaurantOrders = async (req, res) => {
   }
 };
 
+//update order status for specific restaurant admin
 exports.updateOrderStatus = async (req, res) => {
   const { status } = req.body;
-    const { orderId } = req.params;
+  const { orderId } = req.params;
 
-    try {
-        const updatedOrder = await Order.findByIdAndUpdate(orderId, { status }, { new: true });
-        if (!updatedOrder) return res.status(404).json({ message: 'Order not found' });
-        res.json(updatedOrder);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
+  try {
+    const updatedOrder = await Order.findByIdAndUpdate(orderId, { status }, { new: true });
+    if (!updatedOrder) return res.status(404).json({ message: 'Order not found' });
+    res.json(updatedOrder);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
 // Cancel an existing order
@@ -117,6 +125,7 @@ exports.cancelOrder = async (req, res) => {
   }
 };
 
+//updATE order
 exports.updateOrder = async (req, res) => {
   try {
     const { itemId, quantity, totalPrice } = req.body;
@@ -154,32 +163,15 @@ exports.updateOrder = async (req, res) => {
   }
 };
 
+//delete order for restaurant
 exports.deleteOrderForRestaurant = async (req, res) => {
   const { orderId } = req.params;
-    try {
-        await Order.findByIdAndDelete(orderId);
-        res.status(200).send("Order deleted successfully.");
-    } catch (err) {
-        res.status(500).send("Failed to delete order.");
-    }
-};
-
-exports. getNewOrderCount = async (req, res) => {
   try {
-    const restaurantId = req.user.restaurantId;
-    if (!restaurantId) {
-      return res.status(400).json({ error: "Restaurant ID missing in token" });
-    }
-    console.log("Restaurant ID from token:", req.user.restaurantId);
-
-    const count = await Order.countDocuments({
-      restaurant: restaurantId,
-      status: "pending", // or your "new" status
-    });
-
-    res.json({ count });
+    await Order.findByIdAndDelete(orderId);
+    res.status(200).send("Order deleted successfully.");
   } catch (err) {
-    console.error("Error in getNewOrderCount:", err);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).send("Failed to delete order.");
   }
 };
+
+

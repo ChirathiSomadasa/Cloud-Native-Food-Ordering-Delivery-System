@@ -19,7 +19,7 @@ router.post('/add',verifyToken,verifyRole(['customer']), placeOrder);//checked
 //delete order by customer
 router.delete('/:id', verifyToken, verifyRole(['customer']), cancelOrder);//checked
 //get orders by specific customer
-router.get('/:customerId',  getOrdersForCustomer); 
+router.get('/my-orders',getOrdersForCustomer); 
 //update order by customer
 router.put("/:id/update", verifyToken,verifyRole(['customer']), updateOrder);
 
@@ -31,7 +31,6 @@ router.put('/update-status/:orderId', verifyToken, verifyRole(['restaurantAdmin'
 router.get('/restaurant/:restaurantId', verifyToken, verifyRole(['restaurantAdmin']), getRestaurantOrders);
 //delete order by restaurant admin
 router.delete('/delete/:orderId', verifyToken, verifyRole(['restaurantAdmin']), deleteOrderForRestaurant);//checked
-router.get('/new-count', verifyToken, verifyRole(['restaurantAdmin']),getNewOrderCount);
 
  
 

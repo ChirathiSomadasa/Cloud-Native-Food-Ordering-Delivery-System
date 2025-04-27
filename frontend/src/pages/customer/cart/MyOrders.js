@@ -15,29 +15,18 @@ function MyOrders() {
           alert("Please log in to view your orders.");
           return;
         }
-  
-        // Fetch customer ID
-        const userRes = await fetch("http://localhost:5001/api/auth/get-customer-id", {
+    
+        const orderRes = await fetch(`http://localhost:5003/api/order/my-orders`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-  
-        if (!userRes.ok) throw new Error("Failed to fetch user ID");
-  
-        const { customerId } = await userRes.json(); // Destructure customerId
-        console.log("Fetched user ID:", customerId);
-  
-        // Fetch orders by customer ID
-        const orderRes = await fetch(`http://localhost:5003/api/order/${customerId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-  
+    
         if (!orderRes.ok) throw new Error("Failed to fetch orders");
-  
+    
         const ordersData = await orderRes.json();
         console.log("Orders fetched:", ordersData);
-  
+    
         if (Array.isArray(ordersData)) {
-          setOrders(ordersData.reverse()); // Reverse to show latest first
+          setOrders(ordersData.reverse());
         } else {
           console.error("Unexpected orders format", ordersData);
           setOrders([]);
@@ -48,6 +37,7 @@ function MyOrders() {
         setLoading(false);
       }
     };
+    
   
     fetchOrders();
   }, []);
