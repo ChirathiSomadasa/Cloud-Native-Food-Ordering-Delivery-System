@@ -1,231 +1,349 @@
-const Payment = require('../models/Payment');
+const mongoose = require("mongoose");
+const Payment = require("../models/Payment");
 const Order = require("../../order_management_service/models/Order");
-const axios = require('axios');
+const axios = require("axios");
+const { sendPaymentConfirmation } = require("../services/emailService");
 const paypalClient = require("../config/paypalConfig");
-
 
 
 
 // Create new payment //check
 const createPayment = async (req, res) => {
-    try {
-        const { orderId, amount, restaurantId, paymentMethod } = req.body;
+  try {
+    const { orderId, amount, restaurantId, paymentMethod } = req.body;
 
-        // Validate order, user, and restaurant existence
-        // const orderResponse = await axios.get(`http://localhost:5003/api/order/${orderId}`);
-        // const userResponse = await axios.get(`http://localhost:5001/api/user/${customerId}`);
-        // const restaurantResponse = await axios.get(`http://localhost:5002/api/restaurants/${restaurantId}`);
+    // Validate order, user, and restaurant existence
+    // const orderResponse = await axios.get(`http://localhost:5003/api/order/${orderId}`);
+    // const userResponse = await axios.get(`http://localhost:5001/api/user/${customerId}`);
+    // const restaurantResponse = await axios.get(`http://localhost:5002/api/restaurants/${restaurantId}`);
 
-        // if (!orderResponse.data || !userResponse.data || !restaurantResponse.data) {
-        //     return res.status(400).json({ error: 'Invalid order, user, or restaurant data' });
-        // }
-        
-        if (!restaurantId || !orderId || !paymentMethod || !amount) {
-            return res.status(400).json({ error: "Invalid order data" });
-        }
+    // if (!orderResponse.data || !userResponse.data || !restaurantResponse.data) {
+    //     return res.status(400).json({ error: 'Invalid order, user, or restaurant data' });
+    // }
 
-        const customerId = req.user?.id; // Ensure req.user exists
-        if (!customerId) {
-            return res.status(401).json({ error: "Unauthorized - No customer ID" });
-        }
-
-        const newPayment = new Payment({
-            orderId,
-            amount,
-            customerId,
-            restaurantId,
-            paymentMethod,
-            status: 'pending'
-        });
-
-        const savedPayment = await newPayment.save();
-        res.status(201).json(savedPayment);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-        // console.error('Error creating payment:', error.message); // Log the error for debugging
+    if (!restaurantId || !orderId || !paymentMethod || !amount) {
+      return res.status(400).json({ error: "Invalid order data" });
     }
-};
 
+    const customerId = req.user?.id; // Ensure req.user exists
+    if (!customerId) {
+      return res.status(401).json({ error: "Unauthorized - No customer ID" });
+    }
+
+    const newPayment = new Payment({
+      orderId,
+      amount,
+      customerId,
+      restaurantId,
+      paymentMethod,
+      status: "pending",
+    });
+
+    const savedPayment = await newPayment.save();
+    res.status(201).json(savedPayment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+    // console.error('Error creating payment:', error.message); // Log the error for debugging
+  }
+};
 // Get payment by ID  //check
 const getPayment = async (req, res) => {
-    try {
-        const payment = await Payment.findOne({ orderId: req.params.id });
-        if (!payment) {
-            return res.status(404).json({ message: 'Payment not found' });
-        }
-        res.json(payment);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+  try {
+    const payment = await Payment.findOne({ orderId: req.params.id });
+    if (!payment) {
+      return res.status(404).json({ message: "Payment not found" });
     }
+    res.json(payment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
-
 // Update payment status
 const updatePaymentStatus = async (req, res) => {
-    try {
-        const { status, paymentReference } = req.body;
-        const payment = await Payment.findByIdAndUpdate(
-            req.params.id,
-            { status, paymentReference },
-            { new: true }
-        );
-        if (!payment) {
-            return res.status(404).json({ message: 'Payment not found' });
-        }
-        res.json(payment);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+  try {
+    const { status, paymentReference } = req.body;
+    const payment = await Payment.findByIdAndUpdate(
+      req.params.id,
+      { status, paymentReference },
+      { new: true }
+    );
+    if (!payment) {
+      return res.status(404).json({ message: "Payment not found" });
     }
+    res.json(payment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 
 
-// PayPal  // check // Capture PayPal payment details and save to DB
+
+// 8,@-YwE,
 const capturePayPalDetails = async (req, res) => {
     try {
-        console.log("Request Body:", req.body); // Log the incoming request body
+        console.log("Request Body:", req.body);
 
-        const { paypalOrderId, restaurantOrderId, payerName, amount, currency, paymentDetails } = req.body;
+        const {
+            paypalOrderId,
+            restaurantOrderId,
+            payerName,
+            amount,
+            currency,
+            paymentDetails,
+        } = req.body;
 
-        if (!paypalOrderId || !restaurantOrderId || !payerName || !amount || !currency || !paymentDetails) {
-            return res.status(400).json({ message: "Missing required fields" });
+        if (
+            !paypalOrderId ||
+            !restaurantOrderId ||
+            !payerName ||
+            !amount ||
+            !currency ||
+            !paymentDetails
+        ) {
+            return res.status(400).json({ message: "❌ Missing required fields" });
         }
 
-        // Find the corresponding order by PayPal orderId
-        const order = await Order.findById(restaurantOrderId);
-        console.log("Order retrieved successfully:", order);
-        if (!order) {
-            console.error("Order not found for restaurantOrderId:", restaurantOrderId);
-            return res.status(404).json({ message: "Order not found" });
-        }
+        // Find the corresponding order
+        console.log("Searching for order with restaurantOrderId:", restaurantOrderId);
+        
+        // const order = await Order.findOne({ _id: restaurantOrderId }).maxTimeMS(20000);
+        // console.log("Order retrieved successfully:", order);
+        // if (!order) {
+        //     console.error("❌ Order not found:", restaurantOrderId);
+        //     return res.status(404).json({ message: "Order not found", orderId: restaurantOrderId });
+        // }
 
-        console.log("✅ Order found:", order._id);
-
-
+        // Create and save payment
         const newPayment = new Payment({
-            customerId: req.user.id, // This comes from the JWT
-            restaurantOrderId,//: order._id, // This is the order ID from the Order service
-            paypalOrderId, // This is the PayPal order ID
+            customerId: req.user?.id,
+            restaurantOrderId,
+            paypalOrderId,
             payerName,
             amount,
             currency,
             paymentDetails,
             paidAt: new Date(),
         });
-        
-        await newPayment.validate();
+
+        // await newPayment.validate();
         await newPayment.save();
-        console.log("💾 Payment saved successfully:", newPayment._id);
-        res.status(201).json({ message: "Payment recorded successfully" });
+        console.log("💾 Payment saved:", newPayment._id);
+
+        // Attempt to fetch user email and send confirmation
+        try {
+            const userResponse = await axios.get(
+                `http://localhost:5001/api/auth/me`,
+                {
+                    headers: { 
+                        Authorization: `Bearer ${req.headers.authorization}`,
+                        'Content-Type': 'application/json'
+                    },
+                    timeout: 5000 // Add a timeout
+                }
+            );
+
+            // Add debug logging
+            console.log("Token received in payment service:", req.headers.authorization);
+            console.log("User response:", userResponse.data);
+
+            if (!userResponse.data) {
+                console.error("No data received from auth service");
+                throw new Error('No data received from auth service');
+            }
+        
+            if (!userResponse.data?.data?.email) {
+                console.error("User data structure:", userResponse.data);
+                throw new Error('Email not found in user data');
+            }
+
+            const userEmail = userResponse.data.data.email;
+
+            const emailSent = await sendPaymentConfirmation(userEmail, {
+                restaurantOrderId,
+                amount,
+                currency,
+                paidAt: newPayment.paidAt,
+                paypalOrderId,
+            });
+
+            if (!emailSent) {
+                return res.status(201).json({
+                    message: "✅ Payment recorded, but email notification failed",
+                });
+            }
+
+            return res.status(201).json({
+                message: "✅ Payment recorded and email sent successfully",
+            });
+
+        } catch (emailErr) {
+            console.error("⚠️ Detailed error during email process:", {
+                message: emailErr.message,
+                response: emailErr.response?.data,
+                status: emailErr.response?.status,
+                headers: req.headers
+            });
+            return res.status(201).json({
+                message: "✅ Payment recorded, but email notification failed",
+                error: emailErr.message,
+            });
+        }
     } catch (err) {
-        console.error("Error saving payment:", err);
-        res.status(500).json({ message: "Server error" });
+        console.error("🔥 Server Error:", err.message);
+        return res.status(500).json({ message: "Server error", error: err.message });
     }
 };
+// PayPal - get all Paypal details
+const getAllPayments = async (req, res) => {
+  try {
+    console.log('User in request:', req.user); // Debug log
+    console.log('User role:', req.user?.role); // Debug log
+
+    // Verify if the user is an admin
+    if (req.user?.role !== 'systemAdmin') {
+      console.log('Access denied - user role is not systemAdmin');
+      return res.status(403).json({ message: 'Unauthorized - Admin access required' });
+    }
+
+    const payments = await Payment.find()
+      .sort({ paidAt: -1 }); // Sort by date, newest first
+
+    res.json(payments);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// PayPal - delete payment details from sys admin
+const deletePayment = async (req, res) => {
+  try {
+      const paymentId = req.params.id;
+      
+      // Verify if the user is an admin
+      if (req.user?.role !== 'systemAdmin') {
+          return res.status(403).json({ message: 'Unauthorized - Admin access required' });
+      }
+
+      const payment = await Payment.findByIdAndDelete(paymentId);
+      
+      if (!payment) {
+          return res.status(404).json({ message: 'Payment not found' });
+      }
+
+      res.status(200).json({ message: 'Payment deleted successfully' });
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
+
+
+
 
 // not check, mot working
 const createPayPalOrder = async (req, res) => {
-    try {
-        const { amount, currency } = req.body;
+  try {
+    const { amount, currency } = req.body;
 
-        const request = new paypal.orders.OrdersCreateRequest();
-        request.prefer("return=representation");
-        request.requestBody({
-            intent: "CAPTURE",
-            purchase_units: [
-                {
-                    amount: {
-                        currency_code: currency || "USD",
-                        value: amount,
-                    },
-                },
-            ],
-        });
+    const request = new paypal.orders.OrdersCreateRequest();
+    request.prefer("return=representation");
+    request.requestBody({
+      intent: "CAPTURE",
+      purchase_units: [
+        {
+          amount: {
+            currency_code: currency || "USD",
+            value: amount,
+          },
+        },
+      ],
+    });
 
-        const order = await paypalClient.execute(request);
-        res.status(201).json({ id: order.result.id });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const order = await paypalClient.execute(request);
+    res.status(201).json({ id: order.result.id });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 const capturePayPalOrder = async (req, res) => {
-    try {
-        const { orderId } = req.body;
+  try {
+    const { orderId } = req.body;
 
-        const request = new paypal.orders.OrdersCaptureRequest(orderId);
-        request.requestBody({});
+    const request = new paypal.orders.OrdersCaptureRequest(orderId);
+    request.requestBody({});
 
-        const capture = await paypalClient.execute(request);
-        res.status(200).json({ status: "success", details: capture.result });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const capture = await paypalClient.execute(request);
+    res.status(200).json({ status: "success", details: capture.result });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
-
 
 
 // PayHere (Sri Lanka) - Online Payment Integration   // not check, not working
 const initializeOnlinePayment = async (req, res) => {
-    try {
-        const { orderId, amount, customerEmail, customerName } = req.body;
+  try {
+    const { orderId, amount, customerEmail, customerName } = req.body;
 
-        const paymentConfig = {
-            merchant_id: process.env.PAYHERE_MERCHANT_ID,
-            return_url: process.env.PAYMENT_RETURN_URL,
-            cancel_url: process.env.PAYMENT_CANCEL_URL,
-            notify_url: process.env.PAYMENT_NOTIFY_URL,
-            order_id: orderId,
-            items: "Order Payment",
-            amount: amount,
-            currency: "LKR",
-            first_name: customerName,
-            email: customerEmail,
-            phone: "0771234567", // Optional
-            address: "Customer Address", // Optional
-            city: "Colombo", // Optional
-            country: "Sri Lanka",
-        };
+    const paymentConfig = {
+      merchant_id: process.env.PAYHERE_MERCHANT_ID,
+      return_url: process.env.PAYMENT_RETURN_URL,
+      cancel_url: process.env.PAYMENT_CANCEL_URL,
+      notify_url: process.env.PAYMENT_NOTIFY_URL,
+      order_id: orderId,
+      items: "Order Payment",
+      amount: amount,
+      currency: "LKR",
+      first_name: customerName,
+      email: customerEmail,
+      phone: "0771234567", // Optional
+      address: "Customer Address", // Optional
+      city: "Colombo", // Optional
+      country: "Sri Lanka",
+    };
 
-        const paymentUrl = `https://sandbox.payhere.lk/pay/checkout?${new URLSearchParams(paymentConfig).toString()}`;
-        res.json({ paymentUrl });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    const paymentUrl = `https://sandbox.payhere.lk/pay/checkout?${new URLSearchParams(
+      paymentConfig
+    ).toString()}`;
+    res.json({ paymentUrl });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 const handlePaymentNotification = async (req, res) => {
-    try {
-        const { order_id, status } = req.body;
+  try {
+    const { order_id, status } = req.body;
 
-        if (status === "success") {
-            await Payment.findOneAndUpdate(
-                { orderId: order_id },
-                { status: "completed" }
-            );
-        } else {
-            await Payment.findOneAndUpdate(
-                { orderId: order_id },
-                { status: "failed" }
-            );
-        }
-
-        res.status(200).send("Notification processed");
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    if (status === "success") {
+      await Payment.findOneAndUpdate(
+        { orderId: order_id },
+        { status: "completed" }
+      );
+    } else {
+      await Payment.findOneAndUpdate(
+        { orderId: order_id },
+        { status: "failed" }
+      );
     }
+
+    res.status(200).send("Notification processed");
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-
-
 module.exports = {
-    createPayment,
-    getPayment,
-    updatePaymentStatus,
+  createPayment,
+  getPayment,
+  updatePaymentStatus,
 
-    // PayPal
-    createPayPalOrder,
-    capturePayPalOrder,
-    capturePayPalDetails, //check
+  // PayPal
+  createPayPalOrder,
+  capturePayPalOrder,
+  capturePayPalDetails, //check
+  getAllPayments,
+  deletePayment,
 
-    // PayHere
-    initializeOnlinePayment,
-    handlePaymentNotification,
+  // PayHere
+  initializeOnlinePayment,
+  handlePaymentNotification,
 };

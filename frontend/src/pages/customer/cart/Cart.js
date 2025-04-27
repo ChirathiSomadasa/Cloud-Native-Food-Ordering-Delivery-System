@@ -8,7 +8,8 @@ function Cart() {
     const [cartItems, setCartItems] = useState([]);
     const [selectedOrders, setSelectedOrders] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [sdkReady, setSdkReady] = useState(false); // State to check if SDK is ready
+    const [paypalReady, setPaypalReady] = useState(false); // State to check if PayPal button is ready
+    const [showPayPalButton, setShowPayPalButton] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [showOrderDetails, setShowOrderDetails] = useState(false);
     const [deliveryMethod, setDeliveryMethod] = useState('pickup');
@@ -22,7 +23,6 @@ function Cart() {
         const fee = distance * 100; // e.g., 100 LKR per km
         setDeliveryFee(fee);
     };
-
 
     const handlePaymentDetailsClick = () => {
         navigate("/payment-details"); // Navigate to the payment details page
@@ -69,7 +69,7 @@ function Cart() {
     }, []);
 
 
-
+    // Remove item from the cart
     const removeItem = async (id) => {
         const token = localStorage.getItem("auth_token");
         console.log("Attempting to remove item with ID:", id);
@@ -156,6 +156,7 @@ function Cart() {
         setShowConfirmation(true);
     };
 
+    /// Function to confirm checkout and calculate subtotal
     const confirmCheckout = async () => {
         setShowConfirmation(false);
         setShowOrderDetails(true);
@@ -165,6 +166,8 @@ function Cart() {
         setSubtotal(calculatedSubtotal);
 
     };
+
+    /// Function to place the order
     const placeOrder = async () => {
         setShowConfirmation(false);
         setShowOrderDetails(true);
@@ -175,8 +178,8 @@ function Cart() {
             return;
         }
 
-
         const selectedItems = cartItems.filter(item => selectedOrders.includes(item._id));
+        const createdOrderIds = []; // ← to store returned order IDs
 
         try {
             for (const item of selectedItems) {
@@ -195,33 +198,42 @@ function Cart() {
                 );
 
                 console.log("Order placed:", response.data);
+                createdOrderIds.push(response.data._id); // <-- store order._id
             }
+            // Store order IDs in localStorage
+            localStorage.setItem("placed_order_ids", JSON.stringify(createdOrderIds));
 
             alert("Order placed successfully!");
-            //Optionally clear only selected orders from cart
-            const remainingCartItems = cartItems.filter(item => !selectedOrders.includes(item._id));
-            setCartItems(remainingCartItems);
-            setSelectedOrders([]);
-            // Remove ordered items from cart in backend
-            for (const id of selectedOrders) {
-                try {
-                    await axios.delete(`http://localhost:5003/api/cart/remove/${id}`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-                } catch (err) {
-                    console.error(`Failed to remove item ${id} from backend cart`, err);
-                }
-            }
+            setCartItems(cartItems.filter(item => !selectedOrders.includes(item._id)));
+            setSelectedOrders(createdOrderIds); // ← use actual order IDs here
+
+            // alert("Order placed successfully!");
+            // //Optionally clear only selected orders from cart
+            // const remainingCartItems = cartItems.filter(item => !selectedOrders.includes(item._id));
+            // setCartItems(remainingCartItems);
+            // setSelectedOrders([]);
+            // // Remove ordered items from cart in backend
+            // for (const id of selectedOrders) {
+            //     try {
+            //         await axios.delete(`http://localhost:5003/api/cart/remove/${id}`, {
+            //             headers: { Authorization: `Bearer ${token}` },
+            //         });
+            //     } catch (err) {
+            //         console.error(`Failed to remove item ${id} from backend cart`, err);
+            //     }
+            // }
+
+            // Load PayPal SDK script
+            await addPayPalScript();
+            setShowPayPalButton(true); // Trigger PayPal button rendering
 
         } catch (error) {
             console.error("Error placing order:", error.response?.data || error.message);
             alert("Failed to place order. Please try again.");
         }
-        navigate('/');
+        // navigate('/');
 
     };
-
-
 
     const selectedTotal = cartItems
         .filter((item) => selectedOrders.includes(item._id))
@@ -230,146 +242,119 @@ function Cart() {
     const totalPrice = selectedTotal;
 
 
-    //// Function to dynamically load the PayPal SDK script
-    // const addPayPalScript = async () => {
-    //     const { data: clientId } = await axios.get("http://localhost:5010/api/config/paypal");
-    //     console.log(clientId);
+    ///////// Function to dynamically load the PayPal SDK script
+    const addPayPalScript = async () => {
+        try {
+            const { data: clientId } = await axios.get("http://localhost:5010/api/config/paypal");
+            console.log("PayPal Client ID:", clientId);
+    
+            // Check if the script is already added
+            if (document.querySelector(`script[src="https://www.paypal.com/sdk/js?client-id=${clientId}"]`)) {
+                console.log("PayPal script already loaded.");
+                setPaypalReady(true);
+                return;
+            }
+    
+            // Load PayPal script dynamically
+            const script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`; // Add your PayPal client ID
+            script.async = true;
+            script.onload = () => {
+                console.log("PayPal script loaded successfully.");
+                setPaypalReady(true);
+            };
+            script.onerror = () => {
+                console.error("Failed to load PayPal script.");
+                alert("Failed to load PayPal. Please refresh the page and try again.");
+            };
+            document.body.appendChild(script);
 
-    //     // Load PayPal script dynamically
-    //     const script = document.createElement("script");
-    //     script.type = "text/javascript";
-    //     script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`; // Add your PayPal client ID
-    //     script.async = true;
-    //     script.onload = () => {
-    //         // PayPal script loaded successfully
-    //         console.log("PayPal script loaded");
-    //         setSdkReady(true); // Set SDK ready state to true
-    //     };
-    //     document.body.appendChild(script);
-    // };
+        } catch (error) {
+            console.error("Error fetching PayPal Client ID:", error);
+            alert("Failed to load PayPal configuration. Please try again later.");
+        }
+    };
 
-    // useEffect(() => {
-    //     if (sdkReady && selectedOrders.length > 0) {
-    //         // Clear the PayPal button container before rendering a new button
-    //         const paypalContainer = document.getElementById("paypal-button-container");
-    //         if (paypalContainer) {
-    //             paypalContainer.innerHTML = ""; // Clear the container
-    //         }
-
-    //         window.paypal.Buttons({
-    //             createOrder: (data, actions) => {
-    //                 return actions.order.create({
-    //                     purchase_units: [
-    //                         {
-    //                             amount: {
-    //                                 value: totalPrice.toFixed(2),
-    //                                 currency_code: "USD",
-    //                             },
-    //                         },
-    //                     ],
-    //                 });
-    //             },
-    //             onApprove: async (data, actions) => {
-    //                 const details = await actions.order.capture();
-    //                 const payer = details.payer;
-    //                 const purchaseUnit = details.purchase_units[0];
-
-    //                 localStorage.setItem("PayPalorder_id", details.id);// Store paypal order ID in local storage
-
-    //                 alert(`Transaction completed by ${details.payer.name.given_name}`);
-    //                 console.log("Payment Details:", details);
-
-    //                 try {
-    //                     // Trigger checkout logic to create the order in the backend
-    //                     const token = localStorage.getItem("auth_token");
-    //                     if (!token) {
-    //                         alert("Please log in to proceed with checkout.");
-    //                         return;
-    //                     }
-
-    //                     const selectedItems = cartItems.filter(item => selectedOrders.includes(item._id));
-    //                     const orderResponses = [];
-
-    //                     for (const item of selectedItems) {
-    //                         const orderData = {
-    //                             restaurantId: item.restaurantId,
-    //                             itemId: item.itemId,
-    //                             quantity: item.quantity,
-    //                             totalPrice: item.price * item.quantity,
-    //                         };
-
-    //                         const response = await axios.post(
-    //                             "http://localhost:5003/api/order/add",
-    //                             orderData,
-    //                             { headers: { Authorization: `Bearer ${token}` } }
-    //                         );
-    //                         orderResponses.push(response.data);
-    //                     }
-
-    //                     console.log("Orders placed:", orderResponses);
-
-    //                     alert("Order placed successfully!");
-
-    //                     //  Remove ordered items from cart
-    //                     const remainingCartItems = cartItems.filter(item => !selectedOrders.includes(item._id));
-    //                     setCartItems(remainingCartItems);
-    //                     setSelectedOrders([]);
-
-    //                     for (const id of selectedOrders) {
-    //                         try {
-    //                             await axios.delete(`http://localhost:5003/api/cart/remove/${id}`, {
-    //                                 headers: { Authorization: `Bearer ${token}` },
-    //                             });
-    //                         } catch (err) {
-    //                             console.error(`Failed to remove item ${id} from backend cart`, err);
-    //                         }
-    //                     }
-
-
-    //                     await new Promise(res => setTimeout(res, 1000)); // 1000ms delay to ensure orders are created before saving payment details
-
-
-    //                     // Save payment details with the order reference
-    //                     for (const order of orderResponses) {
-    //                         if (!order._id) {
-    //                             console.error("❌ Invalid order ID, skipping payment post");
-    //                             continue;
-    //                         }
-
-    //                         const paymentRequestBody = {
-    //                             restaurantOrderId: order._id, // Use the MongoDB _id of the order
-    //                             paypalOrderId: details.id, // PayPal order ID
-    //                             payerName: `${payer.name.given_name} ${payer.name.surname}`,
-    //                             amount: parseFloat(purchaseUnit.amount.value),
-    //                             currency: purchaseUnit.amount.currency_code,
-    //                             paymentDetails: details,
-    //                         };
-    //                         console.log("Payment Request Body:", paymentRequestBody);
-
-    //                         await axios.post(
-    //                             "http://localhost:5010/api/payment/paypalDetails",
-    //                             paymentRequestBody,
-    //                             {
-    //                                 headers: {
-    //                                     Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-    //                                 },
-    //                             }
-    //                         );
-    //                     }
-
-    //                     console.log("✅ Payment info saved to DB");
-    //                 } catch (error) {
-    //                     console.error("❌ Failed to save payment:", error);
-    //                 }
-
-    //             },
-    //             onError: (err) => {
-    //                 console.error("PayPal Payment Error:", err);
-    //             },
-    //         }).render("#paypal-button-container");
-    //     }
-    // }, [sdkReady, selectedOrders, totalPrice]);
-
+    //////// Function to handle PayPal payment
+    useEffect(() => {
+        const renderPayPalButton = async () => {
+            const container = document.getElementById("paypal-button-container");
+            if (paypalReady && window.paypal && container) {
+                setTimeout(() => {
+                    window.paypal
+                        .Buttons({
+                            createOrder: (data, actions) => {
+                                return actions.order.create({
+                                    purchase_units: [
+                                        {
+                                            amount: {
+                                                value: (subtotal + (deliveryMethod === 'delivery' ? deliveryFee : 0)).toFixed(2), // Ensure this is valid
+                                                currency_code: "USD", // Ensure this is valid
+                                            },
+                                        },
+                                    ],
+                                });
+                            },
+                            onApprove: async (data, actions) => {
+                                const details = await actions.order.capture();
+                                const payer = details.payer;
+                                const purchaseUnit = details.purchase_units[0];
+                            
+                                alert(`Transaction completed by ${payer.name.given_name} ${payer.name.surname}`);
+                                console.log("Payment Details:", details);
+    
+                                // Prepare payment details to send to the backend
+                                const paymentRequestBody = {
+                                    restaurantOrderId: selectedOrders[0], // Assuming one order for simplicity
+                                    paypalOrderId: details.id,
+                                    payerName: `${payer.name.given_name} ${payer.name.surname}`,
+                                    amount: parseFloat(purchaseUnit.amount.value),
+                                    currency: purchaseUnit.amount.currency_code,
+                                    paymentDetails: details,
+                                };
+                                console.log("Payment Request Body:", paymentRequestBody);
+    
+                                try {
+                                    const token = localStorage.getItem("auth_token");
+                                    if (!token) {
+                                        alert("Please log in to proceed with payment.");
+                                        return;
+                                    }
+    
+                                    // Send payment details to the backend
+                                    await axios.post(
+                                        "http://localhost:5010/api/payment/paypalDetails",
+                                        paymentRequestBody,
+                                        {
+                                            headers: {
+                                                Authorization: `Bearer ${token}`,
+                                            },
+                                        }
+                                    );
+    
+                                    console.log("✅ Payment info saved to DB");
+                                    alert("Payment successful!");
+                                    clearCart();
+                                    setShowOrderDetails(false);
+                                    setPaypalReady(false);
+                                } catch (error) {
+                                    console.error("❌ Failed to save payment:", error);
+                                    alert("Failed to process payment. Please try again."); ///// error coming
+                                }
+                            },
+                            onError: (err) => {
+                                console.error("PayPal Payment Error:", err);
+                                alert("Payment failed. Please try again.");
+                            },
+                        })
+                        .render("#paypal-button-container");
+                }, 0); // Delay ensures DOM is ready
+            }
+        };
+    
+        renderPayPalButton();
+    }, [paypalReady, totalPrice]);
 
 
 
@@ -377,6 +362,7 @@ function Cart() {
 
     return (
         <>
+            {/* cart section */}
             <div className="cart-container">
                 <h2 className="cart-title">My Orders</h2>
                 <button className="clear-cart-button" onClick={clearCart}>
@@ -440,33 +426,11 @@ function Cart() {
                 >
                     Go to checkout
                 </button>}
-                {/* {sdkReady && selectedOrders.length > 0 && (
-                    <div id="paypal-button-container"
-                        style={{
-                            marginTop: "20px",
-                            maxWidth: "300px",
-                            marginLeft: "auto",
-                            marginRight: "auto",
-                            display: "block",
-                            textAlign: "center",
-                        }}
-                    ></div>
-                )}
-                <button className="checkout-button"
-                    style={{
-                        marginTop: "20px",
-                        maxWidth: "300px",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                        display: "block",
-                        textAlign: "center",
-                        color: "black",
-                    }}
-                    onClick={handlePaymentDetailsClick}
-                >
-                    Payment Details
-                </button> */}
+                
             </div>
+
+
+            {/* Confirmation popup Modal */}
             {showConfirmation && (
                 <div className="modal-overlay">
                     <div className="modal">
@@ -492,6 +456,8 @@ function Cart() {
                 </div>
             )}
 
+
+            {/* Order Summary popup Modal */}
             {showOrderDetails && (
                 <div className="modal-overlay">
                     <div className="modal order-summary-modal">
@@ -543,12 +509,22 @@ function Cart() {
                         </div>
 
                         <div className="modal-buttons">
-                            <button className="btn place-order-btn" onClick={placeOrder}> Place Order</button>
+                            {!paypalReady ? (
+                                <button className="btn place-order-btn" onClick={placeOrder}>
+                                    Place Order
+                                </button>
+                            ) : (
+                                <div id="paypal-button-container"></div>
+                            )}
                         </div>
+
+                        {/* <div className="modal-buttons">
+                            <button className="btn place-order-btn" onClick={placeOrder}> Place Order</button>
+                        </div>  */}
+
                     </div>
                 </div>
             )}
-
 
         </>
     );

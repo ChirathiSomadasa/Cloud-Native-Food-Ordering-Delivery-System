@@ -111,8 +111,32 @@ function Header() {
 
   const numberOfItems = cartItems.reduce((total, item) => total + item.quantity, 0); 
       // After successfully adding an item to the cart
-      window.dispatchEvent(new Event("cartUpdated"));
+      // window.dispatchEvent(new Event("cartUpdated"));
+  // Dispatch the event only when an item is added or updated in the cart
+  const addItemToCart = async (item) => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      if (!token) return;
 
+      const response = await fetch("http://localhost:5003/api/cart", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(item),
+      });
+
+      if (response.ok) {
+        // After successfully adding an item to the cart
+        window.dispatchEvent(new Event("cartUpdated"));
+      } else {
+        console.error("Failed to add item to cart");
+      }
+    } catch (err) {
+      console.error("Error adding item to cart:", err);
+    }
+  };
 
   return (
     <>

@@ -147,6 +147,19 @@ exports.getUserDetails = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+// Get user ID for profile
+exports.getUserID = async (req, res) => {
+  try {
+    const userId = req.params.id; // Use the ID from URL parameters
+    const user = await User.findById(userId, 'first_name last_name mobile_number email city');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ Status: 'Success', data: user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 // update user details for profile
 exports.updateUser = async (req, res) => {
