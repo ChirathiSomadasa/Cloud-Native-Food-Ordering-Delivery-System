@@ -39,14 +39,13 @@ exports.addToCart = async (req, res) => {
 };
 
 // Get Cart
-// controllers/cartController.js
 exports.getUserCart = async (req, res) => {
   try {
     const userId = req.user.id; // from JWT token
 
     const cart = await Cart.findOne({ userId });
 
-   
+
 
     if (!cart || !cart.items) {
       return res.json({ items: [] });
