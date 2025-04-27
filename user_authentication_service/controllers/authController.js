@@ -71,6 +71,7 @@ try {
   });
 
   res.json({ Status: 'Success', role: user.role, token });
+  console.log("jwt token", token)
 } catch (err) {
   res.status(500).json({ error: err.message });
 }
