@@ -317,24 +317,38 @@ exports.updateDeliveryStatus = async (req, res) => {
     console.log('Before update, delivery status:', delivery.deliveryStatus);
     console.log('Received new status from client:', deliveryStatus);
 
-    // Update the correct field
     delivery.deliveryStatus = deliveryStatus;
-
-    console.log('After update, new delivery status:', delivery.deliveryStatus);
-
     await delivery.save();
 
     console.log('Delivery status saved successfully');
 
+    // 🔔 Emit to all clients in this delivery room
+    if (req.io) {
+      req.io.to(deliveryId).emit('deliveryStatusUpdate', deliveryStatus);
+
+      if (delivery.driverDetails?.location) {
+        const { latitude, longitude } = delivery.driverDetails.location;
+        req.io.to(deliveryId).emit('locationUpdate', {
+          deliveryId,
+          location: {
+            lat: latitude,
+            lng: longitude
+          }
+        });
+      }
+    }
+
     return res.status(200).json({
       message: `Delivery status updated to ${deliveryStatus}`,
-      delivery,
+      delivery
     });
+
   } catch (error) {
     console.error('Error updating delivery status:', error);
     return res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 
 // Update delivery status
@@ -364,13 +378,16 @@ exports.updateDriverLocation = async (req, res) => {
   const { lat, lng } = req.body;
 
   try {
-    // Here you can save it if you want, or just broadcast
-    req.io.to(deliveryId).emit('locationUpdate', { lat, lng });
+    req.io.to(deliveryId).emit('locationUpdate', {
+      deliveryId, 
+      location: { lat, lng }
+    });
     res.json({ message: 'Location updated' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 exports.getDeliveryStatus = async (req, res) => {
   try {
@@ -397,7 +414,58 @@ exports.getDeliveryStatus = async (req, res) => {
   }
 };
 
+exports.sendReceiptEmail = async (req, res) => {
+  try {
+    const { deliveryId } = req.params;
 
+    const delivery = await Delivery.findById(deliveryId).populate('customerId');
+
+    if (!delivery) {
+      return res.status(404).json({ message: 'Delivery not found' });
+    }
+
+    const customerEmail = delivery.customerId.email;
+
+    const itemsHTML = delivery.restaurants.map(restaurant => {
+      const items = restaurant.orderedItems.map(item =>
+        `<li>${item.name} (x${item.quantity}) - $${item.price * item.quantity}</li>`
+      ).join('');
+      return `<h4>${restaurant.restaurantName}</h4><ul>${items}</ul>`;
+    }).join('');
+
+    const emailContent = `
+      <h2>Delivery Receipt</h2>
+      <p><strong>To:</strong> ${delivery.receiverName}</p>
+      <p><strong>Delivery Address:</strong> ${delivery.deliveryAddress}</p>
+      ${itemsHTML}
+      <p><strong>Delivery Fee:</strong> $${delivery.deliveryFee}</p>
+      <p><strong>Total:</strong> $${delivery.totalAmount}</p>
+      <p><strong>Estimated Time:</strong> ${delivery.estimatedDeliveryTime}</p>
+      <p><strong>Driver:</strong> ${delivery.driverDetails.firstName} ${delivery.driverDetails.lastName}</p>
+      <p>Thank you for using our service!</p>
+    `;
+
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: process.env.SMTP_EMAIL,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Delivery Service" <${process.env.SMTP_EMAIL}>`,
+      to: customerEmail,
+      subject: 'Your Delivery Receipt',
+      html: emailContent,
+    });
+
+    res.status(200).json({ message: 'Receipt sent successfully' });
+  } catch (error) {
+    console.error('Error sending receipt email:', error);
+    res.status(500).json({ message: 'Failed to send receipt email' });
+  }
+};
 
 
 

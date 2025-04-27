@@ -41,10 +41,17 @@
   border-radius: 8px;
 }
 
-.map-preview p {
-  margin-top: 10px;
-  font-weight: bold;
+.map-preview {
+  margin-top: 20px;
 }
+#live-map {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+    height: 300px;
+    width: 100%;
+  
+}
+
 
 .status-info {
   align-items: center;

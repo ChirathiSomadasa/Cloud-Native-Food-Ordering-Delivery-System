@@ -10,6 +10,7 @@ const {
   getReadyForPickupDelivery,
   updateDeliveryStatus,
   getDeliveryStatus,
+  sendReceiptEmail,
 } = require('../controllers/driverController');
 const { verifyToken, verifyRole } = require('../middleware/authMiddleware');
 
@@ -46,6 +47,7 @@ router.put('/delivery/:deliveryId/location',updateDriverLocation);
 
 router.get('/delivery-status/:deliveryId', getDeliveryStatus);
 
+router.post('/send-receipt/:deliveryId', sendReceiptEmail);
 
 
 module.exports = router;
