@@ -186,7 +186,7 @@ function Cart() {
                 const orderData = {
                     restaurantId: item.restaurantId, // This must be part of cart item
                     itemId: item.itemId,
-                    itemName:item.name,
+                    itemName: item.name,
                     quantity: item.quantity,
                     totalPrice: item.price * item.quantity
                 };
@@ -207,21 +207,20 @@ function Cart() {
             setCartItems(cartItems.filter(item => !selectedOrders.includes(item._id)));
             setSelectedOrders(createdOrderIds); // ← use actual order IDs here
 
-            // alert("Order placed successfully!");
-            // //Optionally clear only selected orders from cart
-            // const remainingCartItems = cartItems.filter(item => !selectedOrders.includes(item._id));
-            // setCartItems(remainingCartItems);
-            // setSelectedOrders([]);
-            // // Remove ordered items from cart in backend
-            // for (const id of selectedOrders) {
-            //     try {
-            //         await axios.delete(`http://localhost:5003/api/cart/remove/${id}`, {
-            //             headers: { Authorization: `Bearer ${token}` },
-            //         });
-            //     } catch (err) {
-            //         console.error(`Failed to remove item ${id} from backend cart`, err);
-            //     }
-            // }
+            //Optionally clear only selected orders from cart
+            const remainingCartItems = cartItems.filter(item => !selectedOrders.includes(item._id));
+            setCartItems(remainingCartItems);
+            setSelectedOrders([]);
+            // Remove ordered items from cart in backend
+            for (const id of selectedOrders) {
+                try {
+                    await axios.delete(`http://localhost:5003/api/cart/remove/${id}`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                } catch (err) {
+                    console.error(`Failed to remove item ${id} from backend cart`, err);
+                }
+            }
 
             // Load PayPal SDK script
             await addPayPalScript();
@@ -247,14 +246,14 @@ function Cart() {
         try {
             const { data: clientId } = await axios.get("http://localhost:5010/api/config/paypal");
             console.log("PayPal Client ID:", clientId);
-    
+
             // Check if the script is already added
             if (document.querySelector(`script[src="https://www.paypal.com/sdk/js?client-id=${clientId}"]`)) {
                 console.log("PayPal script already loaded.");
                 setPaypalReady(true);
                 return;
             }
-    
+
             // Load PayPal script dynamically
             const script = document.createElement("script");
             script.type = "text/javascript";
@@ -300,10 +299,10 @@ function Cart() {
                                 const details = await actions.order.capture();
                                 const payer = details.payer;
                                 const purchaseUnit = details.purchase_units[0];
-                            
+
                                 alert(`Transaction completed by ${payer.name.given_name} ${payer.name.surname}`);
                                 console.log("Payment Details:", details);
-    
+
                                 // Prepare payment details to send to the backend
                                 const paymentRequestBody = {
                                     restaurantOrderId: selectedOrders[0], // Assuming one order for simplicity
@@ -314,14 +313,14 @@ function Cart() {
                                     paymentDetails: details,
                                 };
                                 console.log("Payment Request Body:", paymentRequestBody);
-    
+
                                 try {
                                     const token = localStorage.getItem("auth_token");
                                     if (!token) {
                                         alert("Please log in to proceed with payment.");
                                         return;
                                     }
-    
+
                                     // Send payment details to the backend
                                     await axios.post(
                                         "http://localhost:5010/api/payment/paypalDetails",
@@ -332,7 +331,7 @@ function Cart() {
                                             },
                                         }
                                     );
-    
+
                                     console.log("✅ Payment info saved to DB");
                                     alert("Payment successful!");
                                     clearCart();
@@ -352,13 +351,13 @@ function Cart() {
                 }, 0); // Delay ensures DOM is ready
             }
         };
-    
+
         renderPayPalButton();
     }, [paypalReady, totalPrice]);
 
 
 
-    if (loading) return <div  className="loading-message">Loading...</div>;
+    if (loading) return <div className="loading-message">Loading...</div>;
 
     return (
         <>
@@ -426,7 +425,7 @@ function Cart() {
                 >
                     Go to checkout
                 </button>}
-                
+
             </div>
 
 
