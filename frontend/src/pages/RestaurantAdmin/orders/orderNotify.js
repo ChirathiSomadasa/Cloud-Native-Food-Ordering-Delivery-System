@@ -19,7 +19,7 @@ const RestaurantOrders = () => {
                     return;
                 }
 
-                // Step 1: Get restaurant ID
+                // Get restaurant ID
                 const idRes = await fetch("http://localhost:5004/api/restaurants/get-restaurant-id/", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -28,7 +28,7 @@ const RestaurantOrders = () => {
                 const { restaurantId } = await idRes.json();
                 console.log("Fetched restaurantId:", restaurantId);
 
-                // Step 2: Get orders for the restaurant
+                //  Get orders for the restaurant
                 const orderRes = await fetch(`http://localhost:5003/api/order/restaurant/${restaurantId}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
