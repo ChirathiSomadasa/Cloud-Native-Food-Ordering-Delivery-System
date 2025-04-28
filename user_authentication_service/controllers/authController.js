@@ -70,7 +70,7 @@ try {
     path: '/',
   });
 
-  res.json({ Status: 'Success', role: user.role, token });
+  res.json({ Status: 'Success', role: user.role, token,email:user.email });
 } catch (err) {
   res.status(500).json({ error: err.message });
 }
