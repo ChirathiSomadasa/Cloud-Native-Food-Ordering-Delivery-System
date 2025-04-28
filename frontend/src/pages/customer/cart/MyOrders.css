@@ -1,8 +1,17 @@
 .orders-container {
   padding-left: 90px;
   padding-right: 90px;
-
+  animation: fadeIn 1.0s ease-in-out;
   font-family: Arial, sans-serif;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 h2{
@@ -14,6 +23,15 @@ h2{
   margin-bottom: 30px;
   border-radius: 10px;
   background-color: #fff;
+  
+  /* Smooth transition for color change */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.order-card:hover {
+  /* Change color on hover */
+  background-color: #fffbf6d2;  /* Adjust to desired color */
+  transform: scale(1.0);  /*add a slight scale effect to the card */
 }
 
 .order-info {
@@ -28,17 +46,17 @@ h2{
 }
 
 .order-status .shipped {
-  color: green;
+  color: #f4a405;
   font-weight: bold;
 }
 
-.progress-tracker-wrapper {
+.progress-tracker-wrapper-p {
   position: relative;
   margin-top: 30px;
   height: 60px;
 }
 
-.progress-line-bg {
+.progress-line-bg-p {
   position: absolute;
   top: 20px;
   left: 0;
@@ -49,18 +67,18 @@ h2{
   border-radius: 2px;
 }
 
-.progress-line-fill {
+.progress-line-fill-p {
   position: absolute;
   top: 20px;
   left: 0;
   height: 4px;
-  background-color: #28a745;
+  background-color: #f4a405;
   z-index: 2;
   border-radius: 2px;
   transition: width 0.3s ease-in-out;
 }
 
-.progress-tracker {
+.progress-tracker-p {
   display: flex;
   justify-content: space-between;
   position: relative;
@@ -74,7 +92,7 @@ h2{
   width: 25%;
 }
 
-.circle {
+.circle-p {
   background: #ccc;
   width: 30px;
   height: 30px;
@@ -89,8 +107,8 @@ h2{
   z-index: 3;
 }
 
-.step.active .circle {
-  background-color: #28a745;
+.step.active .circle-p  {
+  background-color: #f4a405;
 }
 
 .step p {

@@ -15,16 +15,16 @@ function MyOrders() {
           alert("Please log in to view your orders.");
           return;
         }
-    
+
         const orderRes = await fetch(`http://localhost:5003/api/order/my-orders`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-    
+
         if (!orderRes.ok) throw new Error("Failed to fetch orders");
-    
+
         const ordersData = await orderRes.json();
         console.log("Orders fetched:", ordersData);
-    
+
         if (Array.isArray(ordersData)) {
           setOrders(ordersData.reverse());
         } else {
@@ -37,13 +37,13 @@ function MyOrders() {
         setLoading(false);
       }
     };
-    
-  
+
+
     fetchOrders();
   }, []);
-  
 
-  if (loading) return <div  className="loading-message">Loading your orders...</div>;
+
+  if (loading) return <div className="loading-message">Loading your orders...</div>;
   if (error) return <div>{error}</div>;
 
   return (
@@ -57,38 +57,38 @@ function MyOrders() {
             <div className="order-info">
               <p><strong>Item Name:</strong> {order.itemName}</p>
               <div className="order-status">
-              <h3>Order Status: <span className="shipped"> {order.status}</span></h3>
-            </div>
+                <h3>Order Status: <span className="shipped"> {order.status}</span></h3>
+              </div>
               <p><strong>Total Price:</strong> LKR {order.totalPrice.toFixed(2)}</p>
             </div>
 
-            
 
-            <div className="progress-tracker-wrapper">
-  <div className="progress-line-bg" />
-  <div
-    className="progress-line-fill"
-    style={{ width: `${["Pending", "Accepted", "Preparing", "Ready"].indexOf(order.status) / 3 * 100}%` }}
-  />
-  <div className="progress-tracker">
-    <div className={`step ${["Pending", "Accepted", "Preparing", "Ready"].includes(order.status) ? "active" : ""}`}>
-      <div className="circle">✓</div>
-      <p>Pending</p>
-    </div>
-    <div className={`step ${["Accepted", "Preparing", "Ready"].includes(order.status) ? "active" : ""}`}>
-      <div className="circle">✓</div>
-      <p>Accepted</p>
-    </div>
-    <div className={`step ${["Preparing", "Ready"].includes(order.status) ? "active" : ""}`}>
-      <div className="circle">✓</div>
-      <p>Preparing</p>
-    </div>
-    <div className={`step ${["Ready"].includes(order.status) ? "active" : ""}`}>
-      <div className="circle">✓</div>
-      <p>Ready</p>
-    </div>
-  </div>
-</div>
+
+            <div className="progress-tracker-wrapper-p">
+              <div className="progress-line-bg-p" />
+              <div
+                className="progress-line-fill-p"
+                style={{ width: `${["Pending", "Accepted", "Preparing", "Ready"].indexOf(order.status) / 3 * 100}%` }}
+              />
+              <div className="progress-tracker-p">
+                <div className={`step ${["Pending", "Accepted", "Preparing", "Ready"].includes(order.status) ? "active" : ""}`}>
+                  <div className="circle-p">✓</div>
+                  <p>Pending</p>
+                </div>
+                <div className={`step ${["Accepted", "Preparing", "Ready"].includes(order.status) ? "active" : ""}`}>
+                  <div className="circle-p">✓</div>
+                  <p>Accepted</p>
+                </div>
+                <div className={`step ${["Preparing", "Ready"].includes(order.status) ? "active" : ""}`}>
+                  <div className="circle-p">✓</div>
+                  <p>Preparing</p>
+                </div>
+                <div className={`step ${["Ready"].includes(order.status) ? "active" : ""}`}>
+                  <div className="circle-p">✓</div>
+                  <p>Ready</p>
+                </div>
+              </div>
+            </div>
 
           </div>
         ))
