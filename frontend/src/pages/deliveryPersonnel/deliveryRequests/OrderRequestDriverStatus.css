@@ -1,0 +1,60 @@
+.del_status-container {
+    text-align: center;
+    padding: 40px;
+    font-family: Arial, sans-serif;
+    background-color: #f4e7d5;
+  }
+  
+  h2 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .del_status-image {
+    width: 180px;
+    margin-bottom: 20px;
+  }
+  
+  .del_accepted-text {
+    font-size: 16px;
+    color: #7b5303;
+    margin-bottom: 30px;
+    line-height: 1.6;
+    font-weight: bold;
+  }
+  
+  .del_order-id {
+    color: #000;
+  }
+  
+  .del_pickup-box {
+    background-color: #f7f7f6;
+    display: inline-block;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  }
+  
+  .del_pickup-text {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #000;
+  }
+  
+  .del_ok-button {
+    background-color: #f5a90c;
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .del_ok-button:hover {
+    background-color: #b37902;
+  }
+  

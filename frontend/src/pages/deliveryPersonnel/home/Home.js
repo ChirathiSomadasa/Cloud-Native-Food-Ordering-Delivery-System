@@ -1,10 +1,20 @@
-import React from "react";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Home.css';
+import foodImage from '../../../images/delivery/driver.jpg';
 
+const Home = () => {
+  const navigate = useNavigate();
 
-function Home() {
+  const goToOrders = () => {
+    navigate('/delivery-home/order_status');
+  };
+
+  const goToStatus = () => {
+    navigate('/delivery-home/delivery_status');
+  };
 
   return (
-
     <div className="home-containerD">
       <div className="hero-section">
         <div className="hero-text">
@@ -34,6 +44,6 @@ function Home() {
       </div>
     </div>
   );
-}
+};
 
 export default Home;
