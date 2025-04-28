@@ -1,4 +1,4 @@
-import { BrowserRouter, Route,Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header";
 import SignUp from "./pages/auth/signup/SignUp";
@@ -15,9 +15,18 @@ import MenuItemEdit from "./pages/RestaurantAdmin/menuItem/MenuItemEdit";
 import ManageUsers from "./pages/systemAdmin/manageUsers/ManageUsers";
 import Cart from "./pages/customer/cart/Cart";//Piumi
 import MyOrders from "./pages/customer/cart/MyOrders";
+import ResOrders from "./pages/RestaurantAdmin/orders/orderNotify";
 import PaymentDetails from "./pages/customer/payment/PaymentDetails";//Thamindu
-
-
+import ManageFinancial from "./pages/systemAdmin/ManageFinancial/ManageFinancial";//Thamindu
+//delivery related imports
+import DeliveryDetails from "./pages/customer/delivery/DeliveryDetails";
+//import DeliveryHomeUser from "./pages/customer/delivery/DeliveryHomeUser";
+import TrackDelivery from "./pages/customer/delivery/TrackDelivery";
+import YourDeliveriesUser from "./pages/customer/delivery/YourDeliveriesUser";
+import OrderRequestDriverStatus from "./pages/deliveryPersonnel/deliveryRequests/OrderRequestDriverStatus";
+import DeliveryStatus from "./pages/deliveryPersonnel/deliveryRequests/DeliveryStatus";
+import DeliveryRequestStatus from "./pages/RestaurantAdmin/deliveryStatus/DeliveryRequestStatus";
+import Footer from "./components/Footer";
 
 
 function App() {
@@ -39,17 +48,20 @@ function App() {
       <Route path="/manage-users" element={<ManageUsers />} />
       <Route path="/cart" element={<Cart/>}/>
       <Route path="/my-orders" element={<MyOrders />} />
-      <Route path="/payment" element={<PaymentForm/>}/>
+      <Route path="/restaurant-orders" element={<ResOrders />} />
       <Route path="/payment-details" element={<PaymentDetails/>}/>
+      <Route path="/manage-financials" element={<ManageFinancial/>}/>
 
     {/* delivery related routes */}
     <Route path="/deliveries/deliveryDetails" element={<DeliveryDetails/>}/>
-    <Route path="/delivery-home/incoming_order" element={<IncomingOrderRequest/>}/>
+    <Route path="/deliveries/track_deleveries" element={<TrackDelivery/>}/>
+    <Route path="/deliveries/your_deliveries" element={<YourDeliveriesUser/>}/>
     <Route path="/delivery-home/order_status" element={<OrderRequestDriverStatus/>}/>
     <Route path="/delivery-home/delivery_status" element={<DeliveryStatus/>}/>
     <Route path="/restuarant-home/delivery_status" element={<DeliveryRequestStatus/>}/>
 
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }

@@ -1,0 +1,59 @@
+.track-delivery-container {
+  padding: 60px;
+}
+
+.tracking-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.status-steps {
+  display: flex;
+  flex-direction: row;
+ 
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.step.active {
+  opacity: 1;
+  font-weight: bold;
+}
+
+.step.completed  {
+  opacity: 1;
+ 
+}
+
+
+.map-preview {
+  text-align: center;
+}
+
+.map-preview img {
+  width: 300px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.map-preview {
+  margin-top: 20px;
+}
+#live-map {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+    height: 300px;
+    width: 100%;
+  
+}
+
+
+.status-info {
+  align-items: center;
+  gap: 10px; 
+}

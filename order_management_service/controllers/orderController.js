@@ -2,36 +2,42 @@ const mongoose = require("mongoose");
 const Order = require('../models/Order');
 const Restaurant = require('../../restaurant_management_service/models/Restaurant');
 const MenuItem = require('../../restaurant_management_service/models/MenuItem');
+const User = require('../../user_authentication_service/models/User');
+const jwt = require('jsonwebtoken');
 
- 
 //place a order
 exports.placeOrder = async (req, res) => {
   try {
-      console.log("Received order data:", req.body); // Debugging
+    console.log("Received order data:", req.body); // Debugging
 
-      const {  itemId,quantity, totalPrice } = req.body;
-      if ( !itemId || !quantity || !totalPrice) {
-          return res.status(400).json({ error: "Invalid order data" });
-      }
+    const { itemId, restaurantId, quantity, itemName, totalPrice } = req.body;
+    if (!itemId || !restaurantId || !quantity || !totalPrice) {
+      return res.status(400).json({ error: "Invalid order data" });
+    }
 
-      const customerId = req.user?.id; // Ensure req.user exists
-      if (!customerId) {
-          return res.status(401).json({ error: "Unauthorized - No customer ID" });
-      }
+    const customerId = req.user?.id; // Ensure req.user exists
+    if (!customerId) {
+      return res.status(401).json({ error: "Unauthorized - No customer ID" });
+    }
+    
 
-      const order = new Order({
-          customerId,
-          itemId,
-          quantity,
-          totalPrice,
-          status: "Pending",
-      });
+    //place a new order as following
+    const order = new Order({
+      customerId,
+      restaurantId,
+      itemId,
+      quantity,
+      itemName,
+      totalPrice,
+      status: "Pending",
+    });
 
-      await order.save();
-      res.status(201).json(order);
+
+    await order.save();
+    res.status(201).json(order);
   } catch (error) {
-      console.error("Error placing order:", error); // Log full error
-      res.status(500).json({ error: "Error placing order" });
+    console.error("Error placing order:", error); // Log full error
+    res.status(500).json({ error: "Error placing order" });
   }
 };
 /*example
@@ -58,51 +64,52 @@ exports.getOrder = async (req, res) => {
 //get details of specific customer
 exports.getOrdersForCustomer = async (req, res) => {
   try {
-    const customerId = req.user?.id; // Ensure req.user exists
-    if (!customerId) {
-      return res.status(401).json({ error: "Unauthorized - No customer ID" });
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized: No token provided" });
     }
 
-    // Fetch orders associated with this customer
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // or your secret key
+    const customerId = decoded.id; // assuming your JWT payload includes user id
+
     const orders = await Order.find({ customerId });
 
-    // If no orders found, return an empty array
-    res.json(orders);
-  } catch (error) {
-    console.error("Error fetching customer orders:", error);
-    res.status(500).json({ error: "Error fetching customer orders" });
-  }
-};
-
-// Get orders for a specific restaurant
-exports.getOrdersForRestaurant = async (req, res) => {
-  try {
-    const { restaurantId } = req.params;
-    
-    // Validate restaurant ID
-    if (!restaurantId) {
-      return res.status(400).json({ error: "Restaurant ID is required" });
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this customer" });
     }
-    
-    // Fetch orders associated with this restaurant
-    const orders = await Order.find({ restaurantId });
-    
-    // If no orders found, return an empty array
-    res.json(orders);
+
+    res.status(200).json(orders);
   } catch (error) {
-    console.error("Error fetching restaurant orders:", error);
-    res.status(500).json({ error: "Error fetching restaurant orders" });
+    console.error("Backend: Error fetching orders:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-exports.updateOrderStatus = async (req, res) => {
+
+//get orders for restaurant admin
+exports.getRestaurantOrders = async (req, res) => {
   try {
-    const { status } = req.body;
-    const order = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true });
-    if (!order) return res.status(404).json({ error: 'Order not found' });
-    res.json(order);
+    const orders = await Order.find({ restaurantId: req.params.restaurantId });
+
+    res.json(orders);
   } catch (error) {
-    res.status(500).json({ error: 'Error updating order status' });
+    console.error(error);
+    res.status(500).json({ message: "Server error while fetching orders." });
+  }
+};
+
+//update order status for specific restaurant admin
+exports.updateOrderStatus = async (req, res) => {
+  const { status } = req.body;
+  const { orderId } = req.params;
+
+  try {
+    const updatedOrder = await Order.findByIdAndUpdate(orderId, { status }, { new: true });
+    if (!updatedOrder) return res.status(404).json({ message: 'Order not found' });
+    res.json(updatedOrder);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -119,6 +126,7 @@ exports.cancelOrder = async (req, res) => {
   }
 };
 
+//updATE order
 exports.updateOrder = async (req, res) => {
   try {
     const { itemId, quantity, totalPrice } = req.body;
@@ -155,4 +163,16 @@ exports.updateOrder = async (req, res) => {
     res.status(500).json({ error: "Error updating order" });
   }
 };
+
+//delete order for restaurant
+exports.deleteOrderForRestaurant = async (req, res) => {
+  const { orderId } = req.params;
+  try {
+    await Order.findByIdAndDelete(orderId);
+    res.status(200).send("Order deleted successfully.");
+  } catch (err) {
+    res.status(500).send("Failed to delete order.");
+  }
+};
+
 

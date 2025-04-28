@@ -141,6 +141,7 @@ exports.getMenuItemsWithRestaurantName = async (req, res) => {
       id: item._id,
       name: item.name,
       restaurant: item.restaurantId ? item.restaurantId.restaurantName : "Unknown Restaurant",
+      restaurantId: item.restaurantId ?._id,
       image: item.image,
       price: item.price,
       description: item.description,

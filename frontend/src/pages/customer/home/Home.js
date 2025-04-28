@@ -35,9 +35,84 @@ function Home() {
         setError(err.message || "An unexpected error occurred.");
         setLoading(false);
       }
-    };
-    fetchMenuItems();
-  }, [currentPage]); // Re-fetch when the current page changes
+    }
+    fetchMenuItems()
+  }, [currentPage])
+
+  useEffect(() => {
+    // Filter items when restaurant selection or search query changes
+    let results = foodItems;
+  
+    if (selectedRestaurant) {
+      results = results.filter((item) => item.restaurant === selectedRestaurant);
+    }
+  
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      results = results.filter((item) => {
+        // Check if the search query matches the food name, description, restaurant name, or price
+        const matchesName = item.name.toLowerCase().includes(query);
+        const matchesDescription =
+          item.description && item.description.toLowerCase().includes(query);
+        const matchesRestaurant =
+          item.restaurant && item.restaurant.toLowerCase().includes(query);
+        const matchesPrice =
+          item.price &&
+          item.price.toString().toLowerCase().includes(query); // Convert price to string for comparison
+  
+        return matchesName || matchesDescription || matchesRestaurant || matchesPrice;
+      });
+    }
+  
+    setFilteredItems(results);
+  }, [selectedRestaurant, searchQuery, foodItems]);
+
+  //Piumi
+  const handleAddToCart = async (item) => {
+    try {
+      const token = localStorage.getItem("auth_token"); // Retrieve token from localStorage
+      if (!token) {
+        alert("You must be logged in to add items to the cart.");
+        return;
+      }
+
+      const response = await fetch("http://localhost:5003/api/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` // Add the token here
+        },
+        body: JSON.stringify({
+          itemId: item.id,
+          name: item.name,
+          price: item.price,
+          img: item.image,
+          restaurantId:item.restaurantId
+        })
+      });
+
+      const data = await response.json();
+      console.log("Sending to backend:", {
+        itemId: item.id,
+        name: item.name,
+        price: item.price,
+        img: item.image,
+        restaurantId:item.restaurantId
+
+      });
+
+      if (response.ok) {
+        alert("Added to cart!");
+      } else {
+        console.error(data);
+        alert(data.error || "Failed to add item to cart.");
+      }
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+    }
+    window.dispatchEvent(new Event("cartUpdated")); // notify Header
+
+  };
 
   if (loading && currentPage === 1) {
     return <div className="loading">Loading...</div>;

@@ -1,0 +1,80 @@
+.your-deliveries-container {
+    padding: 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fff;
+  }
+  
+  .your-deliveries-title {
+    text-align: center;
+    font-size: 40px;
+    font-weight: 800;
+    color: #ffac0782;
+  }
+  
+  .your-deliveries-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  
+  .delivery-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .delivery-card {
+    background-color: #FFF9E5;
+    border-left: 5px solid #6d5d02;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+  
+  .delivery-card p {
+    margin: 5px 0;
+    font-size: 15px;
+  }
+  /* Blue and bold for Order Ref Number */
+.delivery-card p:first-child strong {
+  color: #007bff;
+  font-weight: bold;
+}
+
+/* Red text for declined deliveries */
+.delivery-card .declined {
+  color: red;
+  font-weight: bold;
+}
+
+/* SLR instead of $ */
+.delivery-card p span.price {
+  font-weight: bold;
+  color: #000;
+}
+.delivery-card p strong {
+  font-weight: 600;
+  color: #555;
+}
+  
+  .delivery-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .delivery-image img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .error-message {
+    color: red;
+    font-weight: bold;
+    margin: 20px 0;
+    text-align: center;
+  }

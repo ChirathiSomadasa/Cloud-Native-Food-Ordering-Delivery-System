@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "test-email": "node services/test-email.js",
     "start": "nodemon server.js"
   },
   "author": "ugThaminduD",
@@ -20,6 +21,7 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.2",
+    "nodemailer": "^6.10.1",
     "nodemon": "^3.1.9"
   }
 }

@@ -3,35 +3,33 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/dbConfig');
 const { PORT } = require('./config/envConfig');
-
-
 const app = express();
 
 // Middleware
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Added OPTIONS
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'] // Added Accept
 }));
 app.use(express.json());
 app.use(cookieParser());
 
-
-
-
 // Connect to the database and start the server
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Failed to start the server:', err.message);
+    process.exit(1); // make sure it doesn't hang
   });
-}).catch((err) => {
-  console.error('Failed to start the server:', err.message);
-});
-
-
+  
 // Routes
 const paymentRoutes = require('./routes/paymentRoutes');
 app.use('/api/payment', paymentRoutes);
-
 
 // PayPal Client ID Route
 // This route is used to send the PayPal client ID to the frontend

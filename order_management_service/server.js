@@ -5,6 +5,7 @@ const connectDB = require('./config/dbConfig');
 const { PORT } = require('./config/envConfig');
 const orderRoutes = require('./routes/orderRoutes');
 const cartRoutes = require('./routes/cartRoutes');
+const sendOrderConfirmationEmail = require('./services/emailService');
 
 
 const app = express();
@@ -20,6 +21,18 @@ app.use(cookieParser());
 // Routes
 app.use('/api/order',orderRoutes);
 app.use('/api/cart', cartRoutes);
+
+app.post('/api/email/send', (req, res) => {
+  const { email, orderDetails } = req.body;
+
+  if (!email) {
+      return res.status(400).send('Email address is required.');
+  }
+
+  sendOrderConfirmationEmail(email, orderDetails);
+  res.status(200).send('Order confirmation email sent.');
+});
+
 
 // Connect to the database and start the server
 connectDB().then(() => {

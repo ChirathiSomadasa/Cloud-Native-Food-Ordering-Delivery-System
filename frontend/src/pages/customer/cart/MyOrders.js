@@ -3,89 +3,93 @@ import axios from "axios";
 import "./MyOrders.css";
 
 function MyOrders() {
-  const [item, setItem] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
-  const [orders, setOrders] = useState([]); // for storing orders
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // to track login status
-  
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      const token = localStorage.getItem("auth_token");
-      if (!token) {
-        alert("Please log in to view your cart.");
-        return;
-      }
-
-      try {
-        const response = await fetch("http://localhost:5003/api/cart", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          const itemsWithQuantity = (data.items || []).map((item) => ({
-            ...item,
-            quantity: item.quantity || 1,
-          }));
-          setCartItems(itemsWithQuantity);
-        } else {
-          console.error("Failed to fetch cart");
-        }
-      } catch (err) {
-        console.error("Error fetching cart:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCartItems();
-  }, []);
+  const [orders, setOrders] = useState([]); // For storing orders
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(""); // For error messages
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const token = localStorage.getItem("auth_token");
-      if (!token) return;
-
       try {
-        const response = await axios.get("http://localhost:5003/api/order/customer/orders", {
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          alert("Please log in to view your orders.");
+          return;
+        }
+    
+        const orderRes = await fetch(`http://localhost:5003/api/order/my-orders`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setOrders(response.data);
+    
+        if (!orderRes.ok) throw new Error("Failed to fetch orders");
+    
+        const ordersData = await orderRes.json();
+        console.log("Orders fetched:", ordersData);
+    
+        if (Array.isArray(ordersData)) {
+          setOrders(ordersData.reverse());
+        } else {
+          console.error("Unexpected orders format", ordersData);
+          setOrders([]);
+        }
       } catch (err) {
         console.error("Error fetching orders:", err);
       } finally {
         setLoading(false);
       }
     };
+    
+  
+    fetchOrders();
+  }, []);
+  
 
-    if (isAuthenticated) {
-      fetchOrders();
-    }
-  }, [isAuthenticated]);
-
-  if (loading) return <div>Loading your orders...</div>;
+  if (loading) return <div  className="loading-message">Loading your orders...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="orders-container">
-      <h2>My Orders</h2>
-      {cartItems.length === 0 ? (
-        <p>No orders placed yet.</p>
+      <h2>Order Status Tracking Page</h2>
+      {orders.length === 0 ? (
+        <p class="no-orders-message">No orders placed yet.</p>
       ) : (
-        cartItems.map((item) => (
-          <div key={item._id} className="order-card">
-            <p><strong>Item:</strong> {item.name}</p>
-            <p><strong>Quantity:</strong> {item.quantity}</p>
-            <p><strong>Price (each):</strong> LKR.{item.price.toFixed(2)}</p>
-            <p><strong>Total:</strong> LKR.{(item.price * item.quantity).toFixed(2)}</p>
-
-            <div className="progress-bar">
-              <div className={`step ${item.status === "Pending" || item.status === "Preparing" || item.status === "Delivered" ? "active" : ""}`}>Pending</div>
-              <div className={`step ${item.status === "Preparing" || item.status === "Delivered" ? "active" : ""}`}>Accepted</div>
-              <div className={`step ${item.status === "Out for Delivery" || item.status === "Delivered" ? "active" : ""}`}>Preparing</div>
-              <div className={`step ${item.status === "Delivered" ? "active" : ""}`}>Ready</div>
+        orders.map((order) => (
+          <div key={order._id} className="order-card">
+            <div className="order-info">
+              <p><strong>Item Name:</strong> {order.itemName}</p>
+              <div className="order-status">
+              <h3>Order Status: <span className="shipped"> {order.status}</span></h3>
             </div>
+              <p><strong>Total Price:</strong> LKR {order.totalPrice.toFixed(2)}</p>
+            </div>
+
+            
+
+            <div className="progress-tracker-wrapper">
+  <div className="progress-line-bg" />
+  <div
+    className="progress-line-fill"
+    style={{ width: `${["Pending", "Accepted", "Preparing", "Ready"].indexOf(order.status) / 3 * 100}%` }}
+  />
+  <div className="progress-tracker">
+    <div className={`step ${["Pending", "Accepted", "Preparing", "Ready"].includes(order.status) ? "active" : ""}`}>
+      <div className="circle">✓</div>
+      <p>Pending</p>
+    </div>
+    <div className={`step ${["Accepted", "Preparing", "Ready"].includes(order.status) ? "active" : ""}`}>
+      <div className="circle">✓</div>
+      <p>Accepted</p>
+    </div>
+    <div className={`step ${["Preparing", "Ready"].includes(order.status) ? "active" : ""}`}>
+      <div className="circle">✓</div>
+      <p>Preparing</p>
+    </div>
+    <div className={`step ${["Ready"].includes(order.status) ? "active" : ""}`}>
+      <div className="circle">✓</div>
+      <p>Ready</p>
+    </div>
+  </div>
+</div>
+
           </div>
         ))
       )}

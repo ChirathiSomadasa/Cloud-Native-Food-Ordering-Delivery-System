@@ -70,7 +70,10 @@ try {
     path: '/',
   });
 
-  res.json({ Status: 'Success', role: user.role, token });
+
+  res.json({ Status: 'Success', role: user.role, token,email:user.email });
+  console.log("jwt token", token)
+
 } catch (err) {
   res.status(500).json({ error: err.message });
 }
@@ -128,6 +131,90 @@ exports.logout = async (req, res) => {
 
     // Respond with success message
     res.status(200).json({ message: 'User logged out successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+// Get user details for profile
+exports.getUserDetails = async (req, res) => {
+  try {
+    const userId = req.user.id; // Extract user ID from JWT token
+    const user = await User.findById(userId, 'first_name last_name mobile_number email city');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ Status: 'Success', data: user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+// Get user ID for profile
+exports.getUserID = async (req, res) => {
+  try {
+    const userId = req.params.id; // Use the ID from URL parameters
+    const user = await User.findById(userId, 'first_name last_name mobile_number email city');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ Status: 'Success', data: user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// update user details for profile
+exports.updateUser = async (req, res) => {
+  try {
+    const userId = req.user.id; // Extract user ID from JWT token
+    const { first_name, last_name, mobile_number, city } = req.body;
+
+    // Validate mobile number
+    if (mobile_number && !/^\d{10}$/.test(mobile_number)) {
+      return res.status(400).json({ error: 'Mobile number must be 10 digits' });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { first_name, last_name, mobile_number, city },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ Status: 'Success', message: 'User updated successfully', data: updatedUser });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// delete user details for profile
+exports.deleteUserAccount = async (req, res) => {
+  try {
+    const userId = req.user.id; // Extract user ID from JWT token
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.clearCookie('auth_token'); // Clear the auth token cookie
+    res.json({ Status: 'Success', message: 'User account deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Get specific customer details by ID (for logged-in user)
+exports.getCustomerById = async (req, res) => {
+  try {
+    const userId = req.user.id; // Extracted from the JWT token
+    if (!userId) {
+      return res.status(404).json({ error: 'User ID not found in token' });
+    }
+
+    res.json({ customerId: userId }); // Send only the ID
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
