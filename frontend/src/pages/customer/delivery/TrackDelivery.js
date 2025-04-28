@@ -14,7 +14,7 @@ const socket = io('http://localhost:5008');
 const TrackDelivery = () => {
   const [deliveryStatus, setDeliveryStatus] = useState('pending');
   const [loading, setLoading] = useState(true);
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState(null); // Store the constant location from the database
   const mapRef = useRef(null);
   const markerRef = useRef(null);
 
@@ -29,6 +29,8 @@ const TrackDelivery = () => {
       const data = await response.json();
       if (response.ok && data.delivery) {
         setDeliveryStatus(data.delivery.deliveryStatus);
+        // Set the constant location (fetched from the database)
+        setLocation(data.delivery.location);
       } else {
         console.error('Failed to fetch delivery status:', data.message);
       }
@@ -65,6 +67,17 @@ const TrackDelivery = () => {
     fetchDeliveryStatus();
     socket.emit('joinRoom', deliveryId);
 
+    // Location updates (real-time updates for driver location)
+    socket.on('locationUpdate', (data) => {
+      if (data.deliveryId === deliveryId) {
+        const { lat, lng } = data.location;
+        if (mapRef.current) {
+          markerRef.current.setLatLng([lat, lng]);
+          mapRef.current.setView([lat, lng]);
+        }
+      }
+    });
+
     // Status update
     socket.on('deliveryStatusUpdate', (newStatus) => {
       setDeliveryStatus(newStatus);
@@ -80,23 +93,6 @@ const TrackDelivery = () => {
       }
     });
 
-    // Location updates
-    socket.on('locationUpdate', (data) => {
-      if (data.deliveryId === deliveryId) {
-        const { lat, lng } = data.location;
-        if (!mapRef.current) {
-          mapRef.current = L.map('live-map').setView([lat, lng], 15);
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-          }).addTo(mapRef.current);
-          markerRef.current = L.marker([lat, lng]).addTo(mapRef.current).bindPopup('Driver Location').openPopup();
-        } else {
-          markerRef.current.setLatLng([lat, lng]);
-          mapRef.current.setView([lat, lng]);
-        }
-      }
-    });
-
     // Request permission for notifications
     if (Notification.permission !== 'granted') {
       Notification.requestPermission();
@@ -104,11 +100,27 @@ const TrackDelivery = () => {
 
     return () => {
       socket.emit('leaveRoom', deliveryId);
+      socket.off('locationUpdate');
       socket.off('deliveryStatusUpdate');
       socket.off('notification');
-      socket.off('locationUpdate');
     };
   }, [deliveryId]);
+
+  useEffect(() => {
+    if (location) {
+      const { latitude, longitude } = location;
+      if (!mapRef.current) {
+        mapRef.current = L.map('live-map').setView([latitude, longitude], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors',
+        }).addTo(mapRef.current);
+        markerRef.current = L.marker([latitude, longitude]).addTo(mapRef.current).bindPopup('Driver Location').openPopup();
+      } else {
+        markerRef.current.setLatLng([latitude, longitude]);
+        mapRef.current.setView([latitude, longitude]);
+      }
+    }
+  }, [location]);
 
   useEffect(() => {
     if (deliveryStatus === 'out_for_delivery') {
@@ -119,7 +131,7 @@ const TrackDelivery = () => {
     }
 
     if (deliveryStatus === 'delivered') {
-      alert('Order Complete! Enjoy your meal 🍽️. A receipt has been sent to your email.');
+      alert('Order Complete! Enjoy your meal 🍽️.');
       const sendEmailReceipt = async () => {
         try {
           const token = localStorage.getItem('auth_token');
@@ -156,28 +168,27 @@ const TrackDelivery = () => {
       ? 'completed'
       : 'disabled';
   };
- 
+
   if (loading) return <p>Loading...</p>;
 
   return (
     <div className="track-delivery-container">
       <h2>Track Your Delivery</h2>
       <div className="tracking-layout">
-      <div className="status-steps">
-  {[
-    { status: 'pending', image: Pending },
-    { status: 'ready_for_pickup', image: pickedUp },
-    { status: 'picked-up', image:OnTheWay },
-    { status: 'delivered', image: delivered }
-  ].map(({ status, image }) => (
-    <div key={status} className="status-info">
-      <img src={image} alt={status} className="delivery-image-res" />
-      <div className={`step ${getStatusClass(status)}`}>
-        <p>{status.replace(/_/g, ' ')}</p>
-      </div>
-    </div>
-  ))}
-</div>
+        <div className="status-steps">
+          {[{ status: 'pending', image: Pending },
+            { status: 'ready_for_pickup', image: pickedUp },
+            { status: 'picked-up', image: OnTheWay },
+            { status: 'delivered', image: delivered }]
+            .map(({ status, image }) => (
+              <div key={status} className="status-info">
+                <img src={image} alt={status} className="delivery-image-res" />
+                <div className={`step ${getStatusClass(status)}`}>
+                  <p>{status.replace(/_/g, ' ')}</p>
+                </div>
+              </div>
+            ))}
+        </div>
 
         <div className="map-preview">
           <div id="live-map" style={{ height: "300px", width: "100%" }}></div>

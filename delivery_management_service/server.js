@@ -46,7 +46,7 @@ io.on('connection', (socket) => {
 });
 
 // Routes
-app.use('/api', deliveryRoutes);
+
 app.use('/delivery', deliveryRoutes);
 app.use('/driver', driverRoutes);
 
