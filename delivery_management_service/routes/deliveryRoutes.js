@@ -3,8 +3,10 @@ const {
   createDelivery,
   getLiveTracking,
   markFoodReady,
+  getDeliveriesForUser,
 } = require('../controllers/deliveryController');
 const { verifyToken, verifyRole } = require('../middleware/authMiddleware');
+
 
 const router = express.Router();
 
@@ -16,5 +18,8 @@ router.get('/:deliveryId/track', verifyToken, getLiveTracking);
 
 // Route for restaurant admin to mark food as ready for delivery
 router.put('/mark-food-ready', verifyToken, verifyRole(['restaurantAdmin']), markFoodReady);
+
+router.get('/user', verifyToken,getDeliveriesForUser);
+
 
 module.exports = router;

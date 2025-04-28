@@ -1,93 +1,133 @@
-.delivery-container {
+.delivery-template-container {
   padding: 40px;
   font-family: Arial, sans-serif;
   background-color: white;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column; /* Stack elements vertically */
-  justify-content: flex-start; /* Make sure the content is aligned at the top */
 }
 
-.delivery-title {
-  font-size: 24px;
+.form-heading {
+  font-size: 28px;
   font-weight: bold;
-  margin-bottom: 30px;
   text-align: center;
+  margin-bottom: 30px;
+  color: #333;
 }
 
-.delivery-content {
+.form-layout {
   display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  width: 100%;
-  margin-bottom: 40px; /* Space for "Searching for available nearby drivers" */
+  gap: 30px;
+  background-color: #fff2d6;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
-.image-section {
+.form-left {
   flex: 1;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   background-color: #f9f9f9;
-  border-radius: 0px;
+  border-radius: 8px;
   overflow: hidden;
 }
 
-.delivery-image {
+.left-illustration {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 0px;
 }
 
-.form-box {
-  flex: 1;
-  background-color: #fff2d6;
-  padding: 30px;
-  border-radius: 0px;
-  box-sizing: border-box;
+.form-right {
+  flex: 1.5;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  gap: 20px;
 }
 
-.form-group {
-  margin-bottom: 15px;
+.input-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.form-group label {
-  display: inline-block;
-  width: 160px;
+.input-row label {
   font-weight: 600;
 }
 
-.form-group input {
-  width: 300px;
-  padding: 8px;
+.input-row input {
+  padding: 10px;
+  width: 100%;
   border: 1px solid #ccc;
   background-color: #fef6f6;
+  border-radius: 4px;
 }
 
-.button-container {
-  text-align: right;
-  margin-top: 15px;
+.restaurant-box {
+  background-color: #fff;
+  border-left: 4px solid #f5a90c;
+  padding: 15px;
+  border-radius: 6px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+}
+
+.item-line {
+  margin-left: 15px;
+  font-size: 14px;
+  padding: 3px 0;
+}
+
+.total-line {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.delivery-charges {
+  background-color: #ffeeee;
+  padding: 10px;
+  border-left: 4px solid red;
+  border-radius: 4px;
+}
+
+.amount-box {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+}
+
+.amount-box input {
+  background-color: #e4f0ff;
+  border: none;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 4px;
 }
 
 .proceed-btn {
+  align-self: flex-end;
   background-color: #f5a90c;
   color: white;
   font-weight: bold;
-  padding: 20px 30px;
+  padding: 14px 26px;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: background-color 0.3s;
 }
 
 .proceed-btn:hover {
   background-color: #b37902;
 }
+
+.error-text {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}
+
 
 .searching-text {
   font-size: 20px;
@@ -95,4 +135,47 @@
   text-align: center;
   margin-top: 20px;
   padding-bottom: 40px;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  max-width: 450px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  border: 1px solid #ccc;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.ok-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #2e86de;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.ok-btn:hover {
+  background-color: #1b4f72;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
