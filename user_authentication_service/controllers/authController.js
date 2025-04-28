@@ -71,7 +71,7 @@ try {
   });
 
 
-  res.json({ Status: 'Success', role: user.role, token,email:user.email });
+  res.json({ Status: 'Success', role: user.role, token,email:user.email,id: user._id, });
   console.log("jwt token", token)
 
 } catch (err) {
