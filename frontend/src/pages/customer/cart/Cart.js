@@ -13,11 +13,14 @@ function Cart() {
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [showOrderDetails, setShowOrderDetails] = useState(false);
     const [deliveryMethod, setDeliveryMethod] = useState('pickup');
+    const [orderPlaced, setOrderPlaced] = useState(false);
     const [subtotal, setSubtotal] = useState(0);
     const [deliveryFee, setDeliveryFee] = useState(0);
+    const [lastPlacedItems, setLastPlacedItems] = useState([]);
     const navigate = useNavigate(); // Initialize useNavigate
 
-
+    
+    
     const calculateDeliveryFee = () => {
         const distance = 5; // km (mock value)
         const fee = distance * 100; // e.g., 100 LKR per km
@@ -26,6 +29,17 @@ function Cart() {
 
     const handlePaymentDetailsClick = () => {
         navigate("/payment-details"); // Navigate to the payment details page
+    };
+
+    const handleDeliveryDetailsClick = () => {
+        const selectedItems = cartItems.filter(item => selectedOrders.includes(item._id));
+        navigate("/deliveries/deliveryDetails", {
+            state: {
+                items: lastPlacedItems,
+                restaurantId: lastPlacedItems.length > 0 ? lastPlacedItems[0].restaurantId : '',
+                totalItemAmount: lastPlacedItems.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)
+            }
+        });
     };
 
     useEffect(() => {
@@ -225,13 +239,14 @@ function Cart() {
             // Load PayPal SDK script
             await addPayPalScript();
             setShowPayPalButton(true); // Trigger PayPal button rendering
+            setOrderPlaced(true);
 
         } catch (error) {
             console.error("Error placing order:", error.response?.data || error.message);
             alert("Failed to place order. Please try again.");
         }
         // navigate('/');
-
+        setLastPlacedItems(selectedItems);
     };
 
     const selectedTotal = cartItems
@@ -495,6 +510,7 @@ function Cart() {
                                     }}
                                 /> Delivery
                             </label>
+                            
                         </div>
 
                         <div className="pricing-summary">
@@ -515,13 +531,32 @@ function Cart() {
                             ) : (
                                 <div id="paypal-button-container"></div>
                             )}
+                            
                         </div>
+                        
 
                         {/* <div className="modal-buttons">
                             <button className="btn place-order-btn" onClick={placeOrder}> Place Order</button>
                         </div>  */}
+                    {orderPlaced && deliveryMethod === 'delivery' && (
+                    <button
+                        className="checkout-button action-btn-delivery"
+                        style={{
+                        marginTop: "20px",
+                        maxWidth: "300px",
+                        marginLeft: "0",
+                        marginRight: "auto",
+                        display: "block",
+                        textAlign: "center",
+                        }}
+                        onClick={handleDeliveryDetailsClick}
+                    >
+                        Proceed to delivery
+                    </button>
+                    )}
 
                     </div>
+                    
                 </div>
             )}
 

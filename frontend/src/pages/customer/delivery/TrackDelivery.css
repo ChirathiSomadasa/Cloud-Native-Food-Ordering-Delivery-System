@@ -1,59 +1,59 @@
-.track-container {
-    display: flex;
-    align-items: flex-start;
-    gap: 30px;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  .status-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .status-panel h3 {
-    margin-bottom: 20px;
-    font-size: 20px;
-    font-weight: bold;
-  }
-  
-  .stage {
-    display: flex;
-    align-items: center;
-    margin: 10px 0;
-    opacity: 0.5;
-    transition: opacity 0.3s ease-in-out;
-  }
-  
-  .stage img {
-    width: 40px;
-    margin-right: 10px;
-  }
-  
-  .stage.active {
-    opacity: 1;
-  }
-  
-  .map-panel {
-    position: relative;
-    flex: 1;
-  }
-  
-  .map {
-    width: 500px;
+.track-delivery-container {
+  padding: 60px;
+}
+
+.tracking-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.status-steps {
+  display: flex;
+  flex-direction: row;
+ 
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.step.active {
+  opacity: 1;
+  font-weight: bold;
+}
+
+.step.completed  {
+  opacity: 1;
+ 
+}
+
+
+.map-preview {
+  text-align: center;
+}
+
+.map-preview img {
+  width: 300px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.map-preview {
+  margin-top: 20px;
+}
+#live-map {
+  border: 1px solid #ccc;
+  border-radius: 8px;
     height: 300px;
-    border-radius: 8px;
-    border: 2px solid #ccc;
-  }
+    width: 100%;
   
-  .live-track {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    font-weight: bold;
-    background: rgba(255,255,255,0.8);
-    padding: 4px 10px;
-    border-radius: 4px;
-  }
-  
+}
+
+
+.status-info {
+  align-items: center;
+  gap: 10px; 
+}

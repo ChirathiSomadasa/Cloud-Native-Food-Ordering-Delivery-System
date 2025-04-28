@@ -63,6 +63,9 @@ function Home() {
   const handleViewMenuButtonClick = () => {
     navigate("/menu-item-list");
   }
+  const handleViewDeliveryButtonClick = () => {
+    navigate("/restuarant-home/delivery_status");
+  }
 
   if (loading) {
     return (
@@ -91,6 +94,9 @@ function Home() {
           </button>
           <button className="secondary-button-RA" onClick={handleViewMenuButtonClick}>
             View my Menus
+          </button>
+          <button className="secondary-button-RA" onClick={handleViewDeliveryButtonClick}>
+            View Deliveries
           </button>
         </div>
       </div>

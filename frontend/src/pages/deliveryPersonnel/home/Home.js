@@ -15,7 +15,7 @@ const Home = () => {
   };
 
   return (
-    <div className="home-container">
+    <div className="home-containerD">
       <div className="hero-section">
         <div className="hero-text">
           <h2>
