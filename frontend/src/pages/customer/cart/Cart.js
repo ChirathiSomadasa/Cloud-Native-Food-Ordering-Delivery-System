@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Cart.css";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { sendEmailConfirmation } from '../../../services/emailService';
 
 function Cart() {
     const [cartItems, setCartItems] = useState([]);
@@ -182,6 +183,13 @@ function Cart() {
         const createdOrderIds = []; // ← to store returned order IDs
 
         try {
+
+            const user = localStorage.getItem('user_email');
+            console.log(localStorage.getItem('user_email'));
+
+            const userEmail = user;
+
+
             for (const item of selectedItems) {
                 const orderData = {
                     restaurantId: item.restaurantId, // This must be part of cart item
@@ -221,6 +229,19 @@ function Cart() {
                     console.error(`Failed to remove item ${id} from backend cart`, err);
                 }
             }
+
+            if (!userEmail) {
+                alert("No email found. Please login again.");
+                return;
+            }
+        
+            const orderDetails = selectedItems.map(item => ({
+                itemName: item.name,
+                totalPrice: item.price * item.quantity
+            }));
+
+            // Send email confirmation
+            await sendEmailConfirmation(userEmail, orderDetails);
 
             // Load PayPal SDK script
             await addPayPalScript();
