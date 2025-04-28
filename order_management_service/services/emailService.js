@@ -12,11 +12,32 @@ const transporter = nodemailer.createTransport({
 const sendOrderConfirmationEmail = (userEmail, orderDetails) => {
   // Create dynamic list of items from orderDetails
   const itemsList = orderDetails.map(item => `
-    <li style="margin-bottom: 8px;"> Order ID     - <strong>${item.orderId}</strong></li>
-    <li style="margin-bottom: 8px;"> Customer    - <strong>${item.customerID}</strong></li>
-    <li style="margin-bottom: 8px;"> Item Name    - <strong>${item.itemName}</strong></li>
-    <li style="margin-bottom: 8px;"> Item Quantity- <strong>${item.quantity}</strong></li>
-    <li style="margin-bottom: 8px;"> Item Price   - <strong>LKR.${item.price}</strong></li>
+    <table style="width: 100%; border-collapse: collapse; font-size: 16px;">
+  <tbody>
+    <tr>
+      <td style="padding: 8px 0; font-weight: bold;">Order ID:</td>
+      <td style="padding: 8px 0;">${item.orderId}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; font-weight: bold;">Customer ID:</td>
+      <td style="padding: 8px 0;">${item.customerID}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; font-weight: bold;">Item Name:</td>
+      <td style="padding: 8px 0;">${item.itemName}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; font-weight: bold;">Item Quantity:</td>
+      <td style="padding: 8px 0;">${item.quantity}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; font-weight: bold;">Item Price:</td>
+      <td style="padding: 8px 0;">LKR. ${item.price}</td>
+    </tr>
+  </tbody>
+</table>
+
+
 
 `).join('');
 
