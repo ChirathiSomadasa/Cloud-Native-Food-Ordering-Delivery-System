@@ -19,6 +19,7 @@ exports.placeOrder = async (req, res) => {
     if (!customerId) {
       return res.status(401).json({ error: "Unauthorized - No customer ID" });
     }
+    
 
     //place a new order as following
     const order = new Order({
