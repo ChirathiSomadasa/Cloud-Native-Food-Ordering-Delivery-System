@@ -93,25 +93,28 @@ function Header() {
       }
     };
 
-  
-    fetchCartItems();
-  
-    const handleCartUpdate = () => {
-      fetchCartItems();
-    };
-  
-    // Add listener
-    window.addEventListener("cartUpdated", handleCartUpdate);
-  
-    // Cleanup
-    return () => {
-      window.removeEventListener("cartUpdated", handleCartUpdate);
-    };
-  }, []);
 
-  const numberOfItems = cartItems.reduce((total, item) => total + item.quantity, 0); 
-      // After successfully adding an item to the cart
-      // window.dispatchEvent(new Event("cartUpdated"));
+    // Only fetch cart if user is a customer
+    if (userRole === "customer") {
+      fetchCartItems();
+
+      const handleCartUpdate = () => {
+        fetchCartItems();
+      };
+
+      // Add listener
+      window.addEventListener("cartUpdated", handleCartUpdate);
+
+      // Cleanup
+      return () => {
+        window.removeEventListener("cartUpdated", handleCartUpdate);
+      };
+    }
+  }, [userRole]);
+
+  const numberOfItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+  // After successfully adding an item to the cart
+  // window.dispatchEvent(new Event("cartUpdated"));
   // Dispatch the event only when an item is added or updated in the cart
   const addItemToCart = async (item) => {
     try {
@@ -157,18 +160,21 @@ function Header() {
             {isLoggedIn ? (
               // Buttons to display when the user is logged in
               <>
-               <Link to="/profile">
-                <button className="icon-button profile-button">
-                  <PersonIcon />
-                </button>
+                <Link to="/profile">
+                  <button className="icon-button profile-button">
+                    <PersonIcon />
+                  </button>
                 </Link>
-                
-                <Link to="/cart">
-                <button className="icon-button cart-button">
-                  <ShoppingCartIcon />
-                  <span className="badge">{numberOfItems}</span>
-                </button>
-                </Link>
+
+                {userRole === "customer" && (
+                  <Link to="/cart">
+                    <button className="icon-button cart-button">
+                      <ShoppingCartIcon />
+                      <span className="badge">{numberOfItems}</span>
+                    </button>
+                  </Link>
+                )}
+
                 <button className="icon-button notification-button">
                   <NotificationsIcon />
                   <span className="badge">2</span>
