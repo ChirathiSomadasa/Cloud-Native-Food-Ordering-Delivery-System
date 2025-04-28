@@ -439,7 +439,6 @@ function Cart() {
                                 .filter(item => selectedOrders.includes(item._id))
                                 .map(item => (
                                     <li key={item._id} className="modal-item">
-                                        <ul><span className="item-name">{item.restaurantId}</span></ul>
                                         <ul><span className="item-name">{item.name}</span></ul>
                                         <ul><span className="item-details">Qty: {item.quantity} | LKR {item.price}</span>
                                         </ul>
