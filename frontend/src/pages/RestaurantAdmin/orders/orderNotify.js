@@ -9,6 +9,14 @@ const RestaurantOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [searchItem, setSearchItem] = useState('');
+    const [searchStatus, setSearchStatus] = useState('');
+
+
+    const filteredOrders = orders.filter(order =>
+        order.itemName.toLowerCase().includes(searchItem.toLowerCase()) &&
+        order.status.toLowerCase().includes(searchStatus.toLowerCase())
+    );
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -135,63 +143,86 @@ const RestaurantOrders = () => {
             ) : orders.length === 0 ? (
                 <p class="no-orders-message">No orders found for this restaurant.</p>
             ) : (
-                <div className="table-order-container">
-                    <table className="order-table">
-                        <thead >
-                            <tr>
-                                <th >Order ID</th>
-                                <th >Customer ID</th>
-                                <th >Total</th>
-                                <th >Item Name</th>
-                                <th >Quantity</th>
-                                <th >Status</th>
-                                <th >Action</th>
+                <>
+                    <div className="search-container-p">
+                        <input
+                            type="text"
+                            placeholder="Search by Item Name"
+                            value={searchItem}
+                            onChange={(e) => setSearchItem(e.target.value)}
+                            className="search-input-p"
+                        />
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {orders.map(order => (
-                                <tr key={order._id} className="orders-tr">
-                                    <td className="orders-td">{order._id}</td>
-                                    <td className="orders-td">{order.customerId}</td>
-                                    <td className="orders-td">LKR.{order.totalPrice}</td>
-                                    <td className="orders-td">
-                                        {order.itemName}
-                                    </td>
-                                    <td className="orders-td">{order.quantity}</td>
-                                    <td className="orders-td">
-                                        <span
-                                            className={`status-badge ${order.status === "Pending"
-                                                ? "status-pending"
-                                                : order.status === "Accepted"
-                                                    ? "status-Accepted"
-                                                    : order.status === "Preparing"
-                                                        ? "status-Preparing"
-                                                        : order.status === "Ready"
-                                                            ? "status-Ready"
-                                                            : ""
-                                                }`}
-                                            onClick={() => handleStatusClick(order._id, order.status)}
-                                        >
-                                            {order.status}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <button
-                                            className="order-delete-btn"
-                                            onClick={() => handleDeleteOrder(order._id)}
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
-                                    </td>
+
+                        <select value={searchStatus} onChange={(e) => setSearchStatus(e.target.value)} className="search-input-p">
+                            <option value="">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Accepted">Accepted</option>
+                            <option value="Preparing">Preparing</option>
+                            <option value="Ready">Ready</option>
+                        </select>
+                    </div>
+                    <div className="table-order-container">
+
+
+                        <table className="order-table">
+                            <thead >
+                                <tr>
+                                    <th >Order ID</th>
+                                    <th >Customer ID</th>
+                                    <th >Total</th>
+                                    <th >Item Name</th>
+                                    <th >Quantity</th>
+                                    <th >Status</th>
+                                    <th >Action</th>
 
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                {filteredOrders.map(order => (
+                                    <tr key={order._id} className="orders-tr">
+                                        <td className="orders-td">{order._id}</td>
+                                        <td className="orders-td">{order.customerId}</td>
+                                        <td className="orders-td">LKR.{order.totalPrice}</td>
+                                        <td className="orders-td">
+                                            {order.itemName}
+                                        </td>
+                                        <td className="orders-td">{order.quantity}</td>
+                                        <td className="orders-td">
+                                            <span
+                                                className={`status-badge ${order.status === "Pending"
+                                                    ? "status-pending"
+                                                    : order.status === "Accepted"
+                                                        ? "status-Accepted"
+                                                        : order.status === "Preparing"
+                                                            ? "status-Preparing"
+                                                            : order.status === "Ready"
+                                                                ? "status-Ready"
+                                                                : ""
+                                                    }`}
+                                                onClick={() => handleStatusClick(order._id, order.status)}
+                                            >
+                                                {order.status}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button
+                                                className="order-delete-btn"
+                                                onClick={() => handleDeleteOrder(order._id)}
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </td>
+
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </>
             )}
         </div>
+
 
     );
 
