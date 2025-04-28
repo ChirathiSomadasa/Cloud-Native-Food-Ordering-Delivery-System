@@ -99,63 +99,91 @@ const TrackDelivery = () => {
     const initMap = async () => {
       const receiver = await getCoordinatesFromAddress(receiverAddress);
       if (!receiver) return;
-
+  
       setReceiverCoords(receiver);
-
+  
       const midLat = (restaurant.lat + receiver.lat) / 2;
       const midLng = (restaurant.lng + receiver.lng) / 2;
-
-      if (mapRef.current) {
-        mapRef.current.remove();
+  
+      if (!mapRef.current) {
+        mapRef.current = L.map('live-map').setView([midLat, midLng], 8);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors',
+        }).addTo(mapRef.current);
+  
+        // Restaurant marker
+        L.marker([restaurant.lat, restaurant.lng], {
+          icon: L.divIcon({
+            className: 'restaurant-icon',
+            html: `<span class="material-icons">restaurant</span>`,
+          }),
+        }).addTo(mapRef.current).bindPopup('Restaurant').openPopup();
+  
+        // Receiver marker
+        L.marker([receiver.lat, receiver.lng], {
+          icon: L.divIcon({
+            className: 'receiver-icon',
+            html: `<span class="material-icons">location_on</span>`,
+          }),
+        }).addTo(mapRef.current);
+  
+        L.Routing.control({
+          waypoints: [
+            L.latLng(restaurant.lat, restaurant.lng), // Restaurant location
+            L.latLng(receiver.lat, receiver.lng), // Receiver location
+          ],
+          routeWhileDragging: true,
+          createMarker: () => null, // Disable waypoints (no markers on the map)
+          showAlternatives: false,   // Don't show alternative routes
+          routeDrag: false,          // Disable dragging the route
+        }).addTo(mapRef.current);
+        
+        // Hide the directions panel if it's being rendered by default:
+        const routeControl = L.Routing.control({
+          waypoints: [
+            L.latLng(restaurant.lat, restaurant.lng), 
+            L.latLng(receiver.lat, receiver.lng),
+          ],
+          routeWhileDragging: true,
+          createMarker: () => null,
+          showAlternatives: false,
+          routeDrag: false,
+        }).addTo(mapRef.current);
+        
+        // After adding the routing control, remove the directions panel:
+        const directionsPanel = document.querySelector('.leaflet-routing-container');
+        if (directionsPanel) {
+          directionsPanel.style.display = 'none'; // Hide the directions panel completely
+        }
+        
+        
+  
+        // Driver marker
+        driverMarkerRef.current = L.marker([restaurant.lat, restaurant.lng], {
+          icon: L.divIcon({
+            className: 'driver-icon',
+            html: `<span class="material-icons">directions_car</span>`,
+          }),
+        }).addTo(mapRef.current);
+      } else {
+        // Update map view only
+        mapRef.current.setView([midLat, midLng], 8);
       }
-
-      mapRef.current = L.map('live-map').setView([midLat, midLng], 8);
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
-      }).addTo(mapRef.current);
-
-      // Restaurant marker
-      L.marker([restaurant.lat, restaurant.lng], {
-        icon: L.divIcon({
-          className: 'restaurant-icon',
-          html: `<span class="material-icons">restaurant</span>`,
-        }),
-      }).addTo(mapRef.current).bindPopup('Restaurant').openPopup();
-
-      // Receiver marker
-      L.marker([receiver.lat, receiver.lng], {
-        icon: L.divIcon({
-          className: 'receiver-icon',
-          html: `<span class="material-icons">location_on</span>`,
-        }),
-      }).addTo(mapRef.current);
-
-      L.Routing.control({
-        waypoints: [
-          L.latLng(restaurant.lat, restaurant.lng), // Restaurant location
-          L.latLng(receiver.lat, receiver.lng), // Receiver location
-        ],
-        routeWhileDragging: true,
-    }).addTo(mapRef.current);
-
-      // Driver marker
-      driverMarkerRef.current = L.marker([restaurant.lat, restaurant.lng], {
-        icon: L.divIcon({
-          className: 'driver-icon',
-          html: `<span class="material-icons">directions_car</span>`,
-        }),
-      }).addTo(mapRef.current);
     };
-
+  
     initMap();
-
+  
     return () => {
+      // Clean up map layers only if necessary
       if (mapRef.current) {
-        mapRef.current.remove();
+        mapRef.current.eachLayer((layer) => {
+          mapRef.current.removeLayer(layer);
+        });
       }
     };
-  }, [receiverAddress]);
+  }, [receiverAddress]); // Only re-run when the receiver address changes
+  
 
   
 
