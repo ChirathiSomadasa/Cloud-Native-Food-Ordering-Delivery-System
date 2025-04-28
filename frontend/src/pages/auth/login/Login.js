@@ -29,13 +29,17 @@ function Login() {
       // Send login data to backend
       const response = await axios.post("http://localhost:5001/api/auth/login", formData);
 
-      const { role, token,email } = response.data;
+      const { role, token,email,id } = response.data;
 
       // Store the token in localStorage or cookies 
       localStorage.setItem("auth_token", token);
 
       localStorage.setItem("user_email", email);
       console.log(localStorage.getItem('user_email'));
+
+      localStorage.setItem("user_id", id);
+      console.log(localStorage.getItem('user_id'));
+
 
       // Navigate based on user role
       if (role === "customer") {
