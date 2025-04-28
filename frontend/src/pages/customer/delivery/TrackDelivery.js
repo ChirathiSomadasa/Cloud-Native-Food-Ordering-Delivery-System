@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './TrackDelivery.css';
 import { io } from 'socket.io-client';
 import Pending from '../../../images/delivery/pending.png';
-import OnTheWay from '../../../images/delivery/ontheway.jpg';
+import OnTheWay from '../../../images/delivery/on_the_way.png';
 import pickedUp from '../../../images/delivery/pickedup.png';
 import delivered from '../../../images/delivery/delivered.png';
 import L from 'leaflet';
@@ -11,12 +11,25 @@ import 'leaflet/dist/leaflet.css';
 const deliveryId = "680db8a76c019f23472c927f";
 const socket = io('http://localhost:5008');
 
+const restaurantData = {
+  '67e5441c09bef4b21b6417c3': { name: 'Cafe Amaki', address: 'Kurunegala', lat: 7.4863, lng: 80.3629 },
+  '67e54cc32603c6fa0217e729': { name: 'Choco Loco', address: 'Kurunegala', lat: 7.4863, lng: 80.3629 },
+  '67e57b2ee241c0b6a5cc0eaa': { name: 'Grain & Greens', address: 'Anuradhapura', lat: 8.3114, lng: 80.4037 },
+  '67e677ac014d303b13134e47': { name: 'Frost & Flavours', address: 'Kurunegala', lat: 7.4863, lng: 80.3629 },
+  '6809d1211d6f19eb59963fbf': { name: 'The Hungry Spoon', address: 'Galle', lat: 6.0535, lng: 80.2210 },
+};
+
 const TrackDelivery = () => {
   const [deliveryStatus, setDeliveryStatus] = useState('pending');
   const [loading, setLoading] = useState(true);
   const [location, setLocation] = useState(null); // Store the constant location from the database
+  const [restaurantInfo, setRestaurantInfo] = useState(null);  // Restaurant data
+  const [receiverLocation, setReceiverLocation] = useState(null);  // Receiver's location
   const mapRef = useRef(null);
   const markerRef = useRef(null);
+  const restaurantMarkerRef = useRef(null);
+  const receiverMarkerRef = useRef(null);
+  const polylineRef = useRef(null);
 
   const fetchDeliveryStatus = async () => {
     try {
@@ -29,8 +42,11 @@ const TrackDelivery = () => {
       const data = await response.json();
       if (response.ok && data.delivery) {
         setDeliveryStatus(data.delivery.deliveryStatus);
-        // Set the constant location (fetched from the database)
-        setLocation(data.delivery.location);
+        setLocation(data.delivery.driverDetails.location);
+        setReceiverLocation(data.delivery.deliveryAddress);
+        // Fetch restaurant information based on the restaurantId
+        const restaurantId = data.delivery.restaurants.id; // Assuming the restaurantId is available here
+        setRestaurantInfo(restaurantData[restaurantId]);
       } else {
         console.error('Failed to fetch delivery status:', data.message);
       }
@@ -191,7 +207,7 @@ const TrackDelivery = () => {
         </div>
 
         <div className="map-preview">
-          <div id="live-map" style={{ height: "300px", width: "100%" }}></div>
+          <div id="live-map" style={{ height: "500px", width: "100%" }}></div>
           <p>Live Track your order</p>
         </div>
       </div>
