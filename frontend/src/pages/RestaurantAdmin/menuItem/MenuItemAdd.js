@@ -157,8 +157,8 @@ function MenuItemAdd() {
         <p>Create a new dish for your restaurant menu</p>
       </div>
       <form className="menu-item-form" onSubmit={handleSubmit}>
-        <div className="form-layout">
-          <div className="form-main">
+        <div className="form-layoutM">
+          <div className="form-mainM">
             <div className="form-groupM">
               <label className="labelM" htmlFor="name">
                 Item Name

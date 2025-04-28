@@ -1,28 +1,21 @@
 const mongoose = require("mongoose");
 const Payment = require("../models/Payment");
-const Order = require("../../order_management_service/models/Order");
 const axios = require("axios");
 const { sendPaymentConfirmation } = require("../services/emailService");
-const paypalClient = require("../config/paypalConfig");
 
 // Capture PayPal payment details
 const capturePayPalDetails = async (req, res) => {
   try {
-    // console.log("Request Body:", req.body); // Debug log
-
     const {
       paypalOrderId, restaurantOrderId, payerName,
       amount, currency, paymentDetails,
     } = req.body;
-
     if (
       !paypalOrderId || !restaurantOrderId || !payerName ||
       !amount || !currency || !paymentDetails
     ) {
-      return res.status(400).json({ message: "❌ Missing required fields" });
+      return res.status(400).json({ message: "Missing required fields" });
     }
-    // Find the corresponding order
-    // console.log( "Searching for order with restaurantOrderId:", restaurantOrderId ); // Debug log
 
     // Create and save payment
     const newPayment = new Payment({
@@ -39,7 +32,6 @@ const capturePayPalDetails = async (req, res) => {
     // await newPayment.validate();
     await newPayment.save();
     const paymentID = newPayment._id;
-    // console.log("💾 Payment saved:", newPayment._id);  // Debug log
 
     // Attempt to fetch user email and send confirmation
     try {
@@ -59,10 +51,6 @@ const capturePayPalDetails = async (req, res) => {
           timeout: 5000,
         }
       );
-
-      // Add debug logging
-      // console.log("Token received in payment service:",req.headers.authorization);
-      // console.log("User response:", userResponse.data);
 
       if (!userResponse.data) {
         throw new Error("No data received from auth service");
@@ -84,7 +72,6 @@ const capturePayPalDetails = async (req, res) => {
         paidAt: newPayment.paidAt,
         paypalOrderId,
       });
-      // console.log("Email sent status:", emailSent); // Debug log
 
       if (!emailSent) {
         return res.status(201).json({
@@ -96,15 +83,8 @@ const capturePayPalDetails = async (req, res) => {
       });
 
     } catch (emailErr) {
-      // console.error("Detailed error during email process:", {  // Debug log
-      //   message: emailErr.message,
-      //   response: emailErr.response?.data,
-      //   status: emailErr.response?.status,
-      //   headers: req.headers,
-      // });
       return res.status(201).json({
-        message: "Payment recorded, but email notification failed",
-        error: emailErr.message,
+        message: "Payment recorded, but email notification failed", error: emailErr.message,
       });
     }
   } catch (err) {
@@ -114,60 +94,6 @@ const capturePayPalDetails = async (req, res) => {
 
 
 // PayPal - get all Paypal details
-// const getAllPayments = async (req, res) => {
-//   try {
-//     // Verify if the user is an admin
-//     if (req.user?.role !== "systemAdmin") {
-//       return res.status(403).json({ message: "Unauthorized - Admin access required" });
-//     }
-
-//     const payments = await Payment.find().sort({ paidAt: -1 });
-//     if (!payments) {
-//       return res.status(404).json({ message: "No payments found" });
-//     }
-
-//     try {
-//       const authHeader = req.headers.authorization;
-//       const token =
-//         authHeader && authHeader.startsWith("Bearer ")
-//           ? authHeader.split(" ")[1]
-//           : authHeader;
-
-//       const userResponse = await axios.get(
-//         `http://localhost:5001/api/auth/${payment.customerId}`,
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//             "Content-Type": "application/json",
-//           },
-//           timeout: 5000,
-//         }
-//       );
-
-//       if (!userResponse.data) {
-//         throw new Error("No data received from auth service");
-//       }
-//       if (!userResponse.data?.data?.first_name && !userResponse.data?.data?.last_name) {
-//         throw new Error("First name & last name not found in user data");
-//       }
-
-//       // // // coustomer details 
-//       // const userName = userResponse.data.data.first_name + " " + userResponse.data.data.last_name;
-//       // return res.status(200).json({
-//       //   message: "Customer retrieved successfully",
-//       //   userName,
-//       // });
-
-//     } catch (err) {
-//       return res.status(500).json({ error: err.message});
-//     }
-
-//     const userName = userResponse.data.data.first_name + " " + userResponse.data.data.last_name;
-//     res.status(200).json({ payments, userName });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 const getAllPayments = async (req, res) => {
   try {
     // Verify if the user is an admin
@@ -250,9 +176,7 @@ const deletePayment = async (req, res) => {
 };
 
 
-
 module.exports = {
-  // PayPal
   capturePayPalDetails, //check
   getAllPayments, //check
   deletePayment, //check
