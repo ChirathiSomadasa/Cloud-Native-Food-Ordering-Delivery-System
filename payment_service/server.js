@@ -19,11 +19,11 @@ app.use(cookieParser());
 connectDB()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`✅ Server is running on port ${PORT}`);
+      console.log(`Server is running on port ${PORT}`);
     });
   })
   .catch((err) => {
-    console.error('❌ Failed to start the server:', err.message);
+    console.error('Failed to start the server:', err.message);
     process.exit(1); // make sure it doesn't hang
   });
   
