@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Cart.css";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Trash2 } from "lucide-react";
 import { sendEmailConfirmation } from '../../../services/emailService';
 
 function Cart() {
@@ -450,7 +450,7 @@ function Cart() {
                                     onClick={() => removeItem(item._id)}
                                     className="remove-btn"
                                 >
-                                    <DeleteIcon />
+                                    <Trash2 size={20} color="#f4a405" />
                                 </button>
                             </div>
                         ))
