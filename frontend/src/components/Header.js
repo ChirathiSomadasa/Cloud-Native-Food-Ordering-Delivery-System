@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonIcon from "@mui/icons-material/Person";
 
 function Header() {
@@ -169,10 +168,6 @@ function Header() {
                   <span className="badge">{numberOfItems}</span>
                 </button>
                 </Link>
-                <button className="icon-button notification-button">
-                  <NotificationsIcon />
-                  <span className="badge">2</span>
-                </button>
                 <button className="text-button" onClick={handleSignOut}>
                   Sign Out
                 </button>

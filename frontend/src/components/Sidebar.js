@@ -3,7 +3,6 @@ import "./Sidebar.css";
 import { Link, useNavigate } from "react-router-dom";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import CloseIcon from "@mui/icons-material/Close";
 import AddBoxIcon from "@mui/icons-material/AddBox";
@@ -123,10 +122,6 @@ function Sidebar({ isOpen, onClose }) {
                       <AccountBalanceIcon />
                       <span>Payments</span>
                     </Link>
-                    <Link to="/notifications" className="sidebar-link" onClick={onClose}>
-                      <NotificationsIcon />
-                      <span>Notifications</span>
-                    </Link>
                     <Link to="/deliveries/deliveryHome" className="sidebar-link" onClick={onClose}>
                       <DeliveryDiningIcon />
                       <span>Deliveries</span>
@@ -192,10 +187,6 @@ function Sidebar({ isOpen, onClose }) {
                 <Link to="/cart" className="sidebar-link" onClick={onClose}>
                   <ShoppingCartIcon />
                   <span>Cart</span>
-                </Link>
-                <Link to="/notifications" className="sidebar-link" onClick={onClose}>
-                  <NotificationsIcon />
-                  <span>Notifications</span>
                 </Link>
                 {/* <Link to="/deliveries/deliveryHome" className="sidebar-link" onClick={onClose}>
                   <DeliveryDiningIcon />
