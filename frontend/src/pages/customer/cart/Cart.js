@@ -198,10 +198,15 @@ function Cart() {
 
         try {
 
-            const user = localStorage.getItem('user_email');
+            //get email from local storage
+            const email = localStorage.getItem('user_email');
             console.log(localStorage.getItem('user_email'));
+            const userId = localStorage.getItem('user_id');
+            console.log(localStorage.getItem('user_id'));
 
-            const userEmail = user;
+            //asign email to user email
+            const userEmail = email;
+            const userID = userId;
 
 
             for (const item of selectedItems) {
@@ -225,7 +230,6 @@ function Cart() {
             // Store order IDs in localStorage
             localStorage.setItem("placed_order_ids", JSON.stringify(createdOrderIds));
 
-            alert("Order placed successfully!");
             setCartItems(cartItems.filter(item => !selectedOrders.includes(item._id)));
             setSelectedOrders(createdOrderIds); // ← use actual order IDs here
 
@@ -247,10 +251,17 @@ function Cart() {
             if (!userEmail) {
                 alert("No email found. Please login again.");
                 return;
+            }else{
+                alert("Check your mails!");
+
             }
         
             const orderDetails = selectedItems.map(item => ({
+                orderId: createdOrderIds,
+                customerID:userID,
                 itemName: item.name,
+                quantity: item.quantity,
+                price:item.price,
                 totalPrice: item.price * item.quantity
             }));
 
@@ -507,39 +518,12 @@ function Cart() {
                                 ))}
                         </ul>
 
-                        <div className="delivery-options">
-                            <p><strong> Choose Delivery Method:</strong></p>
-                            <label className="radio-option">
-                                <input
-                                    type="radio"
-                                    name="deliveryMethod"
-                                    value="pickup"
-                                    checked={deliveryMethod === 'pickup'}
-                                    onChange={() => setDeliveryMethod('pickup')}
-                                /> Pickup
-                            </label>
-                            <label className="radio-option">
-                                <input
-                                    type="radio"
-                                    name="deliveryMethod"
-                                    value="delivery"
-                                    checked={deliveryMethod === 'delivery'}
-                                    onChange={() => {
-                                        setDeliveryMethod('delivery');
-                                        calculateDeliveryFee();
-                                    }}
-                                /> Delivery
-                            </label>
-                            
-                        </div>
+        
 
                         <div className="pricing-summary">
-                            <p>Subtotal: <strong>LKR {subtotal.toFixed(2)}</strong></p>
-                            {deliveryMethod === 'delivery' && (
-                                <p>Delivery Fee: <strong>LKR {deliveryFee.toFixed(2)}</strong></p>
-                            )}
+                            
                             <p className="final-total">
-                                <strong>Total: LKR {(subtotal + (deliveryMethod === 'delivery' ? deliveryFee : 0)).toFixed(2)}</strong>
+                                <strong>Total: LKR {(subtotal).toFixed(2)}</strong>
                             </p>
                         </div>
 
