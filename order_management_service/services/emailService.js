@@ -38,7 +38,7 @@ const sendOrderConfirmationEmail = (userEmail, orderDetails) => {
                 ${itemsList}
             </ul>
 
-            <h2 style="color: rgb(255, 204, 0); margin-top: 20px;">Total: Rs.${totalAmount}</h2>
+            <h2 style="color: rgb(255, 204, 0); margin-top: 20px;">Total: LKR.${totalAmount}</h2>
 
             <p style="margin-top: 30px;">We hope you enjoy your meal! 🍽️<br><strong>FoodSprint Team</strong></p>
             <hr style="margin-top: 30px;">
