@@ -4,10 +4,10 @@ const { sendPaymentConfirmation } = require('./emailService');
 // Dummy data for testing
 const testEmail = 'ugthamindudilaa@gmail.com'; // <-- Replace with your email to receive the test
 const paymentDetails = {
-  customerId: 'CUST12345',  
+  customerId: 'CUST123ddr4234tefwgve45',  
   userName: 'John Doe',   
-  paymentID: 'PAYMENT98765',  
-  restaurantOrderId: 'TEST123456',
+  paymentID: 'PAYMENT9werfwefrefwewe8765',  
+  restaurantOrderId: 'TEST12gerfwswe21133456',
   amount: 2500,
   currency: 'LKR',
   paidAt: new Date(),

@@ -349,10 +349,14 @@ function Cart() {
 
                                 alert(`Transaction completed by ${payer.name.given_name} ${payer.name.surname}`);
                                 console.log("Payment Details:", details);
+                                const restaurantOrderIds = JSON.parse(localStorage.getItem("placed_order_ids") || "[]");
+                                const restaurantOrderId = restaurantOrderIds[0]; // Extract the first order ID
+                                console.log("Restaurant Order ID:", restaurantOrderId);
+                            
 
                                 // Prepare payment details to send to the backend
                                 const paymentRequestBody = {
-                                    restaurantOrderId: selectedOrders[0], // Assuming one order for simplicity
+                                    restaurantOrderId: restaurantOrderId, // Use the retrieved restaurantOrderId
                                     paypalOrderId: details.id,
                                     payerName: `${payer.name.given_name} ${payer.name.surname}`,
                                     amount: parseFloat(purchaseUnit.amount.value),
