@@ -20,11 +20,10 @@ function Cart() {
     const [lastPlacedItems, setLastPlacedItems] = useState([]);
     const navigate = useNavigate(); // Initialize useNavigate
 
-    
-    
+
+
     const calculateDeliveryFee = () => {
-        const distance = 5; // km (mock value)
-        const fee = distance * 100; // e.g., 100 LKR per km
+        const fee = 100; 
         setDeliveryFee(fee);
     };
 
@@ -196,6 +195,8 @@ function Cart() {
         const selectedItems = cartItems.filter(item => selectedOrders.includes(item._id));
         const createdOrderIds = []; // ← to store returned order IDs
 
+        
+
         try {
 
             //get email from local storage
@@ -209,13 +210,22 @@ function Cart() {
             const userID = userId;
 
 
+            // Calculate subtotal
+            const subtotal = selectedItems.reduce(
+                (total, item) => total + item.price * item.quantity,
+                0
+              );
+              
+              const deliveryCost = deliveryMethod === 'delivery' ? deliveryFee : 0;
+
             for (const item of selectedItems) {
                 const orderData = {
                     restaurantId: item.restaurantId, // This must be part of cart item
                     itemId: item.itemId,
                     itemName: item.name,
                     quantity: item.quantity,
-                    totalPrice: item.price * item.quantity
+                    totalPrice: subtotal + deliveryCost
+                   
                 };
 
                 const response = await axios.post(
@@ -251,17 +261,17 @@ function Cart() {
             if (!userEmail) {
                 alert("No email found. Please login again.");
                 return;
-            }else{
+            } else {
                 alert("Check your mails!");
 
             }
-        
+
             const orderDetails = selectedItems.map(item => ({
                 orderId: createdOrderIds,
-                customerID:userID,
+                customerID: userID,
                 itemName: item.name,
                 quantity: item.quantity,
-                price:item.price,
+                price: item.price,
                 totalPrice: item.price * item.quantity
             }));
 
@@ -518,12 +528,39 @@ function Cart() {
                                 ))}
                         </ul>
 
-        
+                        <div className="delivery-options">
+                            <p><strong> Choose Delivery Method:</strong></p>
+                            <label className="radio-option">
+                                <input
+                                    type="radio"
+                                    name="deliveryMethod"
+                                    value="pickup"
+                                    checked={deliveryMethod === 'pickup'}
+                                    onChange={() => setDeliveryMethod('pickup')}
+                                /> Pickup
+                            </label>
+                            <label className="radio-option">
+                                <input
+                                    type="radio"
+                                    name="deliveryMethod"
+                                    value="delivery"
+                                    checked={deliveryMethod === 'delivery'}
+                                    onChange={() => {
+                                        setDeliveryMethod('delivery');
+                                        calculateDeliveryFee();
+                                    }}
+                                /> Delivery
+                            </label>
+
+                        </div>
 
                         <div className="pricing-summary">
-                            
+                            <p>Subtotal: <strong>LKR {subtotal.toFixed(2)}</strong></p>
+                            {deliveryMethod === 'delivery' && (
+                                <p>Delivery Fee: <strong>LKR {deliveryFee.toFixed(2)}</strong></p>
+                            )}
                             <p className="final-total">
-                                <strong>Total: LKR {(subtotal).toFixed(2)}</strong>
+                                <strong>Total: LKR {(subtotal + (deliveryMethod === 'delivery' ? deliveryFee : 0)).toFixed(2)}</strong>
                             </p>
                         </div>
 
@@ -535,32 +572,32 @@ function Cart() {
                             ) : (
                                 <div id="paypal-button-container"></div>
                             )}
-                            
+
                         </div>
-                        
+
 
                         {/* <div className="modal-buttons">
                             <button className="btn place-order-btn" onClick={placeOrder}> Place Order</button>
                         </div>  */}
-                    {orderPlaced && deliveryMethod === 'delivery' && (
-                    <button
-                        className="checkout-button action-btn-delivery"
-                        style={{
-                        marginTop: "20px",
-                        maxWidth: "300px",
-                        marginLeft: "0",
-                        marginRight: "auto",
-                        display: "block",
-                        textAlign: "center",
-                        }}
-                        onClick={handleDeliveryDetailsClick}
-                    >
-                        Proceed to delivery
-                    </button>
-                    )}
+                        {orderPlaced && deliveryMethod === 'delivery' && (
+                            <button
+                                className="checkout-button action-btn-delivery"
+                                style={{
+                                    marginTop: "20px",
+                                    maxWidth: "300px",
+                                    marginLeft: "0",
+                                    marginRight: "auto",
+                                    display: "block",
+                                    textAlign: "center",
+                                }}
+                                onClick={handleDeliveryDetailsClick}
+                            >
+                                Proceed to delivery
+                            </button>
+                        )}
 
                     </div>
-                    
+
                 </div>
             )}
 
