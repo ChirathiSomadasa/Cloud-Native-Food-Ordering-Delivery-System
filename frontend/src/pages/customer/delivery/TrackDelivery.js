@@ -8,11 +8,11 @@ import delivered from '../../../images/delivery/delivered.png';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import Resturant from '../../../images/delivery/resturant.png';
+import User from '../../../images/delivery/home.png';
+import Driver from '../../../images/delivery/drivers.png';
 
-const receiverAddress = 'Kandy';
+const receiverAddress = 'Pothuhera';
 const deliveryId = "680db8a76c019f23472c927f";
 const socket = io('http://localhost:5008');
 const restaurant = {
@@ -116,7 +116,7 @@ const TrackDelivery = () => {
         L.marker([restaurant.lat, restaurant.lng], {
           icon: L.divIcon({
             className: 'restaurant-icon',
-            html: `<span class="material-icons">restaurant</span>`,
+            html: `<img src="${Resturant}" alt="Restaurant" style="width: 40px; height: 40px; border-radius: 50%;"/>`,
           }),
         }).addTo(mapRef.current).bindPopup('Restaurant').openPopup();
   
@@ -124,7 +124,7 @@ const TrackDelivery = () => {
         L.marker([receiver.lat, receiver.lng], {
           icon: L.divIcon({
             className: 'receiver-icon',
-            html: `<span class="material-icons">location_on</span>`,
+            html: `<img src="${User}" alt="Restaurant" style="width: 40px; height: 40px; border-radius: 50%;"/>`,
           }),
         }).addTo(mapRef.current);
   
@@ -138,19 +138,7 @@ const TrackDelivery = () => {
           showAlternatives: false,   // Don't show alternative routes
           routeDrag: false,          // Disable dragging the route
         }).addTo(mapRef.current);
-        
-        // Hide the directions panel if it's being rendered by default:
-        const routeControl = L.Routing.control({
-          waypoints: [
-            L.latLng(restaurant.lat, restaurant.lng), 
-            L.latLng(receiver.lat, receiver.lng),
-          ],
-          routeWhileDragging: true,
-          createMarker: () => null,
-          showAlternatives: false,
-          routeDrag: false,
-        }).addTo(mapRef.current);
-        
+              
         // After adding the routing control, remove the directions panel:
         const directionsPanel = document.querySelector('.leaflet-routing-container');
         if (directionsPanel) {
@@ -163,7 +151,7 @@ const TrackDelivery = () => {
         driverMarkerRef.current = L.marker([restaurant.lat, restaurant.lng], {
           icon: L.divIcon({
             className: 'driver-icon',
-            html: `<span class="material-icons">directions_car</span>`,
+            html: `<img src="${Driver}" alt="Restaurant" style="width: 40px; height: 40px; border-radius: 50%;"/>`,
           }),
         }).addTo(mapRef.current);
       } else {
@@ -190,16 +178,32 @@ const TrackDelivery = () => {
   // Simulate Driver Movement
   useEffect(() => {
     if (!receiverCoords || !driverMarkerRef.current) return;
-
-    if (deliveryStatus === 'pending' || deliveryStatus === 'picked-up') {
+  
+    const isValidCoords = receiverCoords.lat && receiverCoords.lng;
+    if (!isValidCoords) return;
+  
+    // Define status-specific alerts
+    if (deliveryStatus === 'pending') {
       driverMarkerRef.current.setLatLng([restaurant.lat, restaurant.lng]);
-    } else if (deliveryStatus === 'on-the-way' || deliveryStatus === 'picked-up') {
+    } else if (deliveryStatus === 'picked-up' || deliveryStatus === 'on-the-way') {
+      // Notify once when picked up
+      if (deliveryStatus === 'picked-up') {
+        alert("Your order has been collected and is now en route.");
+  
+        
+        setTimeout(() => {
+          alert("The delivery partner is approximately five minutes away.");
+        }, 30000);
+      }
+  
       simulateDriverMovement(restaurant, receiverCoords);
     } else if (deliveryStatus === 'delivered') {
+      alert("Your delivery has arrived. Enjoy your meal!");
       driverMarkerRef.current.setLatLng([receiverCoords.lat, receiverCoords.lng]);
       mapRef.current.panTo([receiverCoords.lat, receiverCoords.lng]);
     }
   }, [deliveryStatus, receiverCoords]);
+  
 
   const simulateDriverMovement = (start, end) => {
     const steps = 100;
@@ -219,7 +223,7 @@ const TrackDelivery = () => {
       driverMarkerRef.current.setLatLng([newLat, newLng]);
       mapRef.current.panTo([newLat, newLng]);
       i++;
-    }, 100); // Adjust the speed here by changing the interval (100ms)
+    },400);
   };
 
   const statusOrder = {

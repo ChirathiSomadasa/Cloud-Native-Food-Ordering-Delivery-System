@@ -161,7 +161,7 @@ const DeliveryDetails = () => {
       return;
     }
 
-    const deliveryFee = distanceKm <= 5 ? 200 : 200 + (distanceKm - 5) * 25;
+    const deliveryFee = 100;
     const totalAmount = (parseFloat(paymentAmount) + deliveryFee).toFixed(2);
     const estimatedDeliveryTime = calculateEstimatedTime(distanceKm);
 
@@ -222,8 +222,7 @@ const DeliveryDetails = () => {
     }
   };
 
-  const deliveryFee = distanceKm <= 5 ? 200 : 200 + (distanceKm - 5) * 25;
-  const grandTotal = (parseFloat(paymentAmount) + deliveryFee).toFixed(2);
+  const grandTotal = (parseFloat(paymentAmount) + 100).toFixed(2);
   const estimatedDeliveryTime = calculateEstimatedTime(distanceKm);
 
   return (
@@ -269,8 +268,8 @@ const DeliveryDetails = () => {
 
           <div className="delivery-charges">
             <span style={{ color: 'red' }}>
-              Delivery charges:<br />
-              LKR 200 for first 5km + LKR 25/km after that
+              Delivery charges:
+              LKR 100 only
             </span>
           </div>
 
