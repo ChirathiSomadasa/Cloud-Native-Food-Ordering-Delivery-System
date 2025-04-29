@@ -18,17 +18,17 @@
   <h2>Technologies Used</h2>
   <h3>Frontend</h3>
   <ul>
-    <li>React.js – JavaScript library for building user interfaces.</li>
-    <li>React Router – For navigation between pages.</li>
-    <li>Axios – For making HTTP requests to the backend.</li>
-    <li>Material-UI – For responsive and modern UI components.</li>
+    <li><strong>React.js</strong>: JavaScript library for building user interfaces.</li>
+    <li><strong>React Router</strong>: For navigation between pages.</li>
+    <li><strong>Axios</strong>:For making HTTP requests to the backend.</li>
+    <li><strong>Material-UI</strong>: For responsive and modern UI components.</li>
   </ul>
 
   <h3>Backend</h3>
   <ul>
     <li><strong>Node.js</strong>: JavaScript runtime for server-side development.</li>
     <li><strong>Express</strong>: Web framework for Node.js.</li>
-    <li>MongoDB – NoSQL database (MongoDB Atlas - Cloud)</li>
+    <li><strong>MongoDB</strong>: NoSQL database (MongoDB Atlas - Cloud)</li>
     <li><strong>Cors</strong>: Middleware for handling cross-origin requests.</li>
     <li><strong>Dotenv</strong>: For managing environment variables.</li>
     <li><strong>Body-parser</strong>: Middleware for parsing incoming request bodies in Node.js and Express applications.</li>
@@ -36,8 +36,9 @@
     <li><strong>Jsonwebtoken (JWT)</strong>: For creating and verifying JSON Web Tokens, typically used for authentication and authorization.</li>
     <li><strong>Bcrypt</strong>: For hashing and salting passwords securely.</li>
     <li><strong>Cookie-parser</strong>: Middleware for parsing HTTP cookies.</li>
-    <li>Nodemailer – For push email notifications.</li>
-    <li>Socket.IO – Real-time, bidirectional communication for real-time delivery updates.</li>
+    <li><strong>express-validator</strong>: for Form validations.</li>
+    <li><strong>Nodemailer</strong>: For push email notifications.</li>
+    <li><strong>Socket.IO</strong>: Real-time, bidirectional communication for real-time delivery updates.</li>
   </ul>
 
   <h2>Project Setup</h2>
