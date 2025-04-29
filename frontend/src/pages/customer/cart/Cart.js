@@ -272,7 +272,7 @@ function Cart() {
                 itemName: item.name,
                 quantity: item.quantity,
                 price: item.price,
-                totalPrice: item.price * item.quantity
+                totalPrice: subtotal + deliveryCost
             }));
 
             // Send email confirmation
