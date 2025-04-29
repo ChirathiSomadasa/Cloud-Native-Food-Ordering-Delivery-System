@@ -10,8 +10,17 @@
 
 .status-steps {
   display: flex;
-  flex-direction: row;
- 
+  width: 50%;
+  max-width: 600px;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.delivery-image-res {
+  width: 75px; 
+  height: auto;
+  margin: 0 10px; 
+  object-fit: contain; 
 }
 
 .step {
@@ -32,6 +41,7 @@
 
 
 .map-preview {
+  width: 50%; 
   text-align: center;
 }
 
@@ -47,10 +57,10 @@
 #live-map {
   border: 1px solid #ccc;
   border-radius: 8px;
-    height: 300px;
-    width: 100%;
-  
+  height: 500px;  /* Increased height */
+  width: 100%;    /* Full width of the container */
 }
+
 
 
 .status-info {

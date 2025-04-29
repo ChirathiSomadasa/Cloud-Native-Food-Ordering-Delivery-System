@@ -376,13 +376,14 @@
   color: #fff;
 }
 .action-btn-delivery {
-  background-color: orange;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 20px;
-  font-weight: bold;
-  cursor: pointer;
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+  
 }
 
 .loading-message {
