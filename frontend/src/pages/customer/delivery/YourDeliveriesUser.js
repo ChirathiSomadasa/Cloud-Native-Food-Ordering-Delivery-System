@@ -49,7 +49,9 @@ const YourDeliveriesUser = () => {
   return (
     <div className="your-deliveries-container">
       <h2 className="your-deliveries-title">Your Delivery Records</h2>
-
+      <div className="delivery-imageuser">
+            <img src={deliveryImage} alt="Delivery Visual" className="delivery-imageuser" />
+          </div>
       {loading ? (
         <p>Loading deliveries...</p>
       ) : (
@@ -97,10 +99,6 @@ const YourDeliveriesUser = () => {
               )}
             </div>
           )}
-
-          <div className="delivery-image">
-            <img src={deliveryImage} alt="Delivery Visual" className="delivery-image" />
-          </div>
         </div>
       )}
     </div>

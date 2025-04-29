@@ -24,7 +24,7 @@ connectDB()
   })
   .catch((err) => {
     console.error('Failed to start the server:', err.message);
-    process.exit(1); // make sure it doesn't hang
+    // process.exit(1); // make sure it doesn't hang
   });
   
 // Routes

@@ -76,13 +76,29 @@ const DeliveryDetails = () => {
 
     // Hardcoded cities and their latitudes and longitudes
     const cityCoordinates = {
-      'colombo': { lat: 6.9271, lng: 79.8612 }, // Colombo
       'nuwara eliya': { lat: 6.9480, lng: 80.7917 }, // Nuwara Eliya
       'galle': { lat: 6.0535, lng: 80.2210 }, // Galle
       'jaffna': { lat: 9.6615, lng: 80.0229 }, // Jaffna
-      'kurunegala': { lat: 7.4863, lng: 80.3629 }, // Kurunegala (already in your example)
       'anuradhapura': { lat: 8.3114, lng: 80.4037 }, // Anuradhapura (already in your example)
       'kandy': { lat: 7.2906, lng: 80.6337 }, // Default Kandy
+      'colombo': { lat: 6.9271, lng: 79.8612 }, // Colombo
+  'kaduwela': { lat: 6.9547, lng: 79.9867 }, // Kaduwela
+  'malabe': { lat: 6.9272, lng: 79.9801 }, // Malabe
+  'piliyandala': { lat: 6.8542, lng: 79.9825 }, // Piliyandala
+  'borella': { lat: 6.9364, lng: 79.9821 }, // Borella
+  'thimbirigasyaya': { lat: 6.9244, lng: 79.9869 }, // Thimbirigasyaya
+  'dehiwala': { lat: 6.8766, lng: 79.9749 }, // Dehiwala
+  'mora': { lat: 6.9331, lng: 79.9916 }, // University of Moratuwa area (Mora)
+  
+  // Kurunegala area
+  'kurunegala': { lat: 7.4863, lng: 80.3629 }, // Kurunegala
+  'pothuhera': { lat: 7.6310, lng: 80.3591 }, // Pothuhera
+  'wariyapola': { lat: 7.4667, lng: 80.3142 }, // Wariyapola
+  'galgamuwa': { lat: 7.5572, lng: 80.3733 }, // Galgamuwa
+  'melsiripura': { lat: 7.5093, lng: 80.3928 }, // Melsiripura
+  'uduwela': { lat: 7.5295, lng: 80.3496 }, // Uduwela
+  'embulgama': { lat: 7.4304, lng: 80.3290 }, // Embulgama
+  'kottagedara': { lat: 7.4481, lng: 80.3355 }, // Kottagedara
     };
 
     // Check if the address contains any of the hardcoded city names
@@ -145,7 +161,7 @@ const DeliveryDetails = () => {
       return;
     }
 
-    const deliveryFee = distanceKm <= 5 ? 200 : 200 + (distanceKm - 5) * 25;
+    const deliveryFee = 100;
     const totalAmount = (parseFloat(paymentAmount) + deliveryFee).toFixed(2);
     const estimatedDeliveryTime = calculateEstimatedTime(distanceKm);
 
@@ -206,8 +222,7 @@ const DeliveryDetails = () => {
     }
   };
 
-  const deliveryFee = distanceKm <= 5 ? 200 : 200 + (distanceKm - 5) * 25;
-  const grandTotal = (parseFloat(paymentAmount) + deliveryFee).toFixed(2);
+  const grandTotal = (parseFloat(paymentAmount) + 100).toFixed(2);
   const estimatedDeliveryTime = calculateEstimatedTime(distanceKm);
 
   return (
@@ -253,8 +268,8 @@ const DeliveryDetails = () => {
 
           <div className="delivery-charges">
             <span style={{ color: 'red' }}>
-              Delivery charges:<br />
-              LKR 200 for first 5km + LKR 25/km after that
+              Delivery charges:
+              LKR 100 only
             </span>
           </div>
 

@@ -78,6 +78,7 @@ const capturePayPalDetails = async (req, res) => {
           message: "Payment recorded, but email notification failed",
         });
       }
+      console.log("Email sent successfully to:", emailSent);
       return res.status(201).json({
         message: "Payment recorded and email sent successfully",
       });
