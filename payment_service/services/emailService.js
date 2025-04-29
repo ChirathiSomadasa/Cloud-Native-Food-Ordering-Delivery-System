@@ -15,8 +15,8 @@ const sendPaymentConfirmation = async (userEmail, paymentDetails) => {
       to: userEmail,
       subject: "Payment Confirmation - Food Ordering System",
       html: `
-        <div style="font-family: Arial, sans-serif; background: #f7f7f7; padding: 30px;">
-          <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 28px;">
+        <div style="font-family: Arial, sans-serif; background: #f7f7f7; padding: 24px;">
+          <div style="width: 500px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 10px;">
             <h2 style="color: #4CAF50; text-align: center; margin-bottom: 16px;">Payment Confirmation</h2>
             <p style="font-size: 16px; color: #333;">Dear Customer,</p>
             <p style="font-size: 16px; color: #333;">Thank you for your payment! Your transaction has been successfully processed.</p>
